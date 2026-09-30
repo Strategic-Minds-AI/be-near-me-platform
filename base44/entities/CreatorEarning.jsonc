@@ -1,0 +1,88 @@
+{
+  "name": "CreatorEarning",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "type": "string"
+    },
+    "video_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "ad_revenue",
+        "membership",
+        "superchat",
+        "tip",
+        "premium_watch",
+        "bonus"
+      ],
+      "default": "ad_revenue"
+    },
+    "amount_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "description": {
+      "type": "string"
+    },
+    "ad_campaign_id": {
+      "type": "string"
+    },
+    "payout_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "paid",
+        "disputed"
+      ],
+      "default": "pending"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "channel_id",
+    "amount_cents"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

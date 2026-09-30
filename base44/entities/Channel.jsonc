@@ -1,0 +1,155 @@
+{
+  "name": "Channel",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Channel display name"
+    },
+    "handle": {
+      "type": "string",
+      "description": "Unique @handle"
+    },
+    "description": {
+      "type": "string"
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "banner_url": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "subscribers_count": {
+      "type": "number",
+      "default": 0
+    },
+    "videos_count": {
+      "type": "number",
+      "default": 0
+    },
+    "total_views": {
+      "type": "number",
+      "default": 0
+    },
+    "total_watch_time": {
+      "type": "number",
+      "default": 0,
+      "description": "Total watch time in seconds"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "silver",
+        "gold",
+        "pro"
+      ],
+      "default": "free"
+    },
+    "credits": {
+      "type": "number",
+      "default": 0
+    },
+    "earnings_balance": {
+      "type": "number",
+      "default": 0,
+      "description": "Unpaid earnings in cents"
+    },
+    "total_earnings": {
+      "type": "number",
+      "default": 0
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "monetization_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "stripe_connect_id": {
+      "type": "string"
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "featured_video_id": {
+      "type": "string"
+    },
+    "channel_trailer_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "terminated"
+      ],
+      "default": "active"
+    },
+    "strikes": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "handle"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

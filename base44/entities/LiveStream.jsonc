@@ -1,0 +1,168 @@
+{
+  "name": "LiveStream",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stream_key": {
+      "type": "string"
+    },
+    "rtmp_url": {
+      "type": "string"
+    },
+    "hls_manifest_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "live",
+        "ended",
+        "processing"
+      ],
+      "default": "scheduled"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "public",
+        "private",
+        "unlisted"
+      ],
+      "default": "public"
+    },
+    "viewers_current": {
+      "type": "number",
+      "default": 0
+    },
+    "viewers_peak": {
+      "type": "number",
+      "default": 0
+    },
+    "total_views": {
+      "type": "number",
+      "default": 0
+    },
+    "likes": {
+      "type": "number",
+      "default": 0
+    },
+    "chat_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "chat_mode": {
+      "type": "string",
+      "enum": [
+        "everyone",
+        "subscribers_only",
+        "members_only",
+        "slow_mode"
+      ],
+      "default": "everyone"
+    },
+    "slow_mode_seconds": {
+      "type": "number",
+      "default": 0
+    },
+    "monetization_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "superchat_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "scheduled_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actual_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "vod_video_id": {
+      "type": "string",
+      "description": "Video ID of the recorded VOD"
+    },
+    "channel_name": {
+      "type": "string"
+    },
+    "channel_avatar": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "channel_id",
+    "title"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "visibility": "public",
+          "status": "live"
+        },
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

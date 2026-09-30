@@ -1,0 +1,87 @@
+{
+  "name": "CreatorReputation",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 reputation score"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "verified"
+      ],
+      "default": "bronze"
+    },
+    "upload_consistency": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100"
+    },
+    "watch_time_score": {
+      "type": "number",
+      "default": 0
+    },
+    "engagement_score": {
+      "type": "number",
+      "default": 0
+    },
+    "retention_score": {
+      "type": "number",
+      "default": 0
+    },
+    "growth_score": {
+      "type": "number",
+      "default": 0
+    },
+    "strikes": {
+      "type": "number",
+      "default": 0
+    },
+    "reports_count": {
+      "type": "number",
+      "default": 0
+    },
+    "monetization_eligible": {
+      "type": "boolean",
+      "default": false
+    },
+    "featured_eligible": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_calculated": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "channel_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

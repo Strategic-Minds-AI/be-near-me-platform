@@ -1,0 +1,148 @@
+{
+  "name": "AdCampaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "advertiser_name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "preroll",
+        "midroll",
+        "postroll",
+        "banner",
+        "overlay"
+      ],
+      "default": "preroll"
+    },
+    "media_url": {
+      "type": "string",
+      "description": "Ad creative URL"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "click_url": {
+      "type": "string",
+      "description": "Landing page URL"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Ad duration in seconds"
+    },
+    "skippable": {
+      "type": "boolean",
+      "default": true
+    },
+    "skip_after": {
+      "type": "number",
+      "default": 5,
+      "description": "Seconds before skip button appears"
+    },
+    "budget_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "spent_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "cpm_cents": {
+      "type": "number",
+      "default": 500,
+      "description": "Cost per 1000 impressions in cents"
+    },
+    "impressions": {
+      "type": "number",
+      "default": 0
+    },
+    "clicks": {
+      "type": "number",
+      "default": 0
+    },
+    "completions": {
+      "type": "number",
+      "default": 0
+    },
+    "targeting": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "age_range": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          }
+        },
+        "exclude_categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "paused",
+        "completed",
+        "rejected"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "name",
+    "media_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {},
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

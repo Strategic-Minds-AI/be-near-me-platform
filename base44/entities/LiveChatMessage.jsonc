@@ -1,0 +1,70 @@
+{
+  "name": "LiveChatMessage",
+  "type": "object",
+  "properties": {
+    "stream_id": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_avatar": {
+      "type": "string"
+    },
+    "is_member": {
+      "type": "boolean",
+      "default": false
+    },
+    "member_tier": {
+      "type": "string"
+    },
+    "is_moderator": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_owner": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_superchat": {
+      "type": "boolean",
+      "default": false
+    },
+    "superchat_amount": {
+      "type": "number"
+    },
+    "superchat_tier": {
+      "type": "string"
+    },
+    "deleted": {
+      "type": "boolean",
+      "default": false
+    },
+    "deleted_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "stream_id",
+    "message"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

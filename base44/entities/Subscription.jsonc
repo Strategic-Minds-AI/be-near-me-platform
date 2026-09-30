@@ -1,0 +1,71 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "channel_id": {
+      "type": "string",
+      "description": "Channel being subscribed to"
+    },
+    "channel_name": {
+      "type": "string",
+      "description": "Cached channel name"
+    },
+    "channel_avatar": {
+      "type": "string",
+      "description": "Cached channel avatar"
+    },
+    "notifications": {
+      "type": "string",
+      "enum": [
+        "all",
+        "personalized",
+        "none"
+      ],
+      "default": "personalized"
+    }
+  },
+  "required": [
+    "channel_id"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

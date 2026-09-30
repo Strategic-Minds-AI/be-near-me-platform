@@ -1,0 +1,74 @@
+{
+  "name": "WatchHistory",
+  "type": "object",
+  "properties": {
+    "video_id": {
+      "type": "string"
+    },
+    "video_title": {
+      "type": "string"
+    },
+    "video_thumbnail": {
+      "type": "string"
+    },
+    "channel_name": {
+      "type": "string"
+    },
+    "watch_time": {
+      "type": "number",
+      "description": "Seconds watched"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Total video duration"
+    },
+    "progress": {
+      "type": "number",
+      "description": "Percentage watched 0-100"
+    }
+  },
+  "required": [
+    "video_id"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

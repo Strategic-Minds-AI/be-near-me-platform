@@ -1,0 +1,237 @@
+{
+  "name": "Video",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Video title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Video description"
+    },
+    "url": {
+      "type": "string",
+      "description": "Original video file URL"
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "description": "Primary thumbnail image URL"
+    },
+    "thumbnails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Multiple thumbnail options"
+    },
+    "poster_url": {
+      "type": "string",
+      "description": "Large poster image"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duration in seconds"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "gaming",
+        "music",
+        "vlogs",
+        "education",
+        "entertainment",
+        "sports",
+        "news",
+        "tech",
+        "comedy",
+        "film",
+        "howto",
+        "travel",
+        "food",
+        "fashion",
+        "art",
+        "science",
+        "pets",
+        "autos",
+        "other"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "language": {
+      "type": "string",
+      "default": "en"
+    },
+    "views": {
+      "type": "number",
+      "default": 0
+    },
+    "likes": {
+      "type": "number",
+      "default": 0
+    },
+    "dislikes": {
+      "type": "number",
+      "default": 0
+    },
+    "comments_count": {
+      "type": "number",
+      "default": 0
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "public",
+        "private",
+        "unlisted"
+      ],
+      "default": "public"
+    },
+    "processing_status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "processing",
+        "done",
+        "failed"
+      ],
+      "default": "done"
+    },
+    "monetized": {
+      "type": "boolean",
+      "default": false
+    },
+    "ad_allowed": {
+      "type": "boolean",
+      "default": true
+    },
+    "age_restricted": {
+      "type": "boolean",
+      "default": false
+    },
+    "channel_id": {
+      "type": "string"
+    },
+    "channel_name": {
+      "type": "string"
+    },
+    "channel_avatar": {
+      "type": "string"
+    },
+    "renditions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "resolution": {
+            "type": "string"
+          },
+          "bitrate": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "captions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "codec": {
+          "type": "string"
+        },
+        "fps": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "file_size": {
+          "type": "number"
+        }
+      }
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scheduled_publish_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "title",
+    "url"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "visibility": "public"
+        },
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
