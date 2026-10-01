@@ -60,8 +60,8 @@ Deno.serve(async (req) => {
       const user = await base44.auth.me();
       if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-      const channelList = await base44.entities.Channel.filter({ created_by: user.email }, '-created_date', 1);
-      const channel = channelList?.[0];
+      const channelPage = await base44.entities.Channel.filter({ created_by: user.email }, { sort: '-created_date', limit: 1 });
+      const channel = (channelPage?.items || channelPage || [])[0];
 
       const records = videos.map((v) => ({
         title: v.title,
