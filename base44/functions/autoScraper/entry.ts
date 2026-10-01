@@ -32,6 +32,13 @@ async function getMeta(id: string) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) {
+      return Response.json({ error: 'Authentication required' }, { status: 401 });
+    }
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Admin access required' }, { status: 403 });
+    }
 
     // 1. Collect video IDs from all trending queries
     const allIds = new Set<string>();
@@ -80,22 +87,14 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 5. Import to database
-    let user: any = null;
-    try {
-      user = await base44.auth.me();
-    } catch {
-      // workflow context — no user session
-    }
-
+    // 5. Import review candidates. Service-role access occurs only after
+    // an authenticated admin caller has passed the gate above.
     let channel: any = null;
-    if (user) {
-      try {
-        const channels = await base44.entities.Channel.filter({ created_by: user.email }, '-created_date', 1);
-        channel = channels?.[0];
-      } catch {
-        // ignore
-      }
+    try {
+      const channels = await base44.entities.Channel.filter({ created_by: user.email }, '-created_date', 1);
+      channel = channels?.[0];
+    } catch {
+      // A channel is optional for review candidates.
     }
 
     const records = videos.map((v) => ({
