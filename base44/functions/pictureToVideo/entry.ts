@@ -1,14 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 
-// pictureToVideo — the picture-to-viral-video engine.
-// 1. Takes an uploaded picture URL + optional user idea + optional category.
+// pictureToVideo — the multi-picture-to-viral-video engine.
+// 1. Takes an array of uploaded picture URLs + optional user idea + optional category.
 // 2. Fetches the platform's top-performing videos as viral references.
-// 3. Uses InvokeLLM with vision (file_urls) to analyze the picture + the viral
-//    formula from top videos + the user's idea → generates an optimized viral
-//    video prompt (shown to the user so they know "what to type").
+// 3. Uses InvokeLLM with vision (file_urls = all pictures) to analyze every picture
+//    + the viral formula from top videos + the user's idea → generates an optimized
+//    viral video prompt that COMBINES all pictures into one cohesive video.
 // 4. If suggest_prompt is true, returns only the analysis (no video generation).
-// 5. Otherwise, generates a 6-second vertical (9:16) video from the visual prompt
-//    and saves it to the Video entity so it lands in the feed.
+// 5. If regenerate is true, instructs the LLM to create a DIFFERENT concept.
+// 6. Otherwise, generates a 6-second vertical (9:16) video and saves it to the feed.
 
 export default async function(req) {
   try {
@@ -17,9 +17,10 @@ export default async function(req) {
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json().catch(() => ({})) || {};
-    const { picture_url, user_idea, category, suggest_prompt } = body;
+    const { picture_urls, user_idea, category, suggest_prompt, regenerate } = body;
 
-    if (!picture_url) return Response.json({ error: "Picture URL required" }, { status: 400 });
+    const urls = Array.isArray(picture_urls) ? picture_urls.filter(Boolean) : [];
+    if (urls.length === 0) return Response.json({ error: "At least one picture URL required" }, { status: 400 });
 
     // 1. Fetch top-performing videos as viral references
     const query = category ? { visibility: "public", category } : { visibility: "public" };
@@ -31,8 +32,15 @@ export default async function(req) {
       views: v.views,
     }));
 
-    // 2. Analyze picture + top videos + user idea → generate viral video prompt
-    const prompt = `You are a viral video director for Be Near Me, a positivity-only short-form video platform. The user uploaded a picture and wants to create a viral video inspired by it.
+    // 2. Analyze all pictures + top videos + user idea → generate viral video prompt
+    const regenInstruction = regenerate
+      ? "\n\nIMPORTANT: This is a REGENERATION request. The user wants a completely DIFFERENT video concept from any previous attempt. Use a different angle, different scene, different visual style — but still incorporate the picture(s) and mirror the viral patterns."
+      : "";
+
+    const picWord = urls.length === 1 ? "a picture" : urls.length + " pictures";
+    const combineWord = urls.length === 1 ? "it" : "all of them into one cohesive video";
+
+    const prompt = `You are a viral video director for Be Near Me, a positivity-only short-form video platform. The user uploaded ${picWord} and wants to create a viral video that combines ${combineWord}.
 
 USER'S IDEA: ${user_idea || "(no specific idea — suggest the best one)"}
 CATEGORY: ${category || "all"}
@@ -40,18 +48,18 @@ CATEGORY: ${category || "all"}
 TOP PERFORMING VIDEOS ON THE PLATFORM (viral references):
 ${JSON.stringify(videoData.slice(0, 8), null, 2)}
 
-Analyze the uploaded picture (provided as a file attachment) and the viral references above. Then create a viral video concept that incorporates the picture's subject/feeling and mirrors the winning patterns from the top videos.
+Analyze the uploaded picture(s) and the viral references above. Then create a viral video concept that COMBINES elements from ${urls.length === 1 ? "the picture" : "all the pictures"} into one cohesive short-form video and mirrors the winning patterns from the top videos.${regenInstruction}
 
 Return JSON with:
-- picture_analysis: brief description of what's in the picture (1-2 sentences)
+- picture_analysis: brief description of what's in the picture(s) (1-2 sentences)
 - suggested_idea: the viral idea we recommend (refine the user's idea if they gave one; suggest one if they didn't)
 - viral_prompt: the exact text someone should type into an AI video generator to get a viral video — this is shown to the user so they know what to type
 - video_title: an optimized viral title (max 80 chars)
-- visual_prompt: a detailed cinematic prompt for AI video generation — vertical 9:16, specific scene, lighting, camera movement, mood, ultra detailed. This is what the video generator receives, so be vivid and specific.`;
+- visual_prompt: a detailed cinematic prompt for AI video generation — vertical 9:16, specific scene describing how the picture(s) elements combine, lighting, camera movement, mood, ultra detailed. This is what the video generator receives, so be vivid and specific.`;
 
     const analysis = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
-      file_urls: [picture_url],
+      file_urls: urls,
       response_json_schema: {
         type: "object",
         properties: {
