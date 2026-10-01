@@ -371,8 +371,7 @@ export default function StudioLive() {
                       />
                       <Button
                         variant="outline"
-                        onClick={() => copyToClipboard(rtmpUrl)}
-                        disabled={!rtmpUrl}
+                        onClick={() => { if (rtmpUrl) copyToClipboard(rtmpUrl); }}
                         className="bg-white/5 border-white/10 text-white hover:bg-white/10"
                       >
                         <Copy className="w-4 h-4" />
