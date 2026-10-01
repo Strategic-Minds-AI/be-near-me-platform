@@ -73,21 +73,25 @@ export default function VideoLibrary() {
   const visibleVideos = (videos || []).slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 bg-black">
       {/* Sticky filter bar */}
-      <div className="sticky top-14 z-30 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Library className="w-5 h-5 text-pink-500" />
-              <h1 className="text-lg font-bold text-white">Video Library</h1>
-              <span className="text-sm text-gray-500">{total} videos</span>
+      <div className="sticky top-14 z-30 bg-black/95 backdrop-blur-xl border-b-2 border-white/20">
+        <div className="px-4 pt-4 pb-3">
+          {/* Editorial header */}
+          <div className="flex items-end justify-between mb-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Library className="w-5 h-5 text-pink-500" strokeWidth={2.5} />
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-pink-500">Browse</span>
+              </div>
+              <h1 className="text-4xl font-black text-white leading-none tracking-tight">Video Library</h1>
+              <p className="text-sm text-gray-500 mt-1.5 font-medium">{total} videos</p>
             </div>
             {/* Sort dropdown */}
             <div className="relative">
               <button
                 onClick={() => setSortOpen((s) => !s)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-white hover:bg-white/10"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/5 border border-white/15 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
               >
                 <currentSort.icon className="w-4 h-4" />
                 {currentSort.label}
@@ -96,12 +100,13 @@ export default function VideoLibrary() {
               {sortOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setSortOpen(false)} />
-                  <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl bg-[#1a1a1a] border border-white/10 overflow-hidden">
+                  <div className="absolute right-0 top-full mt-1 z-50 w-48 rounded-xl bg-[#1a1a1a] border border-white/15 overflow-hidden shadow-2xl">
+                    <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-500 border-b border-white/10">Sort by</div>
                     {SORTS.map((s) => (
                       <button
                         key={s.id}
                         onClick={() => { setSort(s.id); setSortOpen(false); }}
-                        className={`flex items-center gap-2 w-full px-3 py-2.5 text-sm hover:bg-white/10 ${sort === s.id ? 'text-pink-400' : 'text-white'}`}
+                        className={`flex items-center gap-2 w-full px-3 py-2.5 text-sm font-medium hover:bg-white/10 transition-colors ${sort === s.id ? 'text-pink-400 bg-white/5' : 'text-white'}`}
                       >
                         <s.icon className="w-4 h-4" />
                         {s.label}
@@ -114,26 +119,26 @@ export default function VideoLibrary() {
           </div>
 
           {/* Search */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <div className="relative mb-4">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
             <Input
               type="text"
               placeholder="Search videos by title..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-9 pl-9 pr-4 bg-white/5 border-white/10 rounded-full text-white placeholder:text-gray-500"
+              className="w-full h-12 pl-12 pr-4 bg-white/5 border border-white/15 rounded-xl text-white text-base font-medium placeholder:text-gray-500 focus:bg-white/10 focus:border-pink-500/50"
             />
           </div>
 
-          {/* Category pills */}
+          {/* Category pills — bold editorial */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-all ${
                   category === cat.id
-                    ? "bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.4)]"
+                    ? "bg-white text-black"
                     : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white"
                 }`}
               >
@@ -145,16 +150,16 @@ export default function VideoLibrary() {
       </div>
 
       {/* Content */}
-      <div className="px-4 py-4">
+      <div className="px-4 py-6">
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {Array.from({ length: 10 }).map((_, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
               <div key={i}>
                 <Skeleton className="w-full aspect-video rounded-xl" />
-                <div className="flex gap-2 mt-2">
+                <div className="flex gap-2 mt-3">
                   <Skeleton className="w-9 h-9 rounded-full" />
                   <div className="flex-1 space-y-1.5">
-                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3.5 w-full" />
                     <Skeleton className="h-3 w-2/3" />
                   </div>
                 </div>
@@ -162,26 +167,27 @@ export default function VideoLibrary() {
             ))}
           </div>
         ) : total === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-24 h-24 mb-4 rounded-full bg-white/5 flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-24 h-24 mb-4 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
               <Library className="w-10 h-10 text-gray-600" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-1">No videos found</h3>
+            <h3 className="text-2xl font-black text-white mb-1">No videos found</h3>
             <p className="text-sm text-gray-500">Try a different category or search term</p>
           </div>
         ) : grouped ? (
-          /* Grouped by category */
-          <div className="space-y-8">
+          /* Grouped by category — editorial sections */
+          <div className="space-y-10">
             {Object.entries(grouped).map(([cat, vids]) => {
               const catLabel = CATEGORIES.find((c) => c.id === cat)?.label || cat;
               return (
                 <div key={cat}>
-                  <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-base font-bold text-white capitalize">{catLabel}</h2>
-                    <span className="text-xs text-gray-500">{vids.length} videos</span>
+                  {/* Section header with strong divider */}
+                  <div className="flex items-end justify-between mb-4 pb-3 border-b-2 border-white/20">
+                    <h2 className="text-2xl font-black text-white capitalize tracking-tight">{catLabel}</h2>
+                    <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">{vids.length} videos</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {vids.slice(0, 10).map((v) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {vids.slice(0, 8).map((v) => (
                       <VideoCard key={v.id} video={v} />
                     ))}
                   </div>
@@ -192,17 +198,17 @@ export default function VideoLibrary() {
         ) : (
           /* Flat grid for filtered category */
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {visibleVideos.map((v) => (
                 <VideoCard key={v.id} video={v} />
               ))}
             </div>
             {visibleCount < total && (
-              <div className="flex justify-center mt-6">
+              <div className="flex justify-center mt-8">
                 <Button
                   onClick={() => setVisibleCount((c) => c + 48)}
                   variant="outline"
-                  className="text-white border-white/20 hover:bg-white/10"
+                  className="text-white border-white/30 hover:bg-white hover:text-black font-bold px-8 py-3 rounded-lg"
                 >
                   Load More ({total - visibleCount} remaining)
                 </Button>
