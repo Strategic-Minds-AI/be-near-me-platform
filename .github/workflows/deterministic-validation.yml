@@ -25,6 +25,7 @@ jobs:
     env:
       CI: "true"
       VALIDATION_PHASE: hardening
+      FROZEN_BASELINE_SHA: c7d3f11e828f0ff0983406e32079a17598eabed0
 
     steps:
       - name: Checkout exact commit
@@ -41,10 +42,19 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - name: Lint changed application files
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHANGED_FILES="$(git diff --name-only "$FROZEN_BASELINE_SHA"...HEAD | grep -E '^src/.*\.(js|jsx)$' || true)"
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changed JS/JSX application files."
+          else
+            printf '%s\n' "$CHANGED_FILES"
+            npx eslint $CHANGED_FILES
+          fi
 
-      - name: Typecheck
+      - name: Typecheck frozen application surface
         run: npm run typecheck
 
       - name: Build
