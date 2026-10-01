@@ -1,0 +1,86 @@
+{
+  "name": "DomainHealth",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domain name"
+    },
+    "status": {
+      "type": "string",
+      "description": "Domain status from GoDaddy"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_at_domain": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the domain was registered"
+    },
+    "registrar": {
+      "type": "string",
+      "default": "GoDaddy"
+    },
+    "nameservers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dns_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "locked": {
+      "type": "boolean",
+      "default": false
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "domain"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

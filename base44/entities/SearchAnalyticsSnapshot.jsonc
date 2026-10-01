@@ -1,0 +1,103 @@
+{
+  "name": "SearchAnalyticsSnapshot",
+  "type": "object",
+  "properties": {
+    "site_url": {
+      "type": "string",
+      "description": "Search Console site URL (e.g. https://strategicmindsai.com)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date this snapshot covers"
+    },
+    "clicks": {
+      "type": "number",
+      "default": 0
+    },
+    "impressions": {
+      "type": "number",
+      "default": 0
+    },
+    "ctr": {
+      "type": "number",
+      "default": 0,
+      "description": "Click-through rate (0-1)"
+    },
+    "position": {
+      "type": "number",
+      "default": 0,
+      "description": "Average search position"
+    },
+    "top_queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "clicks": {
+            "type": "number"
+          },
+          "impressions": {
+            "type": "number"
+          },
+          "position": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "top_pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string"
+          },
+          "clicks": {
+            "type": "number"
+          },
+          "impressions": {
+            "type": "number"
+          },
+          "position": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "site_url",
+    "date"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

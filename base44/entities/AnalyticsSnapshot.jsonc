@@ -1,0 +1,69 @@
+{
+  "name": "AnalyticsSnapshot",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "GA4 property ID"
+    },
+    "property_name": {
+      "type": "string",
+      "description": "Display name of the GA4 property"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date this snapshot covers"
+    },
+    "sessions": {
+      "type": "number",
+      "default": 0
+    },
+    "total_users": {
+      "type": "number",
+      "default": 0
+    },
+    "page_views": {
+      "type": "number",
+      "default": 0
+    },
+    "average_session_duration": {
+      "type": "number",
+      "default": 0
+    },
+    "engagement_rate": {
+      "type": "number",
+      "default": 0
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "property_id",
+    "date"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
