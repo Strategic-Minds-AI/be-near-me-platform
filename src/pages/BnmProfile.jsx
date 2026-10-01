@@ -22,7 +22,8 @@ export default function BnmProfile() {
     queryKey: ["bnmProfileChannel", user?.email],
     queryFn: async () => {
       const result = await base44.entities.Channel.filter({ created_by: user.email }, { limit: 1 });
-      return (result?.items || result || [])[0] || null;
+      const items = Array.isArray(result) ? result : result?.items || [];
+      return items[0] || null;
     },
     enabled: !!user?.email,
   });
@@ -31,7 +32,7 @@ export default function BnmProfile() {
     queryKey: ["bnmProfileVideos", channel?.id],
     queryFn: async () => {
       const result = await base44.entities.Video.filter({ channel_id: channel.id }, { sort: "-created_date", limit: 60 });
-      return result?.items || result || [];
+      return Array.isArray(result) ? result : result?.items || [];
     },
     enabled: !!channel?.id,
   });
@@ -54,7 +55,7 @@ export default function BnmProfile() {
             action={
               <button
                 type="button"
-                onClick={() => base44.auth.redirectToLogin()}
+                onClick={() => base44.auth.redirectToLogin(window.location.href)}
                 className="rounded-full bg-gradient-to-r from-[#ff008f] via-[#d500ff] to-[#7a38ff] px-6 py-3 text-sm font-extrabold text-white"
               >
                 Sign In

@@ -22,7 +22,7 @@ export default function BnmInbox() {
     queryKey: ["bnmInbox", user?.email],
     queryFn: async () => {
       const result = await base44.entities.Notification.filter({ created_by: user.email }, { sort: "-created_date", limit: 100 });
-      return result?.items || result || [];
+      return Array.isArray(result) ? result : result?.items || [];
     },
     enabled: !!user?.email,
   });
@@ -76,7 +76,7 @@ export default function BnmInbox() {
             action={
               <button
                 type="button"
-                onClick={() => base44.auth.redirectToLogin()}
+                onClick={() => base44.auth.redirectToLogin(window.location.href)}
                 className="rounded-full bg-gradient-to-r from-[#ff008f] via-[#d500ff] to-[#7a38ff] px-6 py-3 text-sm font-extrabold text-white"
               >
                 Sign In

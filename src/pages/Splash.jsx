@@ -48,7 +48,7 @@ export default function Splash() {
         </button>
 
         <button
-          onClick={() => base44.auth.redirectToLogin()}
+          onClick={() => base44.auth.redirectToLogin(window.location.href)}
           className="mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-transform active:scale-95"
         >
           Log In
