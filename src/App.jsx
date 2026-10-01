@@ -13,6 +13,7 @@ import OAuthConsent from '@/pages/OAuthConsent';
 import Benchmark from '@/pages/Benchmark';
 import Camera from '@/pages/Camera';
 import Wallet from '@/pages/Wallet';
+import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -60,6 +61,11 @@ const AuthenticatedApp = () => {
       <Route path="/Wallet" element={
         <LayoutWrapper currentPageName="Wallet">
           <Wallet />
+        </LayoutWrapper>
+      } />
+      <Route path="/AnalyticsTraffic" element={
+        <LayoutWrapper currentPageName="AnalyticsTraffic">
+          <AnalyticsTraffic />
         </LayoutWrapper>
       } />
       <Route path="/" element={
