@@ -250,9 +250,9 @@ export default function Layout({ children, currentPageName }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-9 w-9 rounded-full p-0">
-                    <Avatar className="h-9 w-9 border-2 border-transparent hover:border-red-500 transition-colors">
+                    <Avatar className="h-9 w-9 border-2 border-transparent hover:border-pink-500 transition-colors">
                       <AvatarImage src={myChannel?.avatar_url} />
-                      <AvatarFallback className="bg-gradient-to-br from-pink-500 to-fuchsia-600 text-white">
+                      <AvatarFallback className="bg-gradient-to-br from-slate-200 via-pink-500 to-fuchsia-600 text-white">
                         {user.full_name?.[0] || user.email?.[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
