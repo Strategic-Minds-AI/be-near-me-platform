@@ -26,6 +26,7 @@ import {
   Loader2,
 } from "lucide-react";
 import AIAssistant from "@/components/upload/AIAssistant";
+import { uploadFileProxy } from "@/lib/uploadHelper";
 
 const categories = [
   { value: "gaming", label: "Gaming" },
@@ -119,13 +120,12 @@ export default function Upload() {
       setIsUploading(true);
       setUploadProgress(10);
 
-      const videoResult = await base44.integrations.Core.UploadPublicFile({ file: videoFile });
+      const videoUrl = await uploadFileProxy(videoFile);
       setUploadProgress(50);
 
       let thumbnailUrl = "";
       if (thumbnailFile) {
-        const thumbResult = await base44.integrations.Core.UploadPublicFile({ file: thumbnailFile });
-        thumbnailUrl = thumbResult.file_url;
+        thumbnailUrl = await uploadFileProxy(thumbnailFile);
       }
       setUploadProgress(70);
 
@@ -134,7 +134,7 @@ export default function Upload() {
       const newVideo = await base44.entities.Video.create({
         title: videoData.title,
         description: videoData.description,
-        url: videoResult.file_url,
+        url: videoUrl,
         thumbnail_url: thumbnailUrl,
         category: videoData.category,
         tags,

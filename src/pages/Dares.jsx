@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Target, Send, Inbox, ArrowUpRight, Upload, CheckCircle2, XCircle, Clock, Coins, Video } from "lucide-react";
+import { uploadFileProxy } from "@/lib/uploadHelper";
 
 const CATEGORIES = [
   { value: "kindness", label: "Kindness" },
@@ -93,7 +94,7 @@ export default function Dares() {
 
   const uploadProofMutation = useMutation({
     mutationFn: async ({ file, dareId }) => {
-      const res = await base44.integrations.Core.UploadPublicFile({ file });
+      const res = { file_url: await uploadFileProxy(file) };
       return base44.entities.Dare.update(dareId, {
         video_url: res.file_url,
         status: "submitted",

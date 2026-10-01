@@ -21,6 +21,7 @@ import {
   CreditCard,
   Crown
 } from "lucide-react";
+import { uploadFileProxy } from "@/lib/uploadHelper";
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -81,13 +82,11 @@ export default function Settings() {
       let bannerUrl = myChannel?.banner_url || "";
 
       if (avatarFile) {
-        const result = await base44.integrations.Core.UploadFile({ file: avatarFile });
-        avatarUrl = result.file_url;
+        avatarUrl = await uploadFileProxy(avatarFile);
       }
 
       if (bannerFile) {
-        const result = await base44.integrations.Core.UploadFile({ file: bannerFile });
-        bannerUrl = result.file_url;
+        bannerUrl = await uploadFileProxy(bannerFile);
       }
 
       if (myChannel) {

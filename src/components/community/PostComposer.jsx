@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Image, BarChart2, Pin, X, Plus, Loader2 } from "lucide-react";
+import { uploadFileProxy } from "@/lib/uploadHelper";
 
 export default function PostComposer({ channel, user, onPosted }) {
   const queryClient = useQueryClient();
@@ -20,8 +21,7 @@ export default function PostComposer({ channel, user, onPosted }) {
     mutationFn: async () => {
       let imageUrl = null;
       if (imageFile) {
-        const res = await base44.integrations.Core.UploadFile({ file: imageFile });
-        imageUrl = res.file_url;
+        imageUrl = await uploadFileProxy(imageFile);
       }
 
       const payload = {

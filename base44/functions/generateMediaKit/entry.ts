@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { chatCompletion } from "../../shared/vercelAiGateway.ts";
+import { sanitizePrompt, checkRateLimit } from "../../shared/aiSecurity.ts";
 
 // generateMediaKit — AI-powered influencer media kit generator.
 // Uses Vercel AI Gateway (not Base44 Core) to avoid integration credit limits.
@@ -11,11 +12,26 @@ export default async function(req) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
+    const rl = checkRateLimit(user.id, "generateMediaKit");
+    if (!rl.allowed) {
+      return Response.json(
+        { error: `Rate limit exceeded. Try again in ${rl.retryAfter}s.` },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json().catch(() => ({})) || {};
     const { name, niche, platform, followers, ageRange, experience } = body;
     if (!name || !niche || !platform || !followers) {
       return Response.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    const safeName = sanitizePrompt(name);
+    const safeNiche = sanitizePrompt(niche);
+    const safePlatform = sanitizePrompt(platform);
+    const safeFollowers = sanitizePrompt(String(followers));
+    const safeAgeRange = ageRange ? sanitizePrompt(ageRange) : "Not specified";
+    const safeExperience = experience ? sanitizePrompt(experience) : "Not specified";
 
     const prompt = `Generate a professional influencer media kit for the following creator. Return a JSON object with these exact keys:
 - profile: A short professional bio paragraph
@@ -27,12 +43,12 @@ export default async function(req) {
 - chart_data: An object with "age_distribution" (array of {range, value} where range is age ranges like "13-17", "18-24", etc. and value is percentage) and "gender_distribution" (array of {name, value} where name is "Female", "Male", "Other" and value is percentage)
 
 Creator details:
-Name: ${name}
-Niche: ${niche}
-Main Platform: ${platform}
-Followers: ${followers}
-Audience Age Range: ${ageRange || "Not specified"}
-Brand Collaboration Experience: ${experience || "Not specified"}
+Name: ${safeName}
+Niche: ${safeNiche}
+Main Platform: ${safePlatform}
+Followers: ${safeFollowers}
+Audience Age Range: ${safeAgeRange}
+Brand Collaboration Experience: ${safeExperience}
 
 Make it professional, compelling, and detailed. Write as if it's a real media kit that would impress brands.`;
 

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, ImagePlus, Loader2, CheckCircle, Sparkles } from "lucide-react";
+import { uploadFileProxy } from "@/lib/uploadHelper";
 
 export default function CreateChannel() {
   const navigate = useNavigate();
@@ -98,13 +99,11 @@ export default function CreateChannel() {
       let bannerUrl = aiBannerUrl || "";
 
       if (avatarFile) {
-        const result = await base44.integrations.Core.UploadPublicFile({ file: avatarFile });
-        avatarUrl = result.file_url;
+        avatarUrl = await uploadFileProxy(avatarFile);
       }
 
       if (bannerFile) {
-        const result = await base44.integrations.Core.UploadPublicFile({ file: bannerFile });
-        bannerUrl = result.file_url;
+        bannerUrl = await uploadFileProxy(bannerFile);
       }
 
       await base44.entities.Channel.create({
