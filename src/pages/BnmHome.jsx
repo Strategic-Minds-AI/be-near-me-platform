@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Menu } from "lucide-react";
 import BnmFeed from "@/components/bnm/BnmFeed";
 import { BnmBottomNav } from "@/components/bnm/BnmChrome";
 
@@ -10,7 +11,10 @@ export default function BnmHome() {
         className="pointer-events-none fixed inset-x-0 top-0 z-40 bg-gradient-to-b from-black/75 via-black/20 to-transparent pb-12"
         style={{ paddingTop: "max(env(safe-area-inset-top), 10px)" }}
       >
-        <div className="pointer-events-auto mx-auto flex h-12 max-w-sm items-center justify-center gap-8 text-sm font-semibold">
+        <div className="pointer-events-auto relative mx-auto flex h-12 max-w-sm items-center justify-center gap-8 text-sm font-semibold">
+          <Link to="/menu" className="absolute right-1 flex h-9 w-9 items-center justify-center rounded-full bg-black/30 text-white/80 backdrop-blur" aria-label="Open menu">
+            <Menu className="h-5 w-5" />
+          </Link>
           <Link to="/Subscriptions" className="text-white/55 transition hover:text-white">Following</Link>
           <span className="relative text-white">
             For You
