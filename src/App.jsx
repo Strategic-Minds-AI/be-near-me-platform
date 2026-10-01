@@ -29,6 +29,7 @@ import DomainOps from '@/pages/DomainOps';
 import VideoLibrary from '@/pages/VideoLibrary';
 import PictureToVideo from '@/pages/PictureToVideo';
 import MediaKit from '@/pages/MediaKit';
+import Splash from '@/pages/Splash';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -145,11 +146,7 @@ const AuthenticatedApp = () => {
           <AIVideoStudio />
         </LayoutWrapper>
       } />
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
+      <Route path="/" element={<Splash />} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
