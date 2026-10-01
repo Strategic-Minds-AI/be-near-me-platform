@@ -241,7 +241,7 @@ export default function Layout({ children, currentPageName }) {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Link to={createPageUrl("Upload")}>
+            <Link to={createPageUrl("Camera")}>
               <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
                 <Upload className="w-5 h-5" />
               </Button>
