@@ -1,0 +1,158 @@
+{
+  "name": "SeoReport",
+  "type": "object",
+  "properties": {
+    "report_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date this report covers"
+    },
+    "site_url": {
+      "type": "string",
+      "description": "Search Console site URL this report is for"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Full natural-language report with trends and health assessment"
+    },
+    "clicks_today": {
+      "type": "number",
+      "default": 0
+    },
+    "clicks_prev": {
+      "type": "number",
+      "default": 0
+    },
+    "clicks_change_pct": {
+      "type": "number",
+      "default": 0,
+      "description": "Percent change vs previous period"
+    },
+    "impressions_today": {
+      "type": "number",
+      "default": 0
+    },
+    "impressions_prev": {
+      "type": "number",
+      "default": 0
+    },
+    "impressions_change_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "position_today": {
+      "type": "number",
+      "default": 0
+    },
+    "position_prev": {
+      "type": "number",
+      "default": 0
+    },
+    "position_change": {
+      "type": "number",
+      "default": 0,
+      "description": "Change in average position (negative = improvement)"
+    },
+    "ctr_today": {
+      "type": "number",
+      "default": 0
+    },
+    "ctr_prev": {
+      "type": "number",
+      "default": 0
+    },
+    "ctr_change_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "top_queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "clicks": {
+            "type": "number"
+          },
+          "impressions": {
+            "type": "number"
+          },
+          "position": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "top_pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string"
+          },
+          "clicks": {
+            "type": "number"
+          },
+          "impressions": {
+            "type": "number"
+          },
+          "position": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "health_status": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "needs_attention",
+        "critical",
+        "no_data"
+      ],
+      "default": "no_data"
+    },
+    "health_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific issues or wins flagged in this report"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "report_date",
+    "site_url",
+    "summary",
+    "health_status"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "Daily SEO Report",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Syncs Google Search Console data daily at 9am ET, then generates a trend report with health assessment stored in SeoReport \u2014 the Strategic Insights agent can surface these reports on demand.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_seo_report",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_search_console": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "searchConsoleSync"
+          },
+          "then": "generate_report",
+          "x-base44": {
+            "title": "Sync Search Console",
+            "description": "Pull today's search performance for all sites"
+          }
+        }
+      },
+      {
+        "generate_report": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "generateDailySeoReport"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Generate Daily Report",
+            "description": "Compute 7-day trends and store health report"
+          }
+        }
+      }
+    ]
+  }
+}
