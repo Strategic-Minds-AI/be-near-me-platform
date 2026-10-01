@@ -96,10 +96,7 @@ export default function Layout({ children, currentPageName }) {
     <div className="flex flex-col h-full">
       {mobile && (
         <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10">
-          <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-            <PlaySquare className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white">Vidio</span>
+          <img src="https://media.base44.com/images/public/6abd9e05a56938f03c2c557b/a04d45d75_image.png" alt="BeNearMe" className="h-8 w-auto rounded-md bg-white px-1 py-0.5" />
         </div>
       )}
       
@@ -161,7 +158,7 @@ export default function Layout({ children, currentPageName }) {
 
       <div className="p-4 border-t border-white/10">
         <p className="text-xs text-gray-500 text-center">
-          © 2024 Vidio · Terms · Privacy
+          © 2024 BeNearMe · Terms · Privacy
         </p>
       </div>
     </div>
@@ -177,7 +174,7 @@ export default function Layout({ children, currentPageName }) {
           --card-foreground: 0 0% 98%;
           --popover: 0 0% 8%;
           --popover-foreground: 0 0% 98%;
-          --primary: 0 84% 60%;
+          --primary: 310 100% 58%;
           --primary-foreground: 0 0% 98%;
           --secondary: 0 0% 14%;
           --secondary-foreground: 0 0% 98%;
@@ -189,7 +186,7 @@ export default function Layout({ children, currentPageName }) {
           --destructive-foreground: 0 0% 98%;
           --border: 0 0% 14%;
           --input: 0 0% 14%;
-          --ring: 0 84% 60%;
+          --ring: 310 100% 58%;
         }
       `}</style>
 
@@ -211,10 +208,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20">
-                <PlaySquare className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold hidden sm:block">Vidio</span>
+              <img src="https://media.base44.com/images/public/6abd9e05a56938f03c2c557b/a04d45d75_image.png" alt="BeNearMe" className="h-8 w-auto rounded-md bg-white px-1 py-0.5" />
             </Link>
           </div>
 
@@ -257,7 +251,7 @@ export default function Layout({ children, currentPageName }) {
                   <Button variant="ghost" className="h-9 w-9 rounded-full p-0">
                     <Avatar className="h-9 w-9 border-2 border-transparent hover:border-red-500 transition-colors">
                       <AvatarImage src={myChannel?.avatar_url} />
-                      <AvatarFallback className="bg-gradient-to-br from-red-500 to-orange-500 text-white">
+                      <AvatarFallback className="bg-gradient-to-br from-pink-500 to-fuchsia-600 text-white">
                         {user.full_name?.[0] || user.email?.[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -315,7 +309,7 @@ export default function Layout({ children, currentPageName }) {
             ) : (
               <Button 
                 onClick={() => base44.auth.redirectToLogin()}
-                className="bg-red-600 hover:bg-red-700 text-white rounded-full px-4"
+                className="bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:opacity-90 text-white rounded-full px-4"
               >
                 Sign In
               </Button>
