@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, ImagePlus, Loader2, CheckCircle } from "lucide-react";
+import { Camera, ImagePlus, Loader2, CheckCircle, Sparkles } from "lucide-react";
 
 export default function CreateChannel() {
   const navigate = useNavigate();
@@ -18,6 +18,10 @@ export default function CreateChannel() {
   const [bannerPreview, setBannerPreview] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const [aiAvatarUrl, setAiAvatarUrl] = useState(null);
+  const [aiBannerUrl, setAiBannerUrl] = useState(null);
+  const [generatingAvatar, setGeneratingAvatar] = useState(false);
+  const [generatingBanner, setGeneratingBanner] = useState(false);
 
   const [channelData, setChannelData] = useState({
     name: "",
@@ -41,6 +45,7 @@ export default function CreateChannel() {
     if (file) {
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
+      setAiAvatarUrl(null);
     }
   };
 
@@ -49,13 +54,48 @@ export default function CreateChannel() {
     if (file) {
       setBannerFile(file);
       setBannerPreview(URL.createObjectURL(file));
+      setAiBannerUrl(null);
+    }
+  };
+
+  const generateAvatar = async () => {
+    if (!channelData.name.trim()) return;
+    setGeneratingAvatar(true);
+    setError(null);
+    try {
+      const prompt = `A professional channel avatar for "${channelData.name}"${channelData.description ? ", " + channelData.description.slice(0, 100) : ""}, modern vibrant digital art, pink and fuchsia gradient style, eye-catching profile picture, centered, ultra detailed`;
+      const res = await base44.integrations.Core.GenerateImage({ prompt });
+      setAiAvatarUrl(res.url);
+      setAvatarPreview(res.url);
+      setAvatarFile(null);
+    } catch (e) {
+      setError("Could not generate avatar. Try uploading manually.");
+    } finally {
+      setGeneratingAvatar(false);
+    }
+  };
+
+  const generateBanner = async () => {
+    if (!channelData.name.trim()) return;
+    setGeneratingBanner(true);
+    setError(null);
+    try {
+      const prompt = `A wide cinematic channel banner for "${channelData.name}"${channelData.description ? ", " + channelData.description.slice(0, 100) : ""}, modern vibrant digital art, pink and fuchsia gradient, sweeping landscape, ultra detailed, 16:9 aspect ratio`;
+      const res = await base44.integrations.Core.GenerateImage({ prompt });
+      setAiBannerUrl(res.url);
+      setBannerPreview(res.url);
+      setBannerFile(null);
+    } catch (e) {
+      setError("Could not generate banner. Try uploading manually.");
+    } finally {
+      setGeneratingBanner(false);
     }
   };
 
   const createMutation = useMutation({
     mutationFn: async () => {
-      let avatarUrl = "";
-      let bannerUrl = "";
+      let avatarUrl = aiAvatarUrl || "";
+      let bannerUrl = aiBannerUrl || "";
 
       if (avatarFile) {
         const result = await base44.integrations.Core.UploadPublicFile({ file: avatarFile });
@@ -193,6 +233,41 @@ export default function CreateChannel() {
             </div>
           </div>
         </div>
+
+        {/* AI generation buttons */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={generateAvatar}
+            disabled={!channelData.name.trim() || generatingAvatar}
+            className="rounded-full border-pink-500/40 text-pink-300 hover:bg-pink-500/10"
+          >
+            {generatingAvatar ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating avatar…</>
+            ) : (
+              <><Sparkles className="w-4 h-4 mr-2" /> Generate avatar with AI</>
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={generateBanner}
+            disabled={!channelData.name.trim() || generatingBanner}
+            className="rounded-full border-pink-500/40 text-pink-300 hover:bg-pink-500/10"
+          >
+            {generatingBanner ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating banner…</>
+            ) : (
+              <><Sparkles className="w-4 h-4 mr-2" /> Generate banner with AI</>
+            )}
+          </Button>
+        </div>
+        {!channelData.name.trim() && (
+          <p className="text-xs text-gray-500 mb-6 -mt-3">Enter a channel name first to enable AI generation.</p>
+        )}
 
         {/* Form */}
         <div className="space-y-6">

@@ -24,6 +24,7 @@ import {
   Rocket,
   Server,
   Library,
+  Wand2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,6 +160,11 @@ export default function Layout({ children, currentPageName }) {
                     <DropdownMenuItem asChild>
                       <Link to={createPageUrl("ViralVideoCreator")} className="flex items-center gap-2 cursor-pointer">
                         <Rocket className="w-4 h-4" /> Viral Video Creator
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("PictureToVideo")} className="flex items-center gap-2 cursor-pointer">
+                        <Wand2 className="w-4 h-4" /> Picture to Video
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
