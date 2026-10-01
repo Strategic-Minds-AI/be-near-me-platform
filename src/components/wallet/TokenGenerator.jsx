@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { ethers } from "ethers";
 import { Coins, Loader2, Sparkles, Check, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,7 +43,7 @@ export default function TokenGenerator() {
     const d = Number(decimals);
     if (!Number.isInteger(d) || d < 0 || d > 18) return "Decimals must be 0-18";
     if (!/^\d+$/.test(supply.trim()) || BigInt(supply) <= 0n) return "Total supply must be a positive integer";
-    if (!walletId) return "Select a deploying wallet";
+    if (!walletId) return "Select a reference wallet";
     return null;
   };
 
@@ -59,44 +58,26 @@ export default function TokenGenerator() {
       const wallet = wallets.find((w) => w.id === walletId);
       if (!wallet) throw new Error("Wallet not found");
 
-      // Immediate validation loop: derive the prospective contract address
-      // from the deployer's nonce 0 and verify it is a valid checksummed address.
-      const deployer = ethers.getAddress(wallet.address);
-      if (!ethers.isAddress(deployer)) throw new Error("Deployer address failed validation");
-
-      let contractAddress;
-      try {
-        contractAddress = ethers.getCreateAddress(deployer, 0);
-      } catch {
-        // Fallback: deterministic CREATE2-style address from deployer + symbol salt
-        const salt = ethers.id(symbol.trim());
-        contractAddress = ethers.getCreate2Address(
-          deployer,
-          ethers.keccak256(salt),
-          ethers.keccak256("0x")
-        );
-      }
-      contractAddress = ethers.getAddress(contractAddress);
-      if (!ethers.isAddress(contractAddress)) throw new Error("Contract address failed validation");
+      const referenceAddress = String(wallet.address || "").trim();
+      if (!referenceAddress) throw new Error("Reference wallet address is missing");
 
       await base44.entities.Token.create({
         name: name.trim(),
         symbol: symbol.trim(),
         decimals: Number(decimals),
         total_supply: supply.trim(),
-        contract_address: contractAddress,
         network: wallet.network || "mainnet",
         wallet_id: wallet.id,
-        deployer_address: deployer,
+        deployer_address: referenceAddress,
         status: "defined",
       });
 
-      setLast({ name: name.trim(), symbol: symbol.trim(), contractAddress });
+      setLast({ name: name.trim(), symbol: symbol.trim() });
       setName(""); setSymbol(""); setSupply("1000000"); setDecimals("18"); setWalletId("");
       qc.invalidateQueries({ queryKey: ["myTokens"] });
       toast({
-        title: "Token generated ✓",
-        description: `${symbol} · ${contractAddress.slice(0, 10)}…`,
+        title: "Token definition saved ✓",
+        description: `${symbol} parameters were saved. No blockchain deployment occurred.`,
       });
     } catch (e) {
       toast({ title: "Could not generate token", description: e.message, variant: "destructive" });
@@ -108,7 +89,7 @@ export default function TokenGenerator() {
   return (
     <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
       <h2 className="font-semibold text-white mb-3 flex items-center gap-2">
-        <Coins className="w-4 h-4 text-pink-400" /> Generate ERC-20 Token
+        <Coins className="w-4 h-4 text-pink-400" /> Define ERC-20 Token Parameters
       </h2>
 
       <div className="grid sm:grid-cols-2 gap-3">
@@ -154,10 +135,10 @@ export default function TokenGenerator() {
       </div>
 
       <div className="mt-3">
-        <Label className="text-gray-400">Deploying wallet</Label>
+        <Label className="text-gray-400">Reference wallet</Label>
         <Select value={walletId} onValueChange={setWalletId}>
           <SelectTrigger className="mt-1 bg-white/5 border-white/10 text-white">
-            <SelectValue placeholder="Choose a wallet…" />
+            <SelectValue placeholder="Choose a reference wallet…" />
           </SelectTrigger>
           <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
             {wallets.length === 0 && (
@@ -178,20 +159,20 @@ export default function TokenGenerator() {
         className="w-full mt-4 bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white"
       >
         {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-        Generate Token
+        Save Token Definition
       </Button>
 
       <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
         <ShieldCheck className="w-3.5 h-3.5 text-pink-400" />
-        Contract address is derived in-browser from your wallet and validated immediately.
+        This saves an off-chain token definition only. No smart contract is deployed and no blockchain transaction is performed.
       </div>
 
       {last && (
         <div className="mt-4 rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-green-200 text-sm">
           <div className="flex items-center gap-2 font-semibold mb-1">
-            <Check className="w-4 h-4" /> {last.name} ({last.symbol}) generated
+            <Check className="w-4 h-4" /> {last.name} ({last.symbol}) definition saved
           </div>
-          <p className="font-mono text-xs break-all text-green-100/80">{last.contractAddress}</p>
+          <p className="text-xs text-green-100/80">No contract address exists until a real deployment is completed and verified.</p>
         </div>
       )}
     </div>
