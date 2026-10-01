@@ -26,7 +26,8 @@ import {
   Settings,
   Shield,
   ChevronDown,
-  Plus
+  Plus,
+  Target
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,7 @@ export default function Layout({ children, currentPageName }) {
     { icon: PlaySquare, label: "Shorts", page: "Shorts" },
     { icon: PlaySquare, label: "Subscriptions", page: "Subscriptions" },
     { icon: Lightbulb, label: "Premium", page: "Premium" },
+    { icon: Target, label: "Benchmark", page: "Benchmark" },
   ];
 
   const libraryNav = [

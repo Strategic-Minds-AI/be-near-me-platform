@@ -10,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
+import Benchmark from '@/pages/Benchmark';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -48,6 +49,11 @@ const AuthenticatedApp = () => {
       {/* MCP OAuth consent page — mounted outside the app layout; it handles
           the signed-out case itself, so it must not sit behind an auth guard. */}
       <Route path="/oauth/consent" element={<OAuthConsent />} />
+      <Route path="/Benchmark" element={
+        <LayoutWrapper currentPageName="Benchmark">
+          <Benchmark />
+        </LayoutWrapper>
+      } />
       <Route path="/" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />
