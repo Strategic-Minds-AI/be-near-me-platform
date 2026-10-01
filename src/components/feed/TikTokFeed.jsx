@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import TikTokVideoCard from "./TikTokVideoCard";
 import { Loader2 } from "lucide-react";
 
 export default function TikTokFeed() {
+  const containerRef = useRef(null);
+
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
@@ -20,6 +22,18 @@ export default function TikTokFeed() {
       return base44.entities.Video.filter({ visibility: "public" }, "-views", 30);
     },
   });
+
+  // Keyboard navigation — arrow up/down moves between videos, like TikTok web.
+  useEffect(() => {
+    const onKey = (e) => {
+      const c = containerRef.current;
+      if (!c) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); c.scrollBy({ top: c.clientHeight, behavior: 'smooth' }); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); c.scrollBy({ top: -c.clientHeight, behavior: 'smooth' }); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   if (isLoading) {
     return (
@@ -44,6 +58,7 @@ export default function TikTokFeed() {
 
   return (
     <div
+      ref={containerRef}
       className="h-[calc(100vh-4rem)] overflow-y-scroll snap-y snap-mandatory bg-black [&::-webkit-scrollbar]:hidden"
       style={{ scrollbarWidth: 'none' }}
     >
