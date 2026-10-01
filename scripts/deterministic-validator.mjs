@@ -96,6 +96,24 @@ forbid(
   "Be Near Me scraper scope",
   "autoScraper still contains unrelated epoxy/concrete/DIY acquisition queries."
 );
+requirePattern(
+  "base44/functions/autoScraper/entry.ts",
+  /visibility:\s*['"]unlisted['"]/,
+  "Auto scraper review-only visibility",
+  "Scheduled external imports must enter as unlisted review candidates."
+);
+requirePattern(
+  "base44/functions/autoScraper/entry.ts",
+  /asServiceRole\.entities\.Video\.bulkCreate/,
+  "Auto scraper governed service write",
+  "Scheduled system ingestion must use an explicit service-role write."
+);
+requirePattern(
+  "base44/functions/scrapeVideos/entry.ts",
+  /visibility:\s*['"]unlisted['"]/,
+  "Manual scraper review-first visibility",
+  "Scraped external videos must be reviewed before public visibility."
+);
 
 forbid(
   "src/pages/Dares.jsx",
