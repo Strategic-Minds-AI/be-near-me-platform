@@ -1,0 +1,97 @@
+{
+  "name": "Token",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Token full name"
+    },
+    "symbol": {
+      "type": "string",
+      "description": "Ticker symbol, 2-6 uppercase letters"
+    },
+    "decimals": {
+      "type": "number",
+      "default": 18,
+      "description": "ERC-20 decimals"
+    },
+    "total_supply": {
+      "type": "string",
+      "description": "Total supply as a string to preserve precision"
+    },
+    "contract_address": {
+      "type": "string",
+      "description": "Prospective ERC-20 contract address (CREATE2/nonce-derived, pre-deployment)"
+    },
+    "network": {
+      "type": "string",
+      "enum": [
+        "mainnet",
+        "sepolia"
+      ],
+      "default": "mainnet"
+    },
+    "wallet_id": {
+      "type": "string",
+      "description": "Deploying wallet record id"
+    },
+    "deployer_address": {
+      "type": "string",
+      "description": "Deploying wallet address"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "defined",
+        "deployed"
+      ],
+      "default": "defined"
+    }
+  },
+  "required": [
+    "name",
+    "symbol",
+    "contract_address"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

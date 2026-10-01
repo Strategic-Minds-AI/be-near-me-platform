@@ -13,7 +13,8 @@ import {
   Users,
   Copyright,
   ChevronLeft,
-  Scissors
+  Scissors,
+  Clapperboard
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ const menuItems = [
   { icon: Radio, label: "Live", page: "StudioLive" },
   { icon: Users, label: "Community", page: "Community" },
   { icon: Scissors, label: "AI Clips", page: "StudioAIClips" },
+  { icon: Clapperboard, label: "AI Video Studio", page: "AIVideoStudio" },
   { icon: Sparkles, label: "Shorts", page: "StudioShorts" },
   { icon: Copyright, label: "Copyright", page: "StudioCopyright" },
   { icon: Settings, label: "Settings", page: "StudioSettings" },

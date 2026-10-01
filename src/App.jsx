@@ -14,6 +14,7 @@ import Benchmark from '@/pages/Benchmark';
 import Camera from '@/pages/Camera';
 import Wallet from '@/pages/Wallet';
 import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
+import AIVideoStudio from '@/pages/AIVideoStudio';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -66,6 +67,11 @@ const AuthenticatedApp = () => {
       <Route path="/AnalyticsTraffic" element={
         <LayoutWrapper currentPageName="AnalyticsTraffic">
           <AnalyticsTraffic />
+        </LayoutWrapper>
+      } />
+      <Route path="/AIVideoStudio" element={
+        <LayoutWrapper currentPageName="AIVideoStudio">
+          <AIVideoStudio />
         </LayoutWrapper>
       } />
       <Route path="/" element={

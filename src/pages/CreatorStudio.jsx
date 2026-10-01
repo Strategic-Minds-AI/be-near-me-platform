@@ -23,6 +23,7 @@ import {
   PlaySquare
 } from "lucide-react";
 import ReputationCard from "@/components/studio/ReputationCard";
+import DashboardSummary from "@/components/studio/DashboardSummary";
 
 export default function CreatorStudio() {
   const { data: user } = useQuery({
@@ -166,6 +167,9 @@ export default function CreatorStudio() {
               </Link>
             </div>
           </div>
+
+          {/* Engagement Summary (real total views + real-time GA) */}
+          <DashboardSummary email={user?.email} isAdmin={user?.role === "admin"} />
 
           {/* Stats Overview */}
           <StatsOverview stats={stats} />

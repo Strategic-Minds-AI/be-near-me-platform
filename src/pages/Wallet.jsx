@@ -9,6 +9,7 @@ import {
   Shield,
   Loader2,
   Sparkles,
+  Coins,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import CreateWalletModal from "@/components/wallet/CreateWalletModal";
 import WalletCard from "@/components/wallet/WalletCard";
+import TokenGenerator from "@/components/wallet/TokenGenerator";
 
 export default function Wallet() {
   const { toast } = useToast();
@@ -42,6 +44,17 @@ export default function Wallet() {
     enabled: !!user?.email,
   });
   const wallets = walletsQ.data?.items || [];
+
+  const tokensQ = useQuery({
+    queryKey: ["myTokens", user?.email],
+    queryFn: () =>
+      base44.entities.Token.filter(
+        { created_by: user?.email },
+        { sort: "-created_date", limit: 50 }
+      ),
+    enabled: !!user?.email,
+  });
+  const tokens = tokensQ.data?.items || [];
 
   if (!userLoading && !user) {
     return (
@@ -191,6 +204,37 @@ export default function Wallet() {
           <p className="text-xs text-gray-500 mt-3">
             Processed locally in your browser. Your phrase is never sent to our servers.
           </p>
+        </div>
+      </div>
+
+      <h2 className="font-semibold text-white mt-8 mb-3 flex items-center gap-2">
+        <Coins className="w-4 h-4 text-pink-400" /> Tokens ({tokens.length})
+      </h2>
+      <div className="grid md:grid-cols-2 gap-6 mb-2">
+        <TokenGenerator />
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
+          {tokensQ.isLoading ? (
+            <p className="text-gray-500">Loading…</p>
+          ) : tokens.length === 0 ? (
+            <p className="text-gray-500 text-sm">No tokens yet — generate your first ERC-20 token.</p>
+          ) : (
+            <div className="space-y-3">
+              {tokens.map((t) => (
+                <div key={t.id} className="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium">
+                      {t.name} <span className="text-pink-400 text-sm">({t.symbol})</span>
+                    </span>
+                    <span className="text-xs text-gray-500 capitalize">{t.network}</span>
+                  </div>
+                  <p className="font-mono text-xs text-gray-400 mt-1 break-all">{t.contract_address}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Supply: {t.total_supply} · {t.decimals} decimals
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
