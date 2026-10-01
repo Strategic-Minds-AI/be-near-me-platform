@@ -291,7 +291,7 @@ export default function Layout({ children, currentPageName }) {
       {/* ── Bottom navigation (Premium) ── */}
       <nav className="fixed bottom-0 inset-x-0 h-14 z-50 bg-black/80 backdrop-blur-xl border-t border-white/10">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
-        <div className="flex items-center justify-around h-full max-w-md mx-auto px-2">
+        <div className="flex w-full items-center justify-around h-full max-w-md mx-auto px-2">
           {bottomNav.map((item) => {
             const active = isActive(item.page);
             if (item.isCreate) {
@@ -299,7 +299,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={item.label}
                   to={createPageUrl(item.page)}
-                  className="flex items-center justify-center"
+                  className="flex flex-1 min-w-0 items-center justify-center"
                 >
                   <div className="w-12 h-8 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-600 flex items-center justify-center shadow-[0_0_20px_rgba(236,72,153,0.5)]">
                     <item.icon className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -311,7 +311,7 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.label}
                 to={createPageUrl(item.page)}
-                className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
+                className="flex min-w-0 flex-col items-center justify-center gap-0.5 flex-1 py-1"
               >
                 <item.icon
                   className={`w-6 h-6 transition-all ${active ? "text-white drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" : "text-gray-500"}`}

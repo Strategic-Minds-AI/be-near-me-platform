@@ -21,7 +21,7 @@
     },
     "contract_address": {
       "type": "string",
-      "description": "Prospective ERC-20 contract address (CREATE2/nonce-derived, pre-deployment)"
+      "description": "Verified deployed contract address. Leave absent while status is defined."
     },
     "network": {
       "type": "string",
@@ -33,11 +33,11 @@
     },
     "wallet_id": {
       "type": "string",
-      "description": "Deploying wallet record id"
+      "description": "Reference wallet record id; does not prove deployment."
     },
     "deployer_address": {
       "type": "string",
-      "description": "Deploying wallet address"
+      "description": "Reference wallet address; does not prove deployment."
     },
     "status": {
       "type": "string",
@@ -45,7 +45,8 @@
         "defined",
         "deployed"
       ],
-      "default": "defined"
+      "default": "defined",
+      "description": "defined = off-chain parameters only; deployed = set only after verified on-chain deployment."
     },
     "description": {
       "type": "string",
@@ -54,8 +55,7 @@
   },
   "required": [
     "name",
-    "symbol",
-    "contract_address"
+    "symbol"
   ],
   "rls": {
     "create": {

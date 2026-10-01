@@ -1,4 +1,3 @@
-import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -147,7 +146,7 @@ export default function Notifications() {
           <div className="flex items-start justify-between gap-2">
             <div>
               <p className="text-white">
-                <span className="font-semibold">{notification.source_channel_name || "Vidio"}</span>
+                <span className="font-semibold">{notification.source_channel_name || "Be Near Me"}</span>
                 {" "}
                 <span className="text-gray-400">{notification.message}</span>
               </p>

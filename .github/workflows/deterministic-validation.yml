@@ -1,0 +1,70 @@
+name: Deterministic Validation
+
+on:
+  push:
+    branches:
+      - "hardening/**"
+      - "convergence/**"
+  pull_request:
+    branches:
+      - "baseline/**"
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deterministic-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      VALIDATION_PHASE: hardening
+      FROZEN_BASELINE_SHA: bc112f6b2861704ccd34f6abbb09867dada15c9d
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Lint changed application files
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHANGED_FILES="$(git diff --name-only "$FROZEN_BASELINE_SHA"...HEAD | grep -E '^src/.*\.(js|jsx)$' || true)"
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changed JS/JSX application files."
+          else
+            printf '%s\n' "$CHANGED_FILES"
+            npx eslint $CHANGED_FILES
+          fi
+
+      - name: Typecheck no-new-debt ratchet
+        run: node scripts/typecheck-ratchet.mjs
+
+      - name: Build
+        run: npm run build
+
+      - name: Compile Base44 backend functions
+        run: node scripts/validate-backend-functions.mjs
+
+      - name: Deterministic governance and product-integrity checks
+        run: node scripts/deterministic-validator.mjs
+
+      - name: Critical production dependency audit
+        run: node scripts/audit-critical.mjs
