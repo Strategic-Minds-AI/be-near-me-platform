@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Bell, Heart, MessageCircle, UserPlus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -39,7 +40,15 @@ export default function BnmInbox() {
 
   return (
     <BnmPage>
-      <BnmHeader title="Inbox" brand />
+      <BnmHeader
+        title="Inbox"
+        brand
+        right={
+          <Link to="/messages" className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.045]" aria-label="Messages">
+            <MessageCircle className="h-5 w-5" />
+          </Link>
+        }
+      />
       <main className="mx-auto max-w-md px-4 pt-4">
         <div className="no-scrollbar flex gap-2 overflow-x-auto pb-4">
           {tabs.map((item) => (
