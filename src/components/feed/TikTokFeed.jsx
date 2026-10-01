@@ -37,7 +37,7 @@ export default function TikTokFeed() {
 
   if (isLoading) {
     return (
-      <div className="h-[calc(100vh-4rem)] flex items-center justify-center bg-black">
+      <div className="h-screen flex items-center justify-center bg-black">
         <Loader2 className="w-8 h-8 text-white animate-spin" />
       </div>
     );
@@ -47,7 +47,7 @@ export default function TikTokFeed() {
 
   if (list.length === 0) {
     return (
-      <div className="h-[calc(100vh-4rem)] flex items-center justify-center bg-black text-white/70 text-center px-6">
+      <div className="h-screen flex items-center justify-center bg-black text-white/70 text-center px-6">
         <div>
           <p className="text-lg font-semibold mb-1">No videos yet</p>
           <p className="text-sm">Upload a video to start the feed.</p>
@@ -59,7 +59,7 @@ export default function TikTokFeed() {
   return (
     <div
       ref={containerRef}
-      className="h-[calc(100vh-4rem)] overflow-y-scroll snap-y snap-mandatory overscroll-y-contain touch-pan-y bg-black [&::-webkit-scrollbar]:hidden"
+      className="h-[calc(100vh-3.5rem)] overflow-y-scroll snap-y snap-mandatory overscroll-y-contain touch-pan-y bg-black [&::-webkit-scrollbar]:hidden"
       style={{ scrollbarWidth: 'none' }}
     >
       {list.map((v) => (
