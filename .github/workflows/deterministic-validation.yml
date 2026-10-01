@@ -1,0 +1,57 @@
+name: Deterministic Validation
+
+on:
+  push:
+    branches:
+      - "hardening/**"
+      - "convergence/**"
+  pull_request:
+    branches:
+      - "baseline/**"
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deterministic-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      VALIDATION_PHASE: hardening
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Deterministic governance and product-integrity checks
+        run: node scripts/deterministic-validator.mjs
+
+      - name: Critical production dependency audit
+        run: npm audit --omit=dev --audit-level=critical
