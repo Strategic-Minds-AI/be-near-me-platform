@@ -60,6 +60,7 @@ Return JSON with:
     const analysis = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       file_urls: urls,
+      model: "claude_opus_5",
       response_json_schema: {
         type: "object",
         properties: {
