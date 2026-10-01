@@ -219,7 +219,7 @@ export default function Camera() {
         }
       }
     },
-    onSuccess: () => navigate(createPageUrl("Home")),
+    onSuccess: () => navigate("/home"),
     onError: (e) => { setError(e.message || "Post failed"); setPosting(false); },
   });
 
@@ -275,7 +275,7 @@ export default function Camera() {
 
       {/* top bar */}
       <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between z-20">
-        <button onClick={() => navigate(createPageUrl("Home"))} className="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white">
+        <button onClick={() => navigate("/home")} className="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white">
           <X className="w-5 h-5" />
         </button>
         <div className="px-3 py-1 rounded-full bg-black/40 backdrop-blur text-white text-sm font-medium">
