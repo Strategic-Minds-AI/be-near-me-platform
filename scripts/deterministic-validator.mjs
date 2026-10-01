@@ -117,6 +117,18 @@ requirePattern(
 
 forbid(
   "src/pages/Dares.jsx",
+  /base44\.entities\.Dare\.create\s*\(/,
+  "Dare server-derived creation",
+  "Dares.jsx must not create Dare records directly from browser-supplied ownership fields."
+);
+forbid(
+  "src/pages/Truths.jsx",
+  /base44\.entities\.Truth\.create\s*\(/,
+  "Truth server-derived creation",
+  "Truths.jsx must not create Truth records directly from browser-supplied ownership fields."
+);
+forbid(
+  "src/pages/Dares.jsx",
   /base44\.entities\.Dare\.update\s*\(/,
   "Dare protected mutations",
   "Dares.jsx still performs direct client-side Dare updates."
@@ -132,9 +144,27 @@ requireFile("base44/functions/updateDareState/entry.ts", "Dare state transition 
 requireFile("base44/functions/updateTruthState/entry.ts", "Truth state transition function");
 requirePattern(
   "base44/functions/updateDareState/entry.ts",
+  /asServiceRole\.entities\.Dare\.create/,
+  "Dare service-role creation",
+  "updateDareState must derive ownership server-side and create through asServiceRole."
+);
+requirePattern(
+  "base44/functions/updateDareState/entry.ts",
   /asServiceRole\.entities\.Dare\.update/,
   "Dare service-role mutation",
   "updateDareState must perform validated writes through asServiceRole."
+);
+forbid(
+  "src/pages/Dares.jsx",
+  /handleVerify/,
+  "Independent dare verification",
+  "The dare initiator UI must not self-verify submitted proof."
+);
+requirePattern(
+  "base44/functions/updateTruthState/entry.ts",
+  /asServiceRole\.entities\.Truth\.create/,
+  "Truth service-role creation",
+  "updateTruthState must derive ownership server-side and create through asServiceRole."
 );
 requirePattern(
   "base44/functions/updateTruthState/entry.ts",
@@ -148,6 +178,12 @@ requirePattern(
   "Reward service-role mutation",
   "processReward must perform protected writes through asServiceRole."
 );
+requirePattern(
+  "base44/functions/processReward/entry.ts",
+  /transfer_performed:\s*false/,
+  "Reward transfer truthfulness",
+  "processReward must explicitly state that no blockchain transfer is performed."
+);
 
 for (const entity of ["Dare", "Truth"]) {
   const rel = `base44/entities/${entity}.jsonc`;
@@ -158,9 +194,17 @@ for (const entity of ["Dare", "Truth"]) {
   }
   try {
     const schema = JSON.parse(content);
-    const update = schema?.rls?.update;
-    if (update?.user_condition?.role === "admin") pass(`${entity} RLS update lock`);
-    else fail(`${entity} RLS update lock`, `${entity}.rls.update must be admin-only; user transitions belong in validated backend functions.`);
+    for (const operation of ["create", "update", "delete"]) {
+      const rule = schema?.rls?.[operation];
+      if (rule?.user_condition?.role === "admin") {
+        pass(`${entity} RLS ${operation} lock`);
+      } else {
+        fail(
+          `${entity} RLS ${operation} lock`,
+          `${entity}.rls.${operation} must be admin-only; user state changes belong in validated backend functions.`
+        );
+      }
+    }
   } catch (error) {
     fail(`${entity} schema parse`, error.message);
   }
