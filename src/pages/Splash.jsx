@@ -1,10 +1,10 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
 
 // BNM-01-SPLASH — Launch / entry screen.
 // Full-screen, no layout wrapper, no bottom nav.
-// "Get Started" navigates to /Home (existing TikTok feed).
+// Visual-lock entry screen for the approved B Near Me mobile experience.
 export default function Splash() {
   const navigate = useNavigate();
 
@@ -29,12 +29,15 @@ export default function Splash() {
 
         {/* Wordmark */}
         <h1 className="text-3xl font-extrabold tracking-tight text-bnm-text mb-20">
-          BeNearMe
+          B NEAR ME
         </h1>
+        <p className="mb-14 text-center text-xs font-semibold uppercase tracking-[0.24em] text-bnm-secondary">
+          People · Places · Moments<br />Near You
+        </p>
 
         {/* CTA Button — horizontal pink→magenta→violet gradient */}
         <button
-          onClick={() => navigate("/Home")}
+          onClick={() => navigate("/home")}
           className="w-[80%] h-12 rounded-full font-bold text-white text-base transition-transform active:scale-95"
           style={{
             background: "linear-gradient(90deg, #FF0080 0%, #CE07E3 50%, #6F20FF 100%)",
@@ -44,12 +47,19 @@ export default function Splash() {
           Get Started
         </button>
 
+        <button
+          onClick={() => base44.auth.redirectToLogin()}
+          className="mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-transform active:scale-95"
+        >
+          Log In
+        </button>
+
         {/* Bottom spacer — pushes secondary text to ~88% */}
         <div style={{ flexGrow: 2 }} />
 
         {/* Secondary text */}
         <p className="text-xs text-bnm-secondary text-center leading-relaxed mb-5 px-6">
-          By continuing, you agree to our Terms of Service &amp; Privacy Policy
+          Create · Watch · Explore · Connect
         </p>
 
         {/* Home indicator */}
