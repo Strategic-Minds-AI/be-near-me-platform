@@ -25,6 +25,10 @@
     "progress": {
       "type": "number",
       "description": "Percentage watched 0-100"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
     }
   },
   "required": [

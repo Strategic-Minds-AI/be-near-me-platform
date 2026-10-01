@@ -15,6 +15,8 @@ import Camera from '@/pages/Camera';
 import Wallet from '@/pages/Wallet';
 import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
 import AIVideoStudio from '@/pages/AIVideoStudio';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -54,6 +56,8 @@ const AuthenticatedApp = () => {
           the signed-out case itself, so it must not sit behind an auth guard. */}
       <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/Camera" element={<Camera />} />
+      <Route path="/About" element={<About />} />
+      <Route path="/Contact" element={<Contact />} />
       <Route path="/Benchmark" element={
         <LayoutWrapper currentPageName="Benchmark">
           <Benchmark />

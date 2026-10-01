@@ -161,7 +161,11 @@ export default function Layout({ children, currentPageName }) {
 
       <div className="p-4 border-t border-white/10">
         <p className="text-xs text-gray-500 text-center">
-          © 2024 BeNearMe · Terms · Privacy
+          © 2024 BeNearMe ·{" "}
+          <Link to={createPageUrl("About")} className="hover:text-gray-300 transition-colors">About</Link>
+          {" · "}
+          <Link to={createPageUrl("Contact")} className="hover:text-gray-300 transition-colors">Contact</Link>
+          {" · Terms · Privacy"}
         </p>
       </div>
     </div>

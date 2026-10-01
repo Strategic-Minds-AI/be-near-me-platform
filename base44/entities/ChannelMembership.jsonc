@@ -53,6 +53,10 @@
     "months_subscribed": {
       "type": "number",
       "default": 0
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
     }
   },
   "required": [
