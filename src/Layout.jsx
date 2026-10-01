@@ -21,6 +21,7 @@ import {
   MessageCircleHeart,
   X,
   Youtube,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -153,6 +154,11 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
                     )}
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("ViralVideoCreator")} className="flex items-center gap-2 cursor-pointer">
+                        <Rocket className="w-4 h-4" /> Viral Video Creator
+                      </Link>
+                    </DropdownMenuItem>
                     {user.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link to={createPageUrl("VideoScraper")} className="flex items-center gap-2 cursor-pointer">
