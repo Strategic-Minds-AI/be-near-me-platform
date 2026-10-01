@@ -109,6 +109,15 @@ button:focus-visible {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --bnm-bg: 225 53% 3%;
+    --bnm-surface: 220 43% 7%;
+    --bnm-card: 222 39% 11%;
+    --bnm-border: 220 24% 23%;
+    --bnm-text: 220 50% 98%;
+    --bnm-text-secondary: 215 22% 77%;
+    --bnm-pink: 328 100% 50%;
+    --bnm-magenta: 294 96% 46%;
+    --bnm-violet: 266 100% 56%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -143,6 +152,15 @@ button:focus-visible {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --bnm-bg: 225 53% 3%;
+    --bnm-surface: 220 43% 7%;
+    --bnm-card: 222 39% 11%;
+    --bnm-border: 220 24% 23%;
+    --bnm-text: 220 50% 98%;
+    --bnm-text-secondary: 215 22% 77%;
+    --bnm-pink: 328 100% 50%;
+    --bnm-magenta: 294 96% 46%;
+    --bnm-violet: 266 100% 56%;
   }
 }
 

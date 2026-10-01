@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { X, RefreshCw, Sticker, ImagePlus, Loader2, Check, AlertCircle, Upload as UploadIcon } from "lucide-react";
+import { uploadFileProxy } from "@/lib/uploadHelper";
 
 const FILTERS = {
   none: "none",
@@ -182,11 +183,10 @@ export default function Camera() {
       setPosting(true);
       const blob = videoBlobRef.current;
       const file = new File([blob], `clip-${Date.now()}.webm`, { type: "video/webm" });
-      const vRes = await base44.integrations.Core.UploadPublicFile({ file });
+      const vRes = { file_url: await uploadFileProxy(file) };
       let thumbUrl = "";
       if (thumbBlobRef.current) {
-        const tRes = await base44.integrations.Core.UploadPublicFile({ file: new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }) });
-        thumbUrl = tRes.file_url;
+        thumbUrl = await uploadFileProxy(new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }));
       }
       const newVideo = await base44.entities.Video.create({
         title: `Clip ${new Date().toLocaleString()}`,

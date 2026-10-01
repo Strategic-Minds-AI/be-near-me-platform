@@ -59,6 +59,17 @@ module.exports = {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
+  			},
+  			bnm: {
+  				bg: 'hsl(var(--bnm-bg))',
+  				surface: 'hsl(var(--bnm-surface))',
+  				card: 'hsl(var(--bnm-card))',
+  				border: 'hsl(var(--bnm-border))',
+  				text: 'hsl(var(--bnm-text))',
+  				secondary: 'hsl(var(--bnm-text-secondary))',
+  				pink: 'hsl(var(--bnm-pink))',
+  				magenta: 'hsl(var(--bnm-magenta))',
+  				violet: 'hsl(var(--bnm-violet))'
   			}
   		},
   		keyframes: {

@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
@@ -27,6 +28,8 @@ import SyncDashboard from '@/pages/SyncDashboard';
 import DomainOps from '@/pages/DomainOps';
 import VideoLibrary from '@/pages/VideoLibrary';
 import PictureToVideo from '@/pages/PictureToVideo';
+import MediaKit from '@/pages/MediaKit';
+import Splash from '@/pages/Splash';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -118,6 +121,11 @@ const AuthenticatedApp = () => {
           <PictureToVideo />
         </LayoutWrapper>
       } />
+      <Route path="/MediaKit" element={
+        <LayoutWrapper currentPageName="MediaKit">
+          <MediaKit />
+        </LayoutWrapper>
+      } />
       <Route path="/Benchmark" element={
         <LayoutWrapper currentPageName="Benchmark">
           <Benchmark />
@@ -138,11 +146,7 @@ const AuthenticatedApp = () => {
           <AIVideoStudio />
         </LayoutWrapper>
       } />
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
+      <Route path="/" element={<Splash />} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
@@ -165,12 +169,14 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-        <VisualEditAgent />
+        <ErrorBoundary>
+          <Router>
+            <NavigationTracker />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+          <VisualEditAgent />
+        </ErrorBoundary>
       </QueryClientProvider>
     </AuthProvider>
   )
