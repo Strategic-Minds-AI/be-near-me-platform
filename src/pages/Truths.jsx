@@ -37,13 +37,13 @@ export default function Truths() {
 
   const { data: incoming, isLoading: incLoading } = useQuery({
     queryKey: ["incomingTruths", user?.email],
-    queryFn: () => base44.entities.Truth.filter({ responder_email: user.email }, { sort: "-created_date", limit: 50 }),
+    queryFn: async () => (await base44.entities.Truth.filter({ responder_email: user.email }, { sort: "-created_date", limit: 50 })).items,
     enabled: !!user?.email,
   });
 
   const { data: outgoing, isLoading: outLoading } = useQuery({
     queryKey: ["outgoingTruths", user?.email],
-    queryFn: () => base44.entities.Truth.filter({ initiator_email: user.email }, { sort: "-created_date", limit: 50 }),
+    queryFn: async () => (await base44.entities.Truth.filter({ initiator_email: user.email }, { sort: "-created_date", limit: 50 })).items,
     enabled: !!user?.email,
   });
 

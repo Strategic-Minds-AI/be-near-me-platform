@@ -61,13 +61,13 @@ export default function Dares() {
 
   const { data: incomingDares, isLoading: incLoading } = useQuery({
     queryKey: ["incomingDares", user?.email],
-    queryFn: () => base44.entities.Dare.filter({ challenger_email: user.email }, { sort: "-created_date", limit: 50 }),
+    queryFn: async () => (await base44.entities.Dare.filter({ challenger_email: user.email }, { sort: "-created_date", limit: 50 })).items,
     enabled: !!user?.email,
   });
 
   const { data: outgoingDares, isLoading: outLoading } = useQuery({
     queryKey: ["outgoingDares", user?.email],
-    queryFn: () => base44.entities.Dare.filter({ initiator_email: user.email }, { sort: "-created_date", limit: 50 }),
+    queryFn: async () => (await base44.entities.Dare.filter({ initiator_email: user.email }, { sort: "-created_date", limit: 50 })).items,
     enabled: !!user?.email,
   });
 
