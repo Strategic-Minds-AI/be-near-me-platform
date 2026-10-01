@@ -67,6 +67,19 @@ requirePattern(
   "public/manifest.json must identify the product as Be Near Me."
 );
 
+requirePattern(
+  "src/lib/app-params.js",
+  /DEFAULT_BASE44_APP_ID\s*=\s*["']6abd9e05a56938f03c2c557b["']/,
+  "Base44 public app fallback",
+  "Vercel previews must retain the verified Be Near Me Base44 app identifier fallback."
+);
+requirePattern(
+  "src/lib/app-params.js",
+  /DEFAULT_BASE44_BACKEND_URL\s*=\s*["']https:\/\/base44\.app["']/,
+  "Base44 public backend fallback",
+  "Vercel previews must retain the verified public Base44 backend fallback."
+);
+
 const donorChecks = [
   ["base44/config.jsonc", /VidioTube/i, "Base44 config donor brand", "base44/config.jsonc still contains VidioTube."],
   ["src/components/studio/StudioSidebar.jsx", /Back to Vidio|Vidio Studio/i, "Studio donor brand", "StudioSidebar still contains Vidio branding."],
