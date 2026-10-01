@@ -22,6 +22,7 @@ import {
   X,
   Youtube,
   Rocket,
+  Server,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -157,6 +158,11 @@ export default function Layout({ children, currentPageName }) {
                     <DropdownMenuItem asChild>
                       <Link to={createPageUrl("ViralVideoCreator")} className="flex items-center gap-2 cursor-pointer">
                         <Rocket className="w-4 h-4" /> Viral Video Creator
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("SyncDashboard")} className="flex items-center gap-2 cursor-pointer">
+                        <Server className="w-4 h-4" /> Persistent Sync
                       </Link>
                     </DropdownMenuItem>
                     {user.role === 'admin' && (

@@ -23,6 +23,7 @@ import Dares from '@/pages/Dares';
 import Truths from '@/pages/Truths';
 import VideoScraper from '@/pages/VideoScraper';
 import ViralVideoCreator from '@/pages/ViralVideoCreator';
+import SyncDashboard from '@/pages/SyncDashboard';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -92,6 +93,11 @@ const AuthenticatedApp = () => {
       <Route path="/ViralVideoCreator" element={
         <LayoutWrapper currentPageName="ViralVideoCreator">
           <ViralVideoCreator />
+        </LayoutWrapper>
+      } />
+      <Route path="/SyncDashboard" element={
+        <LayoutWrapper currentPageName="SyncDashboard">
+          <SyncDashboard />
         </LayoutWrapper>
       } />
       <Route path="/Benchmark" element={
