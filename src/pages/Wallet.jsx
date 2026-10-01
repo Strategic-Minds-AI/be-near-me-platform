@@ -41,7 +41,7 @@ export default function Wallet() {
       ),
     enabled: !!user?.email,
   });
-  const wallets = walletsQ.data || [];
+  const wallets = walletsQ.data?.items || [];
 
   if (!userLoading && !user) {
     return (
