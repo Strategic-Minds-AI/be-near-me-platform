@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import TikTokFeed from "@/components/feed/TikTokFeed";
+import BnmFeed from "@/components/bnm/BnmFeed";
 import { BnmBottomNav } from "@/components/bnm/BnmChrome";
 
 export default function BnmHome() {
   return (
     <div className="relative h-[100dvh] overflow-hidden bg-black text-white">
-      <TikTokFeed showTrending={false} emptyVariant="bnm" />
+      <BnmFeed />
       <div
         className="pointer-events-none fixed inset-x-0 top-0 z-40 bg-gradient-to-b from-black/75 via-black/20 to-transparent pb-12"
         style={{ paddingTop: "max(env(safe-area-inset-top), 10px)" }}
