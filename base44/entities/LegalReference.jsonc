@@ -1,0 +1,104 @@
+{
+  "name": "LegalReference",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Name of the law, regulation, or standard"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": [
+        "us_federal",
+        "us_state",
+        "eu",
+        "uk",
+        "international",
+        "other"
+      ],
+      "description": "Which jurisdiction this law applies to"
+    },
+    "jurisdiction_detail": {
+      "type": "string",
+      "description": "Specific state or region (e.g. California, New York)"
+    },
+    "compliance_area": {
+      "type": "string",
+      "enum": [
+        "crypto",
+        "minor_safety",
+        "content_moderation",
+        "data_privacy",
+        "charitable_giving",
+        "digital_signatures",
+        "gamification",
+        "consumer_protection",
+        "other"
+      ],
+      "description": "Which compliance area this falls under"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Plain-language summary of what the law requires"
+    },
+    "relevance": {
+      "type": "string",
+      "description": "How this law specifically applies to Be Near Me"
+    },
+    "url": {
+      "type": "string",
+      "description": "Link to the official source"
+    },
+    "action_required": {
+      "type": "string",
+      "description": "What the platform must do to comply"
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_progress",
+        "compliant",
+        "at_risk",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "last_reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "title",
+    "jurisdiction",
+    "compliance_area",
+    "summary"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

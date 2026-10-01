@@ -18,6 +18,7 @@ import AIVideoStudio from '@/pages/AIVideoStudio';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import AIBuddy from '@/pages/AIBuddy';
+import Onboarding from '@/pages/Onboarding';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -62,6 +63,11 @@ const AuthenticatedApp = () => {
       <Route path="/AIBuddy" element={
         <LayoutWrapper currentPageName="AIBuddy">
           <AIBuddy />
+        </LayoutWrapper>
+      } />
+      <Route path="/Onboarding" element={
+        <LayoutWrapper currentPageName="Onboarding">
+          <Onboarding />
         </LayoutWrapper>
       } />
       <Route path="/Benchmark" element={

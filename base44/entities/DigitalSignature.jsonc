@@ -1,0 +1,87 @@
+{
+  "name": "DigitalSignature",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who signed"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Full name as typed by the user for signature"
+    },
+    "signature_text": {
+      "type": "string",
+      "description": "The typed signature string the user agreed to"
+    },
+    "rules_version": {
+      "type": "string",
+      "description": "Version of the community rules agreed to"
+    },
+    "agreed_to_terms": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user agreed to the terms of service"
+    },
+    "agreed_to_positivity_pledge": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user pledged to maintain positivity"
+    },
+    "agreed_to_crypto_terms": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user acknowledged crypto wallet terms"
+    },
+    "charity_choice": {
+      "type": "string",
+      "description": "The charity the user chose at onboarding"
+    },
+    "ip_address_hash": {
+      "type": "string",
+      "description": "Hashed IP for audit trail (never raw IP)"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "user_email",
+    "user_name",
+    "signature_text",
+    "rules_version",
+    "agreed_to_terms"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
