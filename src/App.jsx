@@ -19,6 +19,8 @@ import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import AIBuddy from '@/pages/AIBuddy';
 import Onboarding from '@/pages/Onboarding';
+import Dares from '@/pages/Dares';
+import Truths from '@/pages/Truths';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -68,6 +70,16 @@ const AuthenticatedApp = () => {
       <Route path="/Onboarding" element={
         <LayoutWrapper currentPageName="Onboarding">
           <Onboarding />
+        </LayoutWrapper>
+      } />
+      <Route path="/Dares" element={
+        <LayoutWrapper currentPageName="Dares">
+          <Dares />
+        </LayoutWrapper>
+      } />
+      <Route path="/Truths" element={
+        <LayoutWrapper currentPageName="Truths">
+          <Truths />
         </LayoutWrapper>
       } />
       <Route path="/Benchmark" element={

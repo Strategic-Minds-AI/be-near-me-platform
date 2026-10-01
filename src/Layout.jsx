@@ -31,7 +31,8 @@ import {
   Target,
   Wallet,
   Activity,
-  Sparkles
+  Sparkles,
+  MessageCircleHeart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,6 +78,8 @@ export default function Layout({ children, currentPageName }) {
     { icon: PlaySquare, label: "Shorts", page: "Shorts" },
     { icon: PlaySquare, label: "Subscriptions", page: "Subscriptions" },
     { icon: Sparkles, label: "AI Buddy", page: "AIBuddy" },
+    { icon: Target, label: "Dares", page: "Dares" },
+    { icon: MessageCircleHeart, label: "Truths", page: "Truths" },
     { icon: Lightbulb, label: "Premium", page: "Premium" },
     { icon: Target, label: "Benchmark", page: "Benchmark" },
   ];
@@ -292,6 +295,12 @@ export default function Layout({ children, currentPageName }) {
                     <Link to={createPageUrl("Wallet")} className="flex items-center gap-2 cursor-pointer">
                       <Wallet className="w-4 h-4" />
                       My Wallet
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("Onboarding")} className="flex items-center gap-2 cursor-pointer">
+                      <Sparkles className="w-4 h-4" />
+                      Onboarding
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
