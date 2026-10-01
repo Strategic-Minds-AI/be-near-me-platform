@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -23,8 +23,6 @@ import {
   Copy, 
   Eye, 
   EyeOff, 
-  RefreshCw,
-  Video,
   Loader2,
   CheckCircle,
   AlertCircle,
@@ -71,15 +69,18 @@ export default function StudioLive() {
 
   const myChannel = channel?.[0];
 
-  // Generate a stream key (in production, this would be from your streaming service)
-  const streamKey = myChannel?.id 
+  // Fail closed until a governed RTMP provider is explicitly configured.
+  const streamingBackendConfigured = false;
+  const streamKey = streamingBackendConfigured && myChannel?.id
     ? `live_${myChannel.id.substring(0, 8)}_${Date.now().toString(36)}`
     : "";
-
-  const rtmpUrl = "rtmp://live.vidio.app/live";
+  const rtmpUrl = "";
 
   const createStreamMutation = useMutation({
     mutationFn: async () => {
+      if (!streamingBackendConfigured) {
+        throw new Error("Live streaming backend is not configured.");
+      }
       const stream = await base44.entities.LiveStream.create({
         channel_id: myChannel.id,
         title: streamSettings.title,
@@ -364,13 +365,14 @@ export default function StudioLive() {
                     <Label className="text-white">Stream URL</Label>
                     <div className="flex gap-2 mt-2">
                       <Input
-                        value={rtmpUrl}
+                        value={rtmpUrl || "Not configured"}
                         readOnly
                         className="bg-white/5 border-white/10 text-white"
                       />
                       <Button
                         variant="outline"
                         onClick={() => copyToClipboard(rtmpUrl)}
+                        disabled={!rtmpUrl}
                         className="bg-white/5 border-white/10 text-white hover:bg-white/10"
                       >
                         <Copy className="w-4 h-4" />
@@ -412,10 +414,15 @@ export default function StudioLive() {
               {/* Create Stream Button */}
               <Button
                 onClick={() => createStreamMutation.mutate()}
-                disabled={!streamSettings.title.trim() || createStreamMutation.isPending}
+                disabled={!streamingBackendConfigured || !streamSettings.title.trim() || createStreamMutation.isPending}
                 className="w-full bg-red-600 hover:bg-red-700 py-6 text-lg"
               >
-                {createStreamMutation.isPending ? (
+                {!streamingBackendConfigured ? (
+                  <>
+                    <AlertCircle className="w-5 h-5 mr-2" />
+                    Streaming Backend Not Configured
+                  </>
+                ) : createStreamMutation.isPending ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Creating...
