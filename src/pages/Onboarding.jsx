@@ -151,6 +151,12 @@ export default function Onboarding() {
               <Button onClick={() => setStep(1)} className="bg-gradient-to-r from-pink-500 to-fuchsia-600 rounded-full px-8 h-12">
                 Let's Go <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
+              <button
+                onClick={() => setStep(4)}
+                className="mt-4 text-sm text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                Skip to signature
+              </button>
             </CardContent>
           </Card>
         )}
@@ -230,7 +236,7 @@ export default function Onboarding() {
                 You can create your wallet now or later from the Wallet page. Your AI Buddy can walk you through it anytime.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button onClick={() => navigate("/Wallet")} className="bg-gradient-to-r from-pink-500 to-fuchsia-600 rounded-full flex-1">
+                <Button onClick={() => window.open("/Wallet", "_blank")} className="bg-gradient-to-r from-pink-500 to-fuchsia-600 rounded-full flex-1">
                   Create Wallet Now
                 </Button>
                 <Button variant="outline" onClick={() => setStep(3)} className="rounded-full flex-1 border-white/20 text-white">
@@ -266,7 +272,7 @@ export default function Onboarding() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button onClick={() => navigate("/AIBuddy")} className="bg-gradient-to-r from-pink-500 to-fuchsia-600 rounded-full flex-1">
+                <Button onClick={() => window.open("/AIBuddy", "_blank")} className="bg-gradient-to-r from-pink-500 to-fuchsia-600 rounded-full flex-1">
                   Meet Buddy Now
                 </Button>
                 <Button variant="outline" onClick={() => setStep(4)} className="rounded-full flex-1 border-white/20 text-white">

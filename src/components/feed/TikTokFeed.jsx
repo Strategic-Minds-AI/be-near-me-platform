@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import TikTokVideoCard from "./TikTokVideoCard";
 import { Link } from "react-router-dom";
-import { Loader2, Flame, TrendingUp } from "lucide-react";
+import { Loader2, Flame, TrendingUp, Sparkles } from "lucide-react";
 
 const TRENDING_TAGS = ["#kindness", "#benearme", "#wholesome", "#goodvibes", "#positivity", "#spreadlove"];
 
@@ -52,10 +52,42 @@ export default function TikTokFeed() {
 
   if (list.length === 0) {
     return (
-      <div className="h-screen flex items-center justify-center bg-black text-white/70 text-center px-6">
-        <div>
-          <p className="text-lg font-semibold mb-1">No videos yet</p>
-          <p className="text-sm">Upload a video to start the feed.</p>
+      <div className="h-screen flex flex-col items-center justify-center bg-black text-white px-6 text-center">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500/20 to-fuchsia-600/20 flex items-center justify-center mb-6">
+          <Sparkles className="w-10 h-10 text-pink-500" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Welcome to Be Near Me</h2>
+        <p className="text-gray-400 text-sm max-w-xs mb-8">
+          The feed is waiting to be filled with kindness. Here's how to get started:
+        </p>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Link to="/CreateChannel" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 transition-colors text-left">
+            <div className="w-9 h-9 rounded-full bg-pink-500/20 flex items-center justify-center shrink-0">
+              <span className="text-pink-400 font-bold text-sm">1</span>
+            </div>
+            <div>
+              <p className="text-white text-sm font-medium">Create your channel</p>
+              <p className="text-gray-500 text-xs">Set up your profile</p>
+            </div>
+          </Link>
+          <Link to="/Camera" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 transition-colors text-left">
+            <div className="w-9 h-9 rounded-full bg-pink-500/20 flex items-center justify-center shrink-0">
+              <span className="text-pink-400 font-bold text-sm">2</span>
+            </div>
+            <div>
+              <p className="text-white text-sm font-medium">Record a video</p>
+              <p className="text-gray-500 text-xs">Share a kindness moment</p>
+            </div>
+          </Link>
+          <Link to="/Dares" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-pink-500/40 transition-colors text-left">
+            <div className="w-9 h-9 rounded-full bg-pink-500/20 flex items-center justify-center shrink-0">
+              <span className="text-pink-400 font-bold text-sm">3</span>
+            </div>
+            <div>
+              <p className="text-white text-sm font-medium">Send a dare</p>
+              <p className="text-gray-500 text-xs">Challenge a friend to be kind</p>
+            </div>
+          </Link>
         </div>
       </div>
     );

@@ -17,6 +17,7 @@ export default function CreateChannel() {
   const [bannerFile, setBannerFile] = useState(null);
   const [bannerPreview, setBannerPreview] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   const [channelData, setChannelData] = useState({
     name: "",
@@ -57,12 +58,12 @@ export default function CreateChannel() {
       let bannerUrl = "";
 
       if (avatarFile) {
-        const result = await base44.integrations.Core.UploadFile({ file: avatarFile });
+        const result = await base44.integrations.Core.UploadPublicFile({ file: avatarFile });
         avatarUrl = result.file_url;
       }
 
       if (bannerFile) {
-        const result = await base44.integrations.Core.UploadFile({ file: bannerFile });
+        const result = await base44.integrations.Core.UploadPublicFile({ file: bannerFile });
         bannerUrl = result.file_url;
       }
 
@@ -86,6 +87,9 @@ export default function CreateChannel() {
         navigate(createPageUrl("Home"));
       }, 2000);
     },
+    onError: () => {
+      setError("Something went wrong creating your channel. Please try again.");
+    },
   });
 
   if (!user) {
@@ -96,7 +100,7 @@ export default function CreateChannel() {
         <p className="text-gray-400 mb-6">You need to sign in to create a channel</p>
         <Button
           onClick={() => base44.auth.redirectToLogin()}
-          className="bg-red-600 hover:bg-red-700 rounded-full px-8"
+          className="bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:opacity-90 rounded-full px-8"
         >
           Sign In
         </Button>
@@ -112,7 +116,7 @@ export default function CreateChannel() {
         <p className="text-gray-400 mb-6">Visit your channel to manage it</p>
         <Button
           onClick={() => navigate(createPageUrl(`Channel?id=${existingChannel[0].id}`))}
-          className="bg-red-600 hover:bg-red-700 rounded-full px-8"
+          className="bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:opacity-90 rounded-full px-8"
         >
           Go to Channel
         </Button>
@@ -159,11 +163,9 @@ export default function CreateChannel() {
             ) : (
               <div className="w-full h-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600" />
             )}
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <div className="flex items-center gap-2 text-white">
-                <ImagePlus className="w-5 h-5" />
-                <span>Upload banner</span>
-              </div>
+            <div className="absolute bottom-2 right-2 flex items-center gap-1.5 text-white bg-black/60 backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-medium pointer-events-none">
+              <ImagePlus className="w-3.5 h-3.5" />
+              <span>{bannerPreview ? "Change" : "Upload"}</span>
             </div>
           </label>
 
@@ -184,8 +186,8 @@ export default function CreateChannel() {
                     {channelData.name?.[0] || user?.full_name?.[0] || "?"}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Camera className="w-6 h-6 text-white" />
+                <div className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-pink-500 flex items-center justify-center border-2 border-[#0f0f0f] pointer-events-none">
+                  <Camera className="w-3.5 h-3.5 text-white" />
                 </div>
               </label>
             </div>
@@ -245,6 +247,9 @@ export default function CreateChannel() {
             />
           </div>
 
+          {error && (
+            <p className="text-sm text-red-400 text-right">{error}</p>
+          )}
           <div className="flex justify-end gap-4 pt-4">
             <Button
               variant="ghost"
@@ -256,7 +261,7 @@ export default function CreateChannel() {
             <Button
               onClick={() => createMutation.mutate()}
               disabled={!channelData.name.trim() || !channelData.handle.trim() || createMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 rounded-full px-8"
+              className="bg-gradient-to-r from-pink-500 to-fuchsia-600 hover:opacity-90 rounded-full px-8"
             >
               {createMutation.isPending ? (
                 <>
