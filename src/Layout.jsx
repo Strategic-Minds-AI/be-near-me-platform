@@ -290,7 +290,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* ── Bottom navigation (TikTok style) ── */}
       <nav className="fixed bottom-0 inset-x-0 h-14 z-50 bg-black/95 backdrop-blur-lg border-t border-white/10">
-        <div className="flex items-center justify-around h-full max-w-md mx-auto px-2">
+        <div className="flex w-full items-center justify-around h-full max-w-md mx-auto px-2">
           {bottomNav.map((item) => {
             const active = isActive(item.page);
             if (item.isCreate) {
@@ -298,7 +298,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={item.label}
                   to={createPageUrl(item.page)}
-                  className="flex items-center justify-center"
+                  className="flex flex-1 min-w-0 items-center justify-center"
                 >
                   <div className="w-11 h-7 rounded-lg bg-white flex items-center justify-center shadow-lg">
                     <item.icon className="w-5 h-5 text-black" strokeWidth={2.5} />
@@ -310,7 +310,7 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.label}
                 to={createPageUrl(item.page)}
-                className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
+                className="flex min-w-0 flex-col items-center justify-center gap-0.5 flex-1 py-1"
               >
                 <item.icon
                   className={`w-6 h-6 transition-colors ${active ? "text-white" : "text-gray-500"}`}
