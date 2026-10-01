@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,7 +56,7 @@ export default function Premium() {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-full mb-4">
             <Crown className="w-4 h-4 text-yellow-400" />
-            <span className="text-yellow-400 font-medium text-sm">Vidio Premium</span>
+            <span className="text-yellow-400 font-medium text-sm">Be Near Me Premium</span>
           </div>
           <h1 className="text-4xl font-black text-white mb-3">
             Upgrade your experience

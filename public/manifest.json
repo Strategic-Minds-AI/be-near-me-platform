@@ -1,0 +1,11 @@
+{
+  "name": "Be Near Me",
+  "short_name": "B Near Me",
+  "description": "A social platform for local connection, kindness, creators, and community.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FF0080",
+  "orientation": "portrait-primary"
+}
