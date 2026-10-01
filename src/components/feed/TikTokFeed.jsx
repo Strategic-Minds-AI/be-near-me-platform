@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import TikTokVideoCard from "./TikTokVideoCard";
-import { Loader2, Flame } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Loader2, Flame, TrendingUp } from "lucide-react";
 
 const TRENDING_TAGS = ["#kindness", "#benearme", "#wholesome", "#goodvibes", "#positivity", "#spreadlove"];
 
@@ -75,6 +76,9 @@ export default function TikTokFeed() {
             {tag}
           </span>
         ))}
+        <Link to="/Trending" className="text-xs font-bold text-pink-400 bg-pink-500/20 border border-pink-500/30 px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-1 flex-shrink-0">
+          <TrendingUp className="w-3 h-3" /> Top Videos
+        </Link>
       </div>
 
       {list.map((v) => (
