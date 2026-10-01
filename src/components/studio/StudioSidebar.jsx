@@ -1,5 +1,4 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { 
   LayoutDashboard, 
@@ -42,7 +41,7 @@ export default function StudioSidebar({ currentPage }) {
         <Link to={createPageUrl("Home")}>
           <Button variant="ghost" className="w-full justify-start text-gray-400 hover:text-white hover:bg-white/5">
             <ChevronLeft className="w-4 h-4 mr-2" />
-            Back to Vidio
+            Back to Be Near Me
           </Button>
         </Link>
       </div>
@@ -72,7 +71,7 @@ export default function StudioSidebar({ currentPage }) {
       {/* Footer */}
       <div className="p-4 border-t border-white/5">
         <p className="text-xs text-gray-500 text-center">
-          © 2024 Vidio Studio
+          © 2026 Be Near Me Studio
         </p>
       </div>
     </div>
