@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
@@ -19,7 +19,6 @@ import {
   Sparkles,
   Target,
   MessageCircleHeart,
-  X,
   Youtube,
   Rocket,
   Server,
