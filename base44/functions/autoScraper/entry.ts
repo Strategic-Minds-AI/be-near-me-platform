@@ -70,14 +70,21 @@ Deno.serve(async (req) => {
     const videos: any[] = [];
     for (const id of newIds) {
       const meta = await getMeta(id);
-      if (meta) {
-        videos.push({
-          youtube_id: id,
-          title: meta.title,
-          channel_name: meta.author_name,
-          thumbnail_url: meta.thumbnail_url,
-        });
+      // Quality gate: skip videos with missing title or thumbnail
+      if (!meta?.title || !meta?.thumbnail_url) continue;
+      // Quality gate: validate thumbnail URL is accessible
+      try {
+        const thumbCheck = await fetch(meta.thumbnail_url, { method: 'HEAD', signal: AbortSignal.timeout(8000) });
+        if (!thumbCheck.ok) continue;
+      } catch {
+        continue;
       }
+      videos.push({
+        youtube_id: id,
+        title: meta.title,
+        channel_name: meta.author_name,
+        thumbnail_url: meta.thumbnail_url,
+      });
     }
 
     // 5. Import to database

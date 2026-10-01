@@ -119,6 +119,38 @@ Using the analysis above, design a NEW video that mimics the winning patterns. I
       });
     }
 
+    // Quality gate: validate the generated video URL is accessible before publishing
+    try {
+      const qualityCheck = await fetch(genResult.url, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
+      if (!qualityCheck.ok) {
+        return Response.json({
+          analysis: {
+            viral_formula: analysis.viral_formula,
+            common_themes: analysis.common_themes,
+            title_patterns: analysis.title_patterns,
+            winning_tags: analysis.winning_tags,
+            top_categories: analysis.top_categories,
+          },
+          concept,
+          video_url: null,
+          error: 'Generated video failed quality check — not published',
+        });
+      }
+    } catch {
+      return Response.json({
+        analysis: {
+          viral_formula: analysis.viral_formula,
+          common_themes: analysis.common_themes,
+          title_patterns: analysis.title_patterns,
+          winning_tags: analysis.winning_tags,
+          top_categories: analysis.top_categories,
+        },
+        concept,
+        video_url: null,
+        error: 'Generated video URL not accessible — not published',
+      });
+    }
+
     // 4. Resolve creator's channel for attribution
     let channel: any = null;
     try {
