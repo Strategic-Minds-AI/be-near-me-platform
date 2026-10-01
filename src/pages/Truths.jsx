@@ -24,6 +24,34 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
+/**
+ * @typedef {{
+ *   responder_email: string,
+ *   truth_prompt: string,
+ *   infinity_coin_stake: number,
+ *   expires_days: number
+ * }} TruthCreateInput
+ */
+
+/**
+ * @typedef {{
+ *   truthId: string,
+ *   action: string,
+ *   response_text?: string
+ * }} TruthTransitionInput
+ */
+
+/** @param {TruthCreateInput} data */
+function createTruth(data) {
+  return base44.functions.invoke("updateTruthState", { action: "create", ...data });
+}
+
+/** @param {TruthTransitionInput} transition */
+function transitionTruth(transition) {
+  const { truthId, action, ...payload } = transition;
+  return base44.functions.invoke("updateTruthState", { truth_id: truthId, action, ...payload });
+}
+
 export default function Truths() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -48,7 +76,7 @@ export default function Truths() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.functions.invoke("updateTruthState", { action: "create", ...data }),
+    mutationFn: createTruth,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["outgoingTruths"] });
       toast({ title: "Truth sent! 💬", description: "Waiting for a courageous reveal." });
@@ -58,8 +86,7 @@ export default function Truths() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ truthId, action, ...payload }) =>
-      base44.functions.invoke("updateTruthState", { truth_id: truthId, action, ...payload }),
+    mutationFn: transitionTruth,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["incomingTruths"] });
       queryClient.invalidateQueries({ queryKey: ["outgoingTruths"] });
