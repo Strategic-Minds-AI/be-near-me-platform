@@ -54,8 +54,8 @@ jobs:
             npx eslint $CHANGED_FILES
           fi
 
-      - name: Typecheck frozen application surface
-        run: npm run typecheck
+      - name: Typecheck no-new-debt ratchet
+        run: node scripts/typecheck-ratchet.mjs
 
       - name: Build
         run: npm run build
