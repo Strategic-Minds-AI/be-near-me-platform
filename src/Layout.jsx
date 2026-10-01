@@ -23,6 +23,7 @@ import {
   Youtube,
   Rocket,
   Server,
+  Library,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,6 +164,11 @@ export default function Layout({ children, currentPageName }) {
                     <DropdownMenuItem asChild>
                       <Link to={createPageUrl("SyncDashboard")} className="flex items-center gap-2 cursor-pointer">
                         <Server className="w-4 h-4" /> Persistent Sync
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("VideoLibrary")} className="flex items-center gap-2 cursor-pointer">
+                        <Library className="w-4 h-4" /> Video Library
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>

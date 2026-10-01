@@ -73,7 +73,7 @@ export default function TikTokVideoCard({ video }) {
   return (
     <section
       ref={ref}
-      className="snap-start snap-always h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-black relative"
+      className="snap-start snap-always h-screen w-full flex items-center justify-center bg-black relative"
     >
       {isYouTube ? (
         <iframe

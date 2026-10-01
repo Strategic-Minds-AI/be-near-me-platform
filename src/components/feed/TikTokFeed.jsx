@@ -65,7 +65,7 @@ export default function TikTokFeed() {
     <div
       ref={containerRef}
       onScroll={() => { if (containerRef.current?.scrollTop > 40) setTagsHidden(true); else setTagsHidden(false); }}
-      className="h-[calc(100vh-3.5rem)] overflow-y-scroll snap-y snap-mandatory overscroll-y-contain touch-pan-y bg-black [&::-webkit-scrollbar]:hidden"
+      className="h-screen overflow-y-scroll snap-y snap-mandatory overscroll-y-contain touch-pan-y bg-black [&::-webkit-scrollbar]:hidden"
       style={{ scrollbarWidth: 'none' }}
     >
       {/* Trending hashtags bar — floats over the feed, fades on scroll */}
