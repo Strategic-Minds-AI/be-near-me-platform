@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -39,7 +38,7 @@ export default function PremiumBanner({ onClose }) {
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
               <Crown className="w-5 h-5 text-yellow-300" />
             </div>
-            <h3 className="text-2xl font-bold text-white">Vidio Premium</h3>
+            <h3 className="text-2xl font-bold text-white">Be Near Me Premium</h3>
           </div>
           
           <p className="text-white/90 mb-4">
