@@ -30,6 +30,14 @@ import VideoLibrary from '@/pages/VideoLibrary';
 import PictureToVideo from '@/pages/PictureToVideo';
 import MediaKit from '@/pages/MediaKit';
 import Splash from '@/pages/Splash';
+import BnmHome from '@/pages/BnmHome';
+import BnmDiscover from '@/pages/BnmDiscover';
+import BnmEffects from '@/pages/BnmEffects';
+import BnmNearby from '@/pages/BnmNearby';
+import BnmProfile from '@/pages/BnmProfile';
+import BnmInbox from '@/pages/BnmInbox';
+import BnmMessages from '@/pages/BnmMessages';
+import BnmMenu from '@/pages/BnmMenu';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -147,6 +155,15 @@ const AuthenticatedApp = () => {
         </LayoutWrapper>
       } />
       <Route path="/" element={<Splash />} />
+      <Route path="/home" element={<BnmHome />} />
+      <Route path="/discover" element={<BnmDiscover />} />
+      <Route path="/create" element={<Camera />} />
+      <Route path="/effects" element={<BnmEffects />} />
+      <Route path="/nearby" element={<BnmNearby />} />
+      <Route path="/profile" element={<BnmProfile />} />
+      <Route path="/inbox" element={<BnmInbox />} />
+      <Route path="/messages" element={<BnmMessages />} />
+      <Route path="/menu" element={<BnmMenu />} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
