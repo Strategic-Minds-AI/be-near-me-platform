@@ -165,7 +165,7 @@ export default function TikTokVideoCard({ video }) {
         </button>
       </div>
 
-      <ShareSheet open={shareOpen} onClose={() => setShareOpen(false)} url={shareUrl} title={video.title} />
+      <ShareSheet open={shareOpen} onClose={() => setShareOpen(false)} url={shareUrl} title={video.title} videoId={video.id} />
     </section>
   );
 }

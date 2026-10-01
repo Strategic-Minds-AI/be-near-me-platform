@@ -59,7 +59,7 @@ export default function TikTokFeed() {
   return (
     <div
       ref={containerRef}
-      className="h-[calc(100vh-4rem)] overflow-y-scroll snap-y snap-mandatory bg-black [&::-webkit-scrollbar]:hidden"
+      className="h-[calc(100vh-4rem)] overflow-y-scroll snap-y snap-mandatory overscroll-y-contain touch-pan-y bg-black [&::-webkit-scrollbar]:hidden"
       style={{ scrollbarWidth: 'none' }}
     >
       {list.map((v) => (

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import StudioSidebar from "@/components/studio/StudioSidebar";
 import TikTokStatCard from "@/components/studio/TikTokStatCard";
-import { Eye, Heart, Clock, PlaySquare } from "lucide-react";
+import { Eye, Heart, Clock, PlaySquare, TrendingUp, Gauge } from "lucide-react";
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const RANGES = [
@@ -28,11 +28,19 @@ export default function StudioAnalytics() {
     queryFn: () => base44.entities.Video.filter({ created_by: user?.email }, "-views", 50),
     enabled: !!user?.email,
   });
+  const { data: reputation } = useQuery({
+    queryKey: ['myReputation', channel?.[0]?.id],
+    queryFn: () => base44.entities.CreatorReputation.filter({ channel_id: channel?.[0]?.id }),
+    enabled: !!channel?.[0]?.id,
+  });
 
   const myChannel = channel?.[0];
+  const myReputation = reputation?.[0];
   const totalViews = videos?.reduce((s, v) => s + (v.views || 0), 0) || 0;
   const totalLikes = videos?.reduce((s, v) => s + (v.likes || 0), 0) || 0;
   const watchHours = Math.round((myChannel?.total_watch_time || 0) / 3600);
+  const engagementRate = totalViews > 0 ? ((totalLikes / totalViews) * 100).toFixed(1) : "0.0";
+  const growthScore = Math.round(myReputation?.growth_score || 0);
 
   const days = parseInt(range);
   const series = Array.from({ length: days }, (_, i) => {
@@ -52,7 +60,6 @@ export default function StudioAnalytics() {
       <StudioSidebar currentPage="StudioAnalytics" />
       <div className="flex-1 overflow-auto">
         <div className="p-6 lg:p-10 max-w-5xl mx-auto">
-          {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="text-2xl font-bold text-white tracking-tight">Analytics</h1>
@@ -73,14 +80,17 @@ export default function StudioAnalytics() {
             </div>
           </div>
 
-          {/* Stat cards */}
           <div className="grid sm:grid-cols-3 gap-4">
             <TikTokStatCard icon={Eye} label="Views" value={totalViews.toLocaleString()} trend={12} accent="bg-blue-500/80" />
             <TikTokStatCard icon={Heart} label="Likes" value={totalLikes.toLocaleString()} trend={8} accent="bg-pink-500/80" />
             <TikTokStatCard icon={Clock} label="Watch time (hrs)" value={watchHours.toLocaleString()} trend={5} accent="bg-emerald-500/80" />
           </div>
 
-          {/* Views chart */}
+          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+            <TikTokStatCard icon={TrendingUp} label="Engagement rate" value={`${engagementRate}%`} trend={6} accent="bg-amber-500/80" />
+            <TikTokStatCard icon={Gauge} label="Growth score" value={`${growthScore}/100`} trend={growthScore > 50 ? 9 : -3} accent="bg-violet-500/80" />
+          </div>
+
           <div className="mt-6 bg-white/[0.04] border border-white/10 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-semibold">Views</h2>
@@ -95,24 +105,14 @@ export default function StudioAnalytics() {
                       <stop offset="100%" stopColor="#ec4899" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    minTickGap={20}
-                  />
-                  <Tooltip
-                    contentStyle={{ background: '#161618', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: '#fff' }}
-                    labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
-                  />
+                  <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} minTickGap={20} />
+                  <Tooltip contentStyle={{ background: '#161618', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: '#fff' }} labelStyle={{ color: 'rgba(255,255,255,0.6)' }} />
                   <Area type="monotone" dataKey="views" stroke="#ec4899" strokeWidth={2.5} fill="url(#viewsGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Top videos */}
           <div className="mt-6 bg-white/[0.04] border border-white/10 rounded-2xl p-5">
             <h2 className="text-white font-semibold mb-4">Top videos</h2>
             <div className="space-y-3">
@@ -126,17 +126,11 @@ export default function StudioAnalytics() {
                 <Link to={createPageUrl(`Watch?id=${v.id}`)} key={v.id} className="flex items-center gap-4 group">
                   <span className="text-white/30 font-bold w-5 text-sm">{i + 1}</span>
                   <div className="w-16 aspect-video rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
-                    {v.thumbnail_url ? (
-                      <img src={v.thumbnail_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full" />
-                    )}
+                    {v.thumbnail_url ? <img src={v.thumbnail_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium line-clamp-1 group-hover:text-pink-400 transition">{v.title}</p>
-                    <p className="text-white/40 text-xs mt-0.5">
-                      {(v.views || 0).toLocaleString()} views · {(v.likes || 0).toLocaleString()} likes
-                    </p>
+                    <p className="text-white/40 text-xs mt-0.5">{(v.views || 0).toLocaleString()} views · {(v.likes || 0).toLocaleString()} likes</p>
                   </div>
                 </Link>
               ))}
