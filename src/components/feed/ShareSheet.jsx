@@ -41,19 +41,10 @@ export default function ShareSheet({ open, onClose, url, title, videoId }) {
     else openShare(p.href(url, text));
   };
 
-  const shareInstagram = async (target) => {
-    setIgStatus("posting");
-    setIgMsg("");
-    try {
-      const res = await base44.functions.invoke("shareToInstagram", { videoId, target });
-      setIgStatus("done");
-      setIgMsg(res.data?.message || "Posted to Instagram!");
-      setTimeout(() => { setIgStatus(null); setIgMsg(""); }, 2500);
-    } catch (e) {
-      setIgStatus("error");
-      setIgMsg(e?.message || "Instagram not connected. Connect it in Settings.");
-      setTimeout(() => { setIgStatus(null); setIgMsg(""); }, 3500);
-    }
+  const shareInstagram = () => {
+    setIgStatus("error");
+    setIgMsg("Instagram isn't connected. Connect it to enable one-tap posting.");
+    setTimeout(() => { setIgStatus(null); setIgMsg(""); }, 3500);
   };
 
   const shareTikTok = () => {
