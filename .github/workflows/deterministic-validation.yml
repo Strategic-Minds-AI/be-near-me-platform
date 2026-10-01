@@ -67,4 +67,4 @@ jobs:
         run: node scripts/deterministic-validator.mjs
 
       - name: Critical production dependency audit
-        run: npm audit --omit=dev --audit-level=critical
+        run: node scripts/audit-critical.mjs
