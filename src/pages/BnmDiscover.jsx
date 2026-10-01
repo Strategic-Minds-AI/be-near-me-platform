@@ -1,17 +1,17 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Compass, MapPin, Play, Sparkles } from "lucide-react";
+import { CalendarDays, Compass, MapPin, Play, Sparkles, Users, Utensils, Plane } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { BnmHeader, BnmPage, BnmSearchField } from "@/components/bnm/BnmChrome";
 
 const categoryTiles = [
-  { label: "Trending Now", sub: "Trending", image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=80", to: null },
-  { label: "Nearby", sub: "Live near you", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80", to: "/nearby" },
-  { label: "Food & Drinks", sub: "Food", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80", to: null },
-  { label: "Travel", sub: "Travel", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80", to: null },
-  { label: "Events", sub: "Events", image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=80", to: null },
-  { label: "Creators", sub: "Creators", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600&q=80", to: null },
+  { label: "Trending", Icon: Sparkles, to: null },
+  { label: "Nearby", Icon: MapPin, to: "/nearby" },
+  { label: "Food", Icon: Utensils, to: null },
+  { label: "Travel", Icon: Plane, to: null },
+  { label: "Events", Icon: CalendarDays, to: null },
+  { label: "Creators", Icon: Users, to: null },
 ];
 
 export default function BnmDiscover() {
@@ -22,8 +22,11 @@ export default function BnmDiscover() {
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ["bnmDiscoverVideos"],
     queryFn: async () => {
-      const result = await base44.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 12 });
-      return result?.items || result || [];
+      const result = await base44.entities.Video.filter(
+        { visibility: "public" },
+        { sort: "-created_date", limit: 12 }
+      );
+      return Array.isArray(result) ? result : result?.items || [];
     },
   });
 
@@ -56,13 +59,16 @@ export default function BnmDiscover() {
         </form>
 
         <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-2">
-          {categoryTiles.map(({ sub }) => {
-            const active = activeCategory === sub;
+          {categoryTiles.map(({ label, to }) => {
+            const active = activeCategory === label;
             return (
               <button
-                key={sub}
+                key={label}
                 type="button"
-                onClick={() => setActiveCategory(sub)}
+                onClick={() => {
+                  setActiveCategory(label);
+                  if (to) navigate(to);
+                }}
                 className={
                   "shrink-0 rounded-full border px-4 py-2 text-xs font-bold transition " +
                   (active
@@ -70,26 +76,28 @@ export default function BnmDiscover() {
                     : "border-white/10 bg-white/[0.045] text-[#aeb8cc] hover:bg-white/[0.08]")
                 }
               >
-                {sub}
+                {label}
               </button>
             );
           })}
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {categoryTiles.map(({ label, sub, image, to }) => (
+          {categoryTiles.map(({ label, Icon, to }) => (
             <button
               key={label}
               type="button"
-              onClick={() => (to ? navigate(to) : setActiveCategory(sub))}
-              className="group relative aspect-[4/3] overflow-hidden rounded-[20px] border border-white/10 text-left"
+              onClick={() => {
+                setActiveCategory(label);
+                if (to) navigate(to);
+              }}
+              className="group flex aspect-[4/3] flex-col items-center justify-center rounded-[20px] border border-white/10 bg-[#0d121d] text-center transition active:scale-[0.99]"
             >
-              <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover transition group-active:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-              <div className="absolute inset-x-3 bottom-3">
-                <p className="text-sm font-extrabold text-white">{label}</p>
-                <p className="text-xs text-white/70">{sub === "Nearby" ? "Live near you" : "Trending content"}</p>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035]">
+                <Icon className="h-6 w-6 text-[#7d89a0]" strokeWidth={1.6} />
               </div>
+              <p className="mt-3 text-sm font-extrabold text-white">{label}</p>
+              <p className="mt-1 text-[11px] text-[#768197]">Real content appears here</p>
             </button>
           ))}
         </div>
@@ -134,19 +142,10 @@ export default function BnmDiscover() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                ["Trending", Sparkles],
-                ["Nearby", MapPin],
-                ["Discover", Compass],
-                ["Creators", Sparkles],
-              ].map(([label, Icon]) => (
-                <div key={label} className="flex aspect-[3/4] flex-col items-center justify-center rounded-[22px] border border-white/10 bg-[#0d121d]">
-                  <Icon className="h-9 w-9 text-[#66728a]" strokeWidth={1.6} />
-                  <p className="mt-4 text-sm font-bold text-white">{label}</p>
-                  <p className="mt-1 text-xs text-[#768197]">Content will appear here</p>
-                </div>
-              ))}
+            <div className="flex min-h-56 flex-col items-center justify-center rounded-[24px] border border-white/10 bg-[#0d121d] px-8 text-center">
+              <Compass className="h-10 w-10 text-[#657189]" strokeWidth={1.6} />
+              <h3 className="mt-4 text-base font-extrabold text-white">Nothing to show yet</h3>
+              <p className="mt-2 text-sm leading-6 text-[#7e899f]">Public videos will appear here when real content is available.</p>
             </div>
           )}
         </section>
@@ -154,3 +153,4 @@ export default function BnmDiscover() {
     </BnmPage>
   );
 }
+
