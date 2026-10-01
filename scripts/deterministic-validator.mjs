@@ -184,6 +184,24 @@ requirePattern(
   "Reward transfer truthfulness",
   "processReward must explicitly state that no blockchain transfer is performed."
 );
+requirePattern(
+  "base44/functions/processReward/entry.ts",
+  /created_by:\s*dare\.challenger_email/,
+  "Dare reward notification recipient",
+  "Dare reward notifications must be assigned to the challenger."
+);
+requirePattern(
+  "base44/functions/processReward/entry.ts",
+  /created_by:\s*truth\.responder_email/,
+  "Truth reward notification recipient",
+  "Truth reward notifications must be assigned to the responder."
+);
+forbid(
+  "base44/functions/updateDareState/entry.ts",
+  /case\s+["']verify["']|action\s*===\s*["']verify["']/,
+  "Dare verifier separation",
+  "User state-transition code must not provide a self-verification action."
+);
 
 for (const entity of ["Dare", "Truth"]) {
   const rel = `base44/entities/${entity}.jsonc`;

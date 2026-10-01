@@ -1,7 +1,6 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { Target, Send, Inbox, ArrowUpRight, Upload, CheckCircle2, XCircle, Clock, Coins, Video } from "lucide-react";
+import { Target, Send, Inbox, ArrowUpRight, Upload, CheckCircle2, XCircle, Clock, Coins } from "lucide-react";
 
 const CATEGORIES = [
   { value: "kindness", label: "Kindness" },
@@ -41,7 +40,6 @@ function formatDate(date) {
 }
 
 export default function Dares() {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileRef = useRef(null);
@@ -72,11 +70,9 @@ export default function Dares() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data) => {
-      return base44.entities.Dare.create(data);
-    },
+    mutationFn: (data) => base44.functions.invoke("updateDareState", { action: "create", ...data }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["outgoingDares"]);
+      queryClient.invalidateQueries({ queryKey: ["outgoingDares"] });
       toast({ title: "Dare sent! 🎯", description: "Your kindness dare is on its way." });
       setForm({ challenger_email: "", challenge_text: "", category: "kindness", infinity_coin_stake: 10, expires_days: 7 });
     },
@@ -84,23 +80,25 @@ export default function Dares() {
   });
 
   const updateDareMutation = useMutation({
-    mutationFn: async ({ id, data }) => base44.entities.Dare.update(id, data),
+    mutationFn: ({ dareId, action, ...payload }) =>
+      base44.functions.invoke("updateDareState", { dare_id: dareId, action, ...payload }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["incomingDares"]);
-      queryClient.invalidateQueries(["outgoingDares"]);
+      queryClient.invalidateQueries({ queryKey: ["incomingDares"] });
+      queryClient.invalidateQueries({ queryKey: ["outgoingDares"] });
     },
   });
 
   const uploadProofMutation = useMutation({
     mutationFn: async ({ file, dareId }) => {
       const res = await base44.integrations.Core.UploadPublicFile({ file });
-      return base44.entities.Dare.update(dareId, {
+      return base44.functions.invoke("updateDareState", {
+        dare_id: dareId,
+        action: "submit_proof",
         video_url: res.file_url,
-        status: "submitted",
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["incomingDares"]);
+      queryClient.invalidateQueries({ queryKey: ["incomingDares"] });
       setProofDareId(null);
       if (fileRef.current) fileRef.current.value = "";
       toast({ title: "Proof submitted! ✅", description: "Your video is being reviewed." });
@@ -111,26 +109,22 @@ export default function Dares() {
   const handleCreate = (e) => {
     e.preventDefault();
     if (!form.challenger_email.trim() || !form.challenge_text.trim()) return;
-    const expires = new Date();
-    expires.setDate(expires.getDate() + Number(form.expires_days));
     createMutation.mutate({
-      initiator_email: user.email,
       challenger_email: form.challenger_email.trim(),
       challenge_text: form.challenge_text.trim(),
       category: form.category,
       infinity_coin_stake: Number(form.infinity_coin_stake),
-      expires_at: expires.toISOString(),
-      status: "pending",
+      expires_days: Number(form.expires_days),
     });
   };
 
   const handleAccept = (dare) => {
-    updateDareMutation.mutate({ id: dare.id, data: { status: "accepted" } });
+    updateDareMutation.mutate({ dareId: dare.id, action: "accept" });
     toast({ title: "Dare accepted! 💪", description: "Go spread some kindness." });
   };
 
   const handleDecline = (dare) => {
-    updateDareMutation.mutate({ id: dare.id, data: { status: "declined" } });
+    updateDareMutation.mutate({ dareId: dare.id, action: "decline" });
     toast({ title: "Dare declined" });
   };
 
@@ -140,21 +134,13 @@ export default function Dares() {
     uploadProofMutation.mutate({ file, dareId });
   };
 
-  const handleVerify = (dare) => {
-    updateDareMutation.mutate({
-      id: dare.id,
-      data: { video_verified: true, status: "verified", verification_note: "Verified by initiator.", completed_at: new Date().toISOString() },
-    });
-    toast({ title: "Dare verified! 🎉", description: "Reward is ready to process." });
-  };
-
   const handleProcessReward = async (dare) => {
     try {
       await base44.functions.invoke("processReward", { dare_id: dare.id });
-      queryClient.invalidateQueries(["incomingDares"]);
-      queryClient.invalidateQueries(["outgoingDares"]);
-      toast({ title: "Reward processed! 🪙", description: "Infinity Coin has been sent." });
-    } catch (err) {
+      queryClient.invalidateQueries({ queryKey: ["incomingDares"] });
+      queryClient.invalidateQueries({ queryKey: ["outgoingDares"] });
+      toast({ title: "Reward recorded 🪙", description: "Recorded in Be Near Me; no blockchain transfer was performed." });
+    } catch {
       toast({ title: "Reward failed", variant: "destructive" });
     }
   };
@@ -218,17 +204,15 @@ export default function Dares() {
             </Button>
           )}
           {!incoming && dare.status === "submitted" && !dare.video_verified && (
-            <Button size="sm" onClick={() => handleVerify(dare)} className="bg-green-600 hover:bg-green-700 rounded-full">
-              <CheckCircle2 className="w-4 h-4 mr-1" /> Verify
-            </Button>
+            <Badge className="bg-purple-500/20 text-purple-300">Awaiting independent verification</Badge>
           )}
           {!incoming && dare.status === "verified" && !dare.reward_paid && (
             <Button size="sm" onClick={() => handleProcessReward(dare)} className="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full">
-              <Coins className="w-4 h-4 mr-1" /> Pay Reward
+              <Coins className="w-4 h-4 mr-1" /> Record Reward
             </Button>
           )}
           {incoming && dare.status === "verified" && dare.reward_paid && (
-            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Reward received!</Badge>
+            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Reward recorded</Badge>
           )}
         </div>
 

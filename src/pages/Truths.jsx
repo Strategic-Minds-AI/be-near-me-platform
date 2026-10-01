@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -48,9 +48,9 @@ export default function Truths() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Truth.create(data),
+    mutationFn: (data) => base44.functions.invoke("updateTruthState", { action: "create", ...data }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["outgoingTruths"]);
+      queryClient.invalidateQueries({ queryKey: ["outgoingTruths"] });
       toast({ title: "Truth sent! 💬", description: "Waiting for a courageous reveal." });
       setForm({ responder_email: "", truth_prompt: "", infinity_coin_stake: 10, expires_days: 7 });
     },
@@ -58,55 +58,49 @@ export default function Truths() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Truth.update(id, data),
+    mutationFn: ({ truthId, action, ...payload }) =>
+      base44.functions.invoke("updateTruthState", { truth_id: truthId, action, ...payload }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["incomingTruths"]);
-      queryClient.invalidateQueries(["outgoingTruths"]);
+      queryClient.invalidateQueries({ queryKey: ["incomingTruths"] });
+      queryClient.invalidateQueries({ queryKey: ["outgoingTruths"] });
     },
   });
 
   const handleCreate = (e) => {
     e.preventDefault();
     if (!form.responder_email.trim() || !form.truth_prompt.trim()) return;
-    const expires = new Date();
-    expires.setDate(expires.getDate() + Number(form.expires_days));
     createMutation.mutate({
-      initiator_email: user.email,
       responder_email: form.responder_email.trim(),
       truth_prompt: form.truth_prompt.trim(),
       infinity_coin_stake: Number(form.infinity_coin_stake),
-      expires_at: expires.toISOString(),
-      status: "pending",
+      expires_days: Number(form.expires_days),
     });
   };
 
   const handleAccept = (truth) => {
-    updateMutation.mutate({ id: truth.id, data: { status: "accepted" } });
+    updateMutation.mutate({ truthId: truth.id, action: "accept" });
     toast({ title: "Truth accepted! 💪" });
   };
 
   const handleDecline = (truth) => {
-    updateMutation.mutate({ id: truth.id, data: { status: "declined" } });
+    updateMutation.mutate({ truthId: truth.id, action: "decline" });
     toast({ title: "Truth declined" });
   };
 
   const handleReveal = (truth) => {
     const text = revealText[truth.id]?.trim();
     if (!text) return;
-    updateMutation.mutate({
-      id: truth.id,
-      data: { status: "revealed", response_text: text, revealed_at: new Date().toISOString() },
-    });
+    updateMutation.mutate({ truthId: truth.id, action: "reveal", response_text: text });
     toast({ title: "Truth revealed! 🎉", description: "Your courage earned the reward." });
   };
 
   const handleProcessReward = async (truth) => {
     try {
       await base44.functions.invoke("processReward", { truth_id: truth.id });
-      queryClient.invalidateQueries(["incomingTruths"]);
-      queryClient.invalidateQueries(["outgoingTruths"]);
-      toast({ title: "Reward processed! 🪙" });
-    } catch (err) {
+      queryClient.invalidateQueries({ queryKey: ["incomingTruths"] });
+      queryClient.invalidateQueries({ queryKey: ["outgoingTruths"] });
+      toast({ title: "Reward recorded 🪙", description: "Recorded in Be Near Me; no blockchain transfer was performed." });
+    } catch {
       toast({ title: "Reward failed", variant: "destructive" });
     }
   };
@@ -176,11 +170,11 @@ export default function Truths() {
           )}
           {!isIncoming && truth.status === "revealed" && !truth.reward_paid && (
             <Button size="sm" onClick={() => handleProcessReward(truth)} className="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full">
-              <Coins className="w-4 h-4 mr-1" /> Pay Reward
+              <Coins className="w-4 h-4 mr-1" /> Record Reward
             </Button>
           )}
           {isIncoming && truth.status === "revealed" && truth.reward_paid && (
-            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Reward received!</Badge>
+            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Reward recorded</Badge>
           )}
         </div>
       </CardContent>
