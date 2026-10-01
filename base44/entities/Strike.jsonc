@@ -1,0 +1,91 @@
+{
+  "name": "Strike",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who received the strike"
+    },
+    "strike_number": {
+      "type": "number",
+      "description": "Which strike this is: 1, 2, or 3"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the strike was issued (positivity violation)"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "warning",
+        "timeout",
+        "removal"
+      ],
+      "description": "warning = strike 1 (slap on the wrist), timeout = strike 2 (5 days off), removal = strike 3 (removed + tokens redistributed)"
+    },
+    "timeout_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "For strike 2: when the 5-day timeout ends"
+    },
+    "removed": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when strike 3 removes the user from the platform"
+    },
+    "tokens_redistributed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user's Infinity Coin tokens were evenly distributed to other users"
+    },
+    "charity_donation_percent": {
+      "type": "number",
+      "default": 10,
+      "description": "Percent of redistributed tokens donated to charity (default 10)"
+    },
+    "reannihilation_eligible_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "For strike 3: date 6 months out when the user can petition for re-annihilation"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "user_email",
+    "strike_number",
+    "reason",
+    "type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

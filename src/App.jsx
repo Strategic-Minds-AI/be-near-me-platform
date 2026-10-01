@@ -17,6 +17,7 @@ import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
 import AIVideoStudio from '@/pages/AIVideoStudio';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
+import AIBuddy from '@/pages/AIBuddy';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -58,6 +59,11 @@ const AuthenticatedApp = () => {
       <Route path="/Camera" element={<Camera />} />
       <Route path="/About" element={<About />} />
       <Route path="/Contact" element={<Contact />} />
+      <Route path="/AIBuddy" element={
+        <LayoutWrapper currentPageName="AIBuddy">
+          <AIBuddy />
+        </LayoutWrapper>
+      } />
       <Route path="/Benchmark" element={
         <LayoutWrapper currentPageName="Benchmark">
           <Benchmark />

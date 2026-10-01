@@ -30,7 +30,8 @@ import {
   Plus,
   Target,
   Wallet,
-  Activity
+  Activity,
+  Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +76,7 @@ export default function Layout({ children, currentPageName }) {
     { icon: Compass, label: "Explore", page: "Explore" },
     { icon: PlaySquare, label: "Shorts", page: "Shorts" },
     { icon: PlaySquare, label: "Subscriptions", page: "Subscriptions" },
+    { icon: Sparkles, label: "AI Buddy", page: "AIBuddy" },
     { icon: Lightbulb, label: "Premium", page: "Premium" },
     { icon: Target, label: "Benchmark", page: "Benchmark" },
   ];
