@@ -73,17 +73,21 @@ export default function TikTokVideoCard({ video }) {
   return (
     <section
       ref={ref}
-      className="snap-start snap-always h-screen w-full flex items-center justify-center bg-black relative"
+      className="snap-start snap-always h-[100dvh] w-full flex items-center justify-center bg-black relative"
     >
       {isYouTube ? (
-        <iframe
-          src={active ? `${video.url}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&playsinline=1` : "about:blank"}
-          className="h-full w-full object-cover pointer-events-none"
-          frameBorder="0"
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-          title={video.title}
-        />
+        <>
+          <iframe
+            src={active ? `${video.url}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3` : "about:blank"}
+            className="h-full w-full object-cover pointer-events-none"
+            frameBorder="0"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+            title={video.title}
+          />
+          {/* Mask the YouTube watermark/logo in the top-left corner */}
+          <div className="absolute top-0 left-0 z-20 h-20 w-44 bg-gradient-to-r from-black via-black/85 to-transparent pointer-events-none" />
+        </>
       ) : (
         <video
           ref={videoRef}
