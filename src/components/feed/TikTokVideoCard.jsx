@@ -18,7 +18,7 @@ export default function TikTokVideoCard({ video }) {
   const [progress, setProgress] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
 
-  const shareUrl = `${window.location.origin}/Watch?id=${video.id}`;
+  const shareUrl = `${window.location.origin}/Watch?v=${video.id}`;
 
   useEffect(() => {
     const el = ref.current;
@@ -151,7 +151,7 @@ export default function TikTokVideoCard({ video }) {
           <Heart className={`w-9 h-9 drop-shadow transition-transform ${liked ? "fill-pink-500 text-pink-500 scale-110" : "text-white"}`} />
           <span className="text-xs font-semibold">{fmt((video.likes || 0) + (liked ? 1 : 0))}</span>
         </button>
-        <Link to={createPageUrl(`Watch?id=${video.id}`)} className="flex flex-col items-center gap-1">
+        <Link to={createPageUrl(`Watch?v=${video.id}`)} className="flex flex-col items-center gap-1">
           <MessageCircle className="w-9 h-9 drop-shadow text-white" />
           <span className="text-xs font-semibold">{fmt(video.comments_count)}</span>
         </Link>

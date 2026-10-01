@@ -76,7 +76,7 @@ export default function Upload() {
 
   const { data: channel } = useQuery({
     queryKey: ['myChannel', user?.email],
-    queryFn: () => base44.entities.Channel.filter({ created_by: user?.email }),
+    queryFn: async () => (await base44.entities.Channel.filter({ created_by: user?.email }, { limit: 1 })).items,
     enabled: !!user?.email,
   });
 
@@ -119,12 +119,12 @@ export default function Upload() {
       setIsUploading(true);
       setUploadProgress(10);
 
-      const videoResult = await base44.integrations.Core.UploadFile({ file: videoFile });
+      const videoResult = await base44.integrations.Core.UploadPublicFile({ file: videoFile });
       setUploadProgress(50);
 
       let thumbnailUrl = "";
       if (thumbnailFile) {
-        const thumbResult = await base44.integrations.Core.UploadFile({ file: thumbnailFile });
+        const thumbResult = await base44.integrations.Core.UploadPublicFile({ file: thumbnailFile });
         thumbnailUrl = thumbResult.file_url;
       }
       setUploadProgress(70);
@@ -151,7 +151,7 @@ export default function Upload() {
         published_at: new Date().toISOString(),
       });
 
-      const subscriptions = await base44.entities.Subscription.filter({ channel_id: myChannel.id });
+      const subscriptions = (await base44.entities.Subscription.filter({ channel_id: myChannel.id }, { limit: 50 })).items;
       if (subscriptions?.length > 0) {
         await Promise.all(
           subscriptions.slice(0, 50).map((sub) =>

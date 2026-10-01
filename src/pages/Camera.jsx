@@ -56,7 +56,7 @@ export default function Camera() {
   const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => base44.auth.me() });
   const { data: channel } = useQuery({
     queryKey: ["myChannel", user?.email],
-    queryFn: () => base44.entities.Channel.filter({ created_by: user?.email }),
+    queryFn: async () => (await base44.entities.Channel.filter({ created_by: user?.email }, { limit: 1 })).items,
     enabled: !!user?.email,
   });
   const myChannel = channel?.[0];
@@ -182,10 +182,10 @@ export default function Camera() {
       setPosting(true);
       const blob = videoBlobRef.current;
       const file = new File([blob], `clip-${Date.now()}.webm`, { type: "video/webm" });
-      const vRes = await base44.integrations.Core.UploadFile({ file });
+      const vRes = await base44.integrations.Core.UploadPublicFile({ file });
       let thumbUrl = "";
       if (thumbBlobRef.current) {
-        const tRes = await base44.integrations.Core.UploadFile({ file: new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }) });
+        const tRes = await base44.integrations.Core.UploadPublicFile({ file: new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }) });
         thumbUrl = tRes.file_url;
       }
       const newVideo = await base44.entities.Video.create({
@@ -206,7 +206,7 @@ export default function Camera() {
       });
       if (myChannel) {
         await base44.entities.Channel.update(myChannel.id, { videos_count: (myChannel.videos_count || 0) + 1 });
-        const subs = await base44.entities.Subscription.filter({ channel_id: myChannel.id });
+        const subs = (await base44.entities.Subscription.filter({ channel_id: myChannel.id }, { limit: 50 })).items;
         if (subs?.length) {
           await Promise.all(subs.slice(0, 50).map((sub) =>
             base44.entities.Notification.create({

@@ -87,48 +87,47 @@ export default function Watch() {
 
   const { data: video, isLoading: videoLoading } = useQuery({
     queryKey: ['video', videoId],
-    queryFn: () => base44.entities.Video.filter({ id: videoId }),
+    queryFn: async () => (await base44.entities.Video.filter({ id: videoId }, { limit: 1 })).items,
     enabled: !!videoId,
   });
 
   const { data: channel } = useQuery({
     queryKey: ['channel', video?.[0]?.created_by],
-    queryFn: () => base44.entities.Channel.filter({ created_by: video?.[0]?.created_by }),
+    queryFn: async () => (await base44.entities.Channel.filter({ created_by: video?.[0]?.created_by }, { limit: 1 })).items,
     enabled: !!video?.[0]?.created_by,
   });
 
   const { data: comments, isLoading: commentsLoading } = useQuery({
     queryKey: ['comments', videoId],
-    queryFn: () => base44.entities.Comment.filter({ video_id: videoId }, "-created_date", 50),
+    queryFn: async () => (await base44.entities.Comment.filter({ video_id: videoId }, { sort: "-created_date", limit: 50 })).items,
     enabled: !!videoId,
   });
 
   const { data: suggestedVideos } = useQuery({
     queryKey: ['suggested', video?.[0]?.category],
-    queryFn: () => base44.entities.Video.filter(
+    queryFn: async () => (await base44.entities.Video.filter(
       { visibility: "public", category: video?.[0]?.category },
-      "-views",
-      20
-    ),
+      { sort: "-views", limit: 20 }
+    )).items,
     enabled: !!video?.[0]?.category,
   });
 
   const { data: subscription } = useQuery({
     queryKey: ['subscription', channel?.[0]?.id, user?.email],
-    queryFn: () => base44.entities.Subscription.filter({ 
-      channel_id: channel?.[0]?.id, 
-      created_by: user?.email 
-    }),
+    queryFn: async () => (await base44.entities.Subscription.filter({
+      channel_id: channel?.[0]?.id,
+      created_by: user?.email
+    }, { limit: 1 })).items,
     enabled: !!channel?.[0]?.id && !!user?.email,
   });
 
   const { data: existingReaction } = useQuery({
     queryKey: ['reaction', videoId, user?.email],
-    queryFn: () => base44.entities.Reaction.filter({ 
-      target_id: videoId, 
+    queryFn: async () => (await base44.entities.Reaction.filter({
+      target_id: videoId,
       target_type: "video",
-      created_by: user?.email 
-    }),
+      created_by: user?.email
+    }, { limit: 1 })).items,
     enabled: !!videoId && !!user?.email,
   });
 

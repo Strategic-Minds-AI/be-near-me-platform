@@ -22,7 +22,8 @@ export default function TikTokFeed() {
         const res = await base44.functions.invoke('recommendVideos', { limit: 30 });
         return res.data?.videos || [];
       }
-      return base44.entities.Video.filter({ visibility: "public" }, "-views", 30);
+      const page = await base44.entities.Video.filter({ visibility: "public" }, { sort: "-views", limit: 30 });
+      return page.items || [];
     },
   });
 
