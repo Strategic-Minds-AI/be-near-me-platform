@@ -108,6 +108,27 @@ requirePattern(
   "Auto scraper governed service write",
   "Scheduled system ingestion must use an explicit service-role write."
 );
+
+requirePattern(
+  "base44/functions/autoScraper/entry.ts",
+  /auth\.me\(\)[\s\S]*user\.role\s*!==\s*['"]admin['"]/,
+  "Auto scraper admin authentication gate",
+  "autoScraper must authenticate and require an admin caller before service-role operations."
+);
+forbid(
+  "base44/functions/autoScraper/entry.ts",
+  /workflow context\s*[—-]\s*no user session/i,
+  "Auto scraper anonymous workflow fallback",
+  "autoScraper must not treat an unauthenticated scheduled workflow as a trusted caller."
+);
+if (exists("base44/workflows/Daily Video Scraper.jsonc")) {
+  fail(
+    "Single-heartbeat scraper scheduling",
+    "Recurring Base44 Daily Video Scraper workflow must not coexist with the governed single-heartbeat scheduler."
+  );
+} else {
+  pass("Single-heartbeat scraper scheduling");
+}
 requirePattern(
   "base44/functions/scrapeVideos/entry.ts",
   /visibility:\s*['"]unlisted['"]/,
