@@ -1,0 +1,74 @@
+{
+  "auth": "oauth",
+  "tools": {
+    "functions": [
+      {
+        "name": "generate_clip_assets",
+        "title": "Generate AI clip assets",
+        "description": "Analyzes a video owned by the signed-in creator and returns 8 short-clip concepts with timestamp ranges and hooks, 10 SEO title variants, 5 thumbnail concepts, auto-generated chapters, and a 200-word SEO description. Call when a creator wants repurposing assets for one of their videos.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "videoId": {
+              "type": "string",
+              "description": "The id of the Video record to analyze. The signed-in user must own the video."
+            }
+          },
+          "required": ["videoId"]
+        },
+        "handler": "aiClipFactory",
+        "annotations": {
+          "read_only_hint": true,
+          "destructive_hint": false,
+          "idempotent_hint": false
+        }
+      },
+      {
+        "name": "calculate_creator_reputation",
+        "title": "Calculate creator reputation",
+        "description": "Computes a 0-100 reputation score for a channel from upload consistency, watch time, engagement, growth, strikes and reports, assigns a level (bronze/silver/gold/platinum), checks monetization and featured eligibility, and upserts a CreatorReputation record. Pass channelId to score a specific channel; omit to score the signed-in user's own channel.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "channelId": {
+              "type": "string",
+              "description": "Optional Channel id to score. Omit to use the signed-in user's own channel."
+            }
+          },
+          "required": []
+        },
+        "handler": "calculateReputation",
+        "annotations": {
+          "read_only_hint": false,
+          "destructive_hint": false,
+          "idempotent_hint": true
+        }
+      },
+      {
+        "name": "recommend_videos",
+        "title": "Recommend videos",
+        "description": "Returns a personalized feed of up to 50 public videos for the signed-in user using a 3-layer engine (popularity, personalization from watch history and subscriptions, exploration). Optionally filter by a single category. Call when a user wants a recommended video list.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "number",
+              "description": "Maximum videos to return, 1-50. Defaults to 30."
+            },
+            "category": {
+              "type": "string",
+              "description": "Optional category filter (case-insensitive). Use 'All' or omit for no filter."
+            }
+          },
+          "required": []
+        },
+        "handler": "recommendVideos",
+        "annotations": {
+          "read_only_hint": true,
+          "destructive_hint": false,
+          "idempotent_hint": false
+        }
+      }
+    ]
+  }
+}

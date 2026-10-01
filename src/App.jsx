@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import OAuthConsent from '@/pages/OAuthConsent';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -44,6 +45,9 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      {/* MCP OAuth consent page — mounted outside the app layout; it handles
+          the signed-out case itself, so it must not sit behind an auth guard. */}
+      <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />
