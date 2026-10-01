@@ -1,0 +1,83 @@
+{
+  "name": "Wallet",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string",
+      "description": "Checksummed public wallet address (private key is never stored)"
+    },
+    "chain": {
+      "type": "string",
+      "enum": [
+        "ethereum"
+      ],
+      "default": "ethereum"
+    },
+    "network": {
+      "type": "string",
+      "enum": [
+        "mainnet",
+        "sepolia"
+      ],
+      "default": "mainnet",
+      "description": "mainnet = Ethereum mainnet, sepolia = testnet"
+    },
+    "label": {
+      "type": "string",
+      "description": "User-assigned wallet label"
+    },
+    "balance_eth": {
+      "type": "number",
+      "default": 0,
+      "description": "Last fetched ETH balance"
+    },
+    "last_checked_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "address"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

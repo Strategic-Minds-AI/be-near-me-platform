@@ -12,6 +12,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
 import Benchmark from '@/pages/Benchmark';
 import Camera from '@/pages/Camera';
+import Wallet from '@/pages/Wallet';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -54,6 +55,11 @@ const AuthenticatedApp = () => {
       <Route path="/Benchmark" element={
         <LayoutWrapper currentPageName="Benchmark">
           <Benchmark />
+        </LayoutWrapper>
+      } />
+      <Route path="/Wallet" element={
+        <LayoutWrapper currentPageName="Wallet">
+          <Wallet />
         </LayoutWrapper>
       } />
       <Route path="/" element={

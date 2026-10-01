@@ -28,7 +28,8 @@ import {
   Shield,
   ChevronDown,
   Plus,
-  Target
+  Target,
+  Wallet
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -280,6 +281,12 @@ export default function Layout({ children, currentPageName }) {
                     </DropdownMenuItem>
                   )}
                   
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("Wallet")} className="flex items-center gap-2 cursor-pointer">
+                      <Wallet className="w-4 h-4" />
+                      My Wallet
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to={createPageUrl("Settings")} className="flex items-center gap-2 cursor-pointer">
                       <Settings className="w-4 h-4" />
