@@ -18,6 +18,10 @@ export default function TikTokVideoCard({ video }) {
   const [progress, setProgress] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
 
+  const ytMatch = video.url?.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+  const isYouTube = !!ytMatch;
+  const ytId = ytMatch?.[1] || '';
+
   const shareUrl = `${window.location.origin}/Watch?v=${video.id}`;
 
   useEffect(() => {
@@ -71,34 +75,49 @@ export default function TikTokVideoCard({ video }) {
       ref={ref}
       className="snap-start snap-always h-[calc(100vh-4rem)] w-full flex items-center justify-center bg-black relative"
     >
-      <video
-        ref={videoRef}
-        src={video.url}
-        poster={video.poster_url || video.thumbnail_url}
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        onClick={handleTap}
-        onTimeUpdate={(e) => {
-          const v = e.currentTarget;
-          if (v.duration) setProgress((v.currentTime / v.duration) * 100);
-        }}
-        className="h-full w-full object-cover"
-      />
+      {isYouTube ? (
+        <iframe
+          src={active ? `${video.url}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&playsinline=1` : "about:blank"}
+          className="h-full w-full object-cover pointer-events-none"
+          frameBorder="0"
+          allow="autoplay; encrypted-media; fullscreen"
+          allowFullScreen
+          title={video.title}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          src={video.url}
+          poster={video.poster_url || video.thumbnail_url}
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          onClick={handleTap}
+          onTimeUpdate={(e) => {
+            const v = e.currentTarget;
+            if (v.duration) setProgress((v.currentTime / v.duration) * 100);
+          }}
+          className="h-full w-full object-cover"
+        />
+      )}
 
       {/* Progress bar */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-white/15 z-20">
-        <div className="h-full bg-white transition-[width] duration-100" style={{ width: `${progress}%` }} />
-      </div>
+      {!isYouTube && (
+        <div className="absolute top-0 left-0 right-0 h-1 bg-white/15 z-20">
+          <div className="h-full bg-white transition-[width] duration-100" style={{ width: `${progress}%` }} />
+        </div>
+      )}
 
       {/* Mute toggle */}
-      <button
-        onClick={() => setMuted((m) => !m)}
-        className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"
-      >
-        {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-      </button>
+      {!isYouTube && (
+        <button
+          onClick={() => setMuted((m) => !m)}
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"
+        >
+          {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+        </button>
+      )}
 
       {/* Double-tap heart pop */}
       <AnimatePresence>
@@ -115,7 +134,7 @@ export default function TikTokVideoCard({ video }) {
         )}
       </AnimatePresence>
 
-      {paused && active && (
+      {!isYouTube && paused && active && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <Play className="w-16 h-16 text-white/80 drop-shadow-lg" />
         </div>

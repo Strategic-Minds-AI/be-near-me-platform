@@ -21,6 +21,7 @@ import AIBuddy from '@/pages/AIBuddy';
 import Onboarding from '@/pages/Onboarding';
 import Dares from '@/pages/Dares';
 import Truths from '@/pages/Truths';
+import VideoScraper from '@/pages/VideoScraper';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -80,6 +81,11 @@ const AuthenticatedApp = () => {
       <Route path="/Truths" element={
         <LayoutWrapper currentPageName="Truths">
           <Truths />
+        </LayoutWrapper>
+      } />
+      <Route path="/VideoScraper" element={
+        <LayoutWrapper currentPageName="VideoScraper">
+          <VideoScraper />
         </LayoutWrapper>
       } />
       <Route path="/Benchmark" element={

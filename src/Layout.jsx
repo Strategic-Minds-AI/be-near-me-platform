@@ -20,6 +20,7 @@ import {
   Target,
   MessageCircleHeart,
   X,
+  Youtube,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -149,6 +150,13 @@ export default function Layout({ children, currentPageName }) {
                       <DropdownMenuItem asChild>
                         <Link to={createPageUrl("AnalyticsTraffic")} className="flex items-center gap-2 cursor-pointer">
                           <Activity className="w-4 h-4" /> Platform Analytics
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    {user.role === 'admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("VideoScraper")} className="flex items-center gap-2 cursor-pointer">
+                          <Youtube className="w-4 h-4" /> Video Scraper
                         </Link>
                       </DropdownMenuItem>
                     )}
