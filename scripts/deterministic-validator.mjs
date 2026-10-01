@@ -253,6 +253,19 @@ forbid(
   "TokenGenerator must describe a definition/proposal, not a deployed token."
 );
 
+forbid(
+  "src/components/wallet/TokenGenerator.jsx",
+  /getCreateAddress|getCreate2Address|Contract address is derived/i,
+  "Token address truthfulness",
+  "TokenGenerator must not fabricate a prospective contract address before deployment."
+);
+requirePattern(
+  "src/components/wallet/TokenGenerator.jsx",
+  /No smart contract is deployed|No blockchain deployment occurred/i,
+  "Token definition disclosure",
+  "TokenGenerator must clearly disclose that saving a definition performs no blockchain deployment."
+);
+
 const phase = process.env.VALIDATION_PHASE || "hardening";
 if (phase === "release") {
   requireFile("public/robots.txt", "Release robots.txt");
