@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
+import BrandLogo from "@/components/BrandLogo";
 import { useQuery } from "@tanstack/react-query";
 import {
   Home,
@@ -208,7 +209,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
-              <img src="https://media.base44.com/images/public/6abd9e05a56938f03c2c557b/a04d45d75_image.png" alt="BeNearMe" className="h-8 w-auto rounded-md bg-white px-1 py-0.5" />
+              <BrandLogo className="h-8 w-auto" />
             </Link>
           </div>
 
