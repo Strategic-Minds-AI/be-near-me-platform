@@ -7,16 +7,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 const YT_ID_RE = /watch\?v=([a-zA-Z0-9_-]{11})/g;
 
 const TRENDING_QUERIES = [
-  'trending viral videos today',
-  'most popular videos this week',
-  'inspirational viral video',
-  'feel good viral video',
+  'random acts of kindness',
   'kindness challenge video',
-  'epoxy floor installation tutorial',
-  'concrete polishing tutorial',
-  'DIY home improvement viral',
   'wholesome moments',
+  'feel good viral video',
   'positive news today',
+  'community volunteering stories',
+  'helping strangers kindness',
+  'uplifting community stories',
+  'friendship challenge kindness',
+  'people doing good today',
 ];
 
 async function getMeta(id: string) {
@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
     // 2. Get existing YouTube video IDs to avoid duplicates
     let existingIds = new Set<string>();
     try {
-      const existing = await base44.entities.Video.filter(
+      const existing = await base44.asServiceRole.entities.Video.filter(
         { url: { $regex: 'youtube.com/embed' } },
         '-created_date',
         500
@@ -100,17 +100,17 @@ Deno.serve(async (req) => {
 
     const records = videos.map((v) => ({
       title: v.title,
-      description: `Auto-imported trending video from ${v.channel_name}`,
+      description: `Review candidate from ${v.channel_name} on YouTube`,
       url: `https://www.youtube.com/embed/${v.youtube_id}`,
       thumbnail_url: v.thumbnail_url,
       poster_url: v.thumbnail_url,
       category: 'entertainment',
-      tags: ['scraped', 'youtube', 'auto', 'trending'],
-      visibility: 'public',
+      tags: ['scraped', 'youtube', 'auto', 'trending', 'review_required'],
+      visibility: 'unlisted',
       processing_status: 'done',
       channel_id: channel?.id || '',
       channel_name: v.channel_name,
-      views: Math.floor(Math.random() * 10000) + 100,
+      views: 0,
       likes: 0,
       dislikes: 0,
       comments_count: 0,
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     }));
 
     if (records.length > 0) {
-      await base44.entities.Video.bulkCreate(records);
+      await base44.asServiceRole.entities.Video.bulkCreate(records);
     }
 
     return Response.json({
