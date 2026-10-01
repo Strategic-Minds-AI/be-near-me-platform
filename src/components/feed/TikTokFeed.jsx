@@ -69,14 +69,14 @@ export default function TikTokFeed() {
       style={{ scrollbarWidth: 'none' }}
     >
       {/* Trending hashtags bar — floats over the feed, fades on scroll */}
-      <div className={`sticky top-0 z-20 flex items-center gap-2 px-3 py-2 overflow-x-auto no-scrollbar bg-gradient-to-b from-black/70 to-transparent transition-opacity duration-300 ${tagsHidden ? 'opacity-0' : 'opacity-100'}`}>
-        <Flame className="w-4 h-4 text-pink-500 flex-shrink-0" />
+      <div className={`sticky top-0 z-20 flex items-center gap-2 px-3 py-2.5 overflow-x-auto no-scrollbar bg-gradient-to-b from-black/80 to-transparent transition-opacity duration-300 ${tagsHidden ? 'opacity-0' : 'opacity-100'}`}>
+        <Flame className="w-4 h-4 text-pink-500 flex-shrink-0 drop-shadow-[0_0_6px_rgba(236,72,153,0.6)]" />
         {TRENDING_TAGS.map((tag) => (
-          <span key={tag} className="text-xs font-semibold text-white/90 bg-white/10 px-3 py-1 rounded-full whitespace-nowrap">
+          <span key={tag} className="text-xs font-bold text-white bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full whitespace-nowrap">
             {tag}
           </span>
         ))}
-        <Link to="/Trending" className="text-xs font-bold text-pink-400 bg-pink-500/20 border border-pink-500/30 px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-1 flex-shrink-0">
+        <Link to="/Trending" className="text-xs font-bold text-white bg-gradient-to-r from-pink-500 to-fuchsia-600 border border-pink-400/40 px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-1 flex-shrink-0 shadow-[0_0_12px_rgba(236,72,153,0.4)]">
           <TrendingUp className="w-3 h-3" /> Top Videos
         </Link>
       </div>

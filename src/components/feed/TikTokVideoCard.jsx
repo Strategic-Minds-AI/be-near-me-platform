@@ -105,7 +105,7 @@ export default function TikTokVideoCard({ video }) {
       {/* Progress bar */}
       {!isYouTube && (
         <div className="absolute top-0 left-0 right-0 h-1 bg-white/15 z-20">
-          <div className="h-full bg-white transition-[width] duration-100" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-gradient-to-r from-pink-500 to-fuchsia-500 transition-[width] duration-100 shadow-[0_0_8px_rgba(236,72,153,0.6)]" style={{ width: `${progress}%` }} />
         </div>
       )}
 
@@ -113,7 +113,7 @@ export default function TikTokVideoCard({ video }) {
       {!isYouTube && (
         <button
           onClick={() => setMuted((m) => !m)}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"
+          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-lg"
         >
           {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
         </button>
@@ -140,47 +140,55 @@ export default function TikTokVideoCard({ video }) {
         </div>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
       {/* Creator + caption */}
-      <div className="absolute left-4 bottom-6 right-20 text-white z-10">
+      <div className="absolute left-4 bottom-6 right-20 text-white z-10" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
         <Link to={createPageUrl(`Channel?id=${video.channel_id}`)} className="block mb-2">
-          <span className="font-bold text-base drop-shadow">@{video.channel_name || "creator"}</span>
+          <span className="font-extrabold text-lg tracking-tight">@{video.channel_name || "creator"}</span>
         </Link>
-        <p className="text-sm leading-snug line-clamp-3 drop-shadow">{video.title}</p>
+        <p className="font-semibold text-sm leading-snug line-clamp-3">{video.title}</p>
         {video.tags?.length > 0 && (
-          <p className="text-xs text-white/70 mt-1 line-clamp-1">
+          <p className="text-xs font-medium text-white/80 mt-1.5 line-clamp-1">
             {video.tags.slice(0, 4).map((t) => `#${t}`).join(" ")}
           </p>
         )}
-        <div className="flex items-center gap-2 mt-2 text-xs text-white/80">
+        <div className="flex items-center gap-2 mt-2 text-xs font-medium text-white/90">
           <Music2 className="w-3.5 h-3.5 animate-spin" />
           <span className="line-clamp-1">Original audio · {video.category || "video"}</span>
         </div>
       </div>
 
-      {/* Right action rail */}
-      <div className="absolute right-3 bottom-6 flex flex-col items-center gap-5 text-white z-10">
+      {/* Right action rail — premium frosted glass buttons */}
+      <div className="absolute right-3 bottom-6 flex flex-col items-center gap-4 text-white z-10" style={{ textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
         <Link to={createPageUrl(`Channel?id=${video.channel_id}`)}>
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-lg font-bold border-2 border-white">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-600 flex items-center justify-center text-lg font-bold border-2 border-white shadow-[0_0_16px_rgba(236,72,153,0.4)]">
             {(video.channel_name || "B")[0]?.toUpperCase()}
           </div>
         </Link>
-        <button onClick={() => setLiked((l) => !l)} className="flex flex-col items-center gap-1">
-          <Heart className={`w-9 h-9 drop-shadow transition-transform ${liked ? "fill-pink-500 text-pink-500 scale-110" : "text-white"}`} />
-          <span className="text-xs font-semibold">{fmt((video.likes || 0) + (liked ? 1 : 0))}</span>
+        <button onClick={() => setLiked((l) => !l)} className="flex flex-col items-center gap-1 group">
+          <div className={`w-11 h-11 rounded-full backdrop-blur-md border flex items-center justify-center transition-all group-hover:bg-white/10 group-hover:shadow-[0_0_16px_rgba(236,72,153,0.4)] ${liked ? 'bg-pink-500/20 border-pink-500/60' : 'bg-black/30 border-white/20 group-hover:border-pink-500/50'}`}>
+            <Heart className={`w-7 h-7 transition-transform ${liked ? "fill-pink-500 text-pink-500 scale-110" : "text-white"}`} />
+          </div>
+          <span className="text-xs font-bold">{fmt((video.likes || 0) + (liked ? 1 : 0))}</span>
         </button>
-        <Link to={createPageUrl(`Watch?v=${video.id}`)} className="flex flex-col items-center gap-1">
-          <MessageCircle className="w-9 h-9 drop-shadow text-white" />
-          <span className="text-xs font-semibold">{fmt(video.comments_count)}</span>
+        <Link to={createPageUrl(`Watch?v=${video.id}`)} className="flex flex-col items-center gap-1 group">
+          <div className="w-11 h-11 rounded-full bg-black/30 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all group-hover:bg-white/10 group-hover:border-pink-500/50 group-hover:shadow-[0_0_16px_rgba(236,72,153,0.4)]">
+            <MessageCircle className="w-7 h-7 text-white" />
+          </div>
+          <span className="text-xs font-bold">{fmt(video.comments_count)}</span>
         </Link>
-        <button className="flex flex-col items-center gap-1">
-          <Bookmark className="w-9 h-9 drop-shadow text-white" />
-          <span className="text-xs font-semibold">Save</span>
+        <button className="flex flex-col items-center gap-1 group">
+          <div className="w-11 h-11 rounded-full bg-black/30 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all group-hover:bg-white/10 group-hover:border-pink-500/50 group-hover:shadow-[0_0_16px_rgba(236,72,153,0.4)]">
+            <Bookmark className="w-7 h-7 text-white" />
+          </div>
+          <span className="text-xs font-bold">Save</span>
         </button>
-        <button onClick={() => setShareOpen(true)} className="flex flex-col items-center gap-1">
-          <Share2 className="w-9 h-9 drop-shadow text-white" />
-          <span className="text-xs font-semibold">Share</span>
+        <button onClick={() => setShareOpen(true)} className="flex flex-col items-center gap-1 group">
+          <div className="w-11 h-11 rounded-full bg-black/30 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all group-hover:bg-white/10 group-hover:border-pink-500/50 group-hover:shadow-[0_0_16px_rgba(236,72,153,0.4)]">
+            <Share2 className="w-7 h-7 text-white" />
+          </div>
+          <span className="text-xs font-bold">Share</span>
         </button>
       </div>
 

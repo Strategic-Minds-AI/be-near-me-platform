@@ -85,7 +85,7 @@ export default function Layout({ children, currentPageName }) {
     <div className="relative min-h-screen bg-black text-white overflow-x-hidden">
       {/* ── Top bar (hidden on full-screen feed) ── */}
       {!isFeed && (
-        <header className="fixed top-0 inset-x-0 h-14 z-40 bg-black/95 backdrop-blur-lg border-b border-white/5">
+        <header className="fixed top-0 inset-x-0 h-14 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
           <div className="flex items-center justify-between h-full px-4">
             <Link to={createPageUrl("Home")} className="flex items-center gap-2">
               <BrandLogo className="h-7 w-auto" />
@@ -288,8 +288,9 @@ export default function Layout({ children, currentPageName }) {
         {children}
       </main>
 
-      {/* ── Bottom navigation (TikTok style) ── */}
-      <nav className="fixed bottom-0 inset-x-0 h-14 z-50 bg-black/95 backdrop-blur-lg border-t border-white/10">
+      {/* ── Bottom navigation (Premium) ── */}
+      <nav className="fixed bottom-0 inset-x-0 h-14 z-50 bg-black/80 backdrop-blur-xl border-t border-white/10">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
         <div className="flex items-center justify-around h-full max-w-md mx-auto px-2">
           {bottomNav.map((item) => {
             const active = isActive(item.page);
@@ -300,8 +301,8 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   className="flex items-center justify-center"
                 >
-                  <div className="w-11 h-7 rounded-lg bg-white flex items-center justify-center shadow-lg">
-                    <item.icon className="w-5 h-5 text-black" strokeWidth={2.5} />
+                  <div className="w-12 h-8 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-600 flex items-center justify-center shadow-[0_0_20px_rgba(236,72,153,0.5)]">
+                    <item.icon className="w-5 h-5 text-white" strokeWidth={2.5} />
                   </div>
                 </Link>
               );
@@ -313,10 +314,10 @@ export default function Layout({ children, currentPageName }) {
                 className="flex flex-col items-center justify-center gap-0.5 flex-1 py-1"
               >
                 <item.icon
-                  className={`w-6 h-6 transition-colors ${active ? "text-white" : "text-gray-500"}`}
+                  className={`w-6 h-6 transition-all ${active ? "text-white drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]" : "text-gray-500"}`}
                   strokeWidth={active ? 2.4 : 2}
                 />
-                <span className={`text-[10px] font-medium transition-colors ${active ? "text-white" : "text-gray-500"}`}>
+                <span className={`text-[10px] font-bold transition-all ${active ? "text-white" : "text-gray-500"}`}>
                   {item.label}
                 </span>
               </Link>
