@@ -25,6 +25,7 @@ import {
   Server,
   Library,
   Wand2,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -165,6 +166,11 @@ export default function Layout({ children, currentPageName }) {
                     <DropdownMenuItem asChild>
                       <Link to={createPageUrl("PictureToVideo")} className="flex items-center gap-2 cursor-pointer">
                         <Wand2 className="w-4 h-4" /> Picture to Video
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("MediaKit")} className="flex items-center gap-2 cursor-pointer">
+                        <FileText className="w-4 h-4" /> Creator Media Kit
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
