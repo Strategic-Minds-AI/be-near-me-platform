@@ -1,6 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { generateVideo } from "../../shared/vercelAiGateway.ts";
 
 // 10 one-tap AI video presets. Single source of truth for the AIVideoStudio page.
+// Now powered by Vercel AI Gateway (Veo 3.1) — no Base44 integration credits required.
 const PRESETS = {
   neon_city: {
     title: "Neon Cyberpunk City",
@@ -68,12 +70,8 @@ export default async function(req) {
     const chRes = await base44.entities.Channel.filter({ created_by: user.email });
     const channel = Array.isArray(chRes) ? chRes[0] : chRes?.items?.[0];
 
-    // Generate the video via the Core integration (single touch)
-    const gen = await base44.asServiceRole.integrations.Core.GenerateVideo({
-      prompt: preset.prompt,
-      duration: 6,
-      aspect_ratio: "9:16",
-    });
+    // Generate the video via Vercel AI Gateway (Veo 3.1)
+    const gen = await generateVideo(preset.prompt, { duration: 6, aspectRatio: "9:16" });
 
     if (!gen?.url) return Response.json({ error: "Generation returned no video" }, { status: 502 });
 

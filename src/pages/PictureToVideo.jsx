@@ -44,6 +44,16 @@ export default function PictureToVideo() {
   const allUploaded = images.length > 0 && images.every((img) => img.url && !img.uploading);
   const pictureUrls = images.filter((img) => img.url).map((img) => img.url);
 
+  // Convert a File to a base64 data URL — sent directly to the backend function,
+  // bypassing UploadPublicFile (no Base44 integration credits needed).
+  const fileToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -62,12 +72,12 @@ export default function PictureToVideo() {
 
     for (const img of newImages) {
       try {
-        const res = await base44.integrations.Core.UploadPublicFile({ file: img.file });
+        const base64 = await fileToBase64(img.file);
         setImages((prev) =>
-          prev.map((p) => (p.id === img.id ? { ...p, url: res.file_url, uploading: false } : p))
+          prev.map((p) => (p.id === img.id ? { ...p, url: base64, uploading: false } : p))
         );
       } catch (err) {
-        const msg = err?.message || err?.response?.data?.error || "Upload failed";
+        const msg = err?.message || "Failed to process image";
         setImages((prev) =>
           prev.map((p) => (p.id === img.id ? { ...p, uploading: false, error: msg } : p))
         );

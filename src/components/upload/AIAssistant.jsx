@@ -15,14 +15,14 @@ export default function AIAssistant({ videoTitle, videoCategory, onApply }) {
     setSuggestions(null);
     setApplied({});
 
-    const result = await base44.integrations.Core.InvokeLLM({
+    const res = await base44.functions.invoke("aiChat", {
       prompt: `You are an expert YouTube SEO assistant. Given the video title "${videoTitle}" in the "${videoCategory || "general"}" category, generate:
 1. Three alternative optimized titles (catchy, SEO-friendly, under 70 chars each)
 2. A compelling video description (150-200 words, includes keywords, ends with CTA)
 3. Ten relevant tags (single words or short phrases, comma-separated)
 
 Respond only as JSON.`,
-      response_json_schema: {
+      jsonSchema: {
         type: "object",
         properties: {
           titles: { type: "array", items: { type: "string" } },
@@ -32,7 +32,7 @@ Respond only as JSON.`,
       }
     });
 
-    setSuggestions(result);
+    setSuggestions(res.data);
     setIsGenerating(false);
   };
 

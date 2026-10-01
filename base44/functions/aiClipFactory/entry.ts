@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { chatCompletion } from "../../shared/vercelAiGateway.ts";
 
 // AI Clip Factory — analyzes a video and generates:
 // - 10 short clip concepts (timestamps + titles)
@@ -6,8 +7,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 // - 5 thumbnail concepts
 // - Auto chapters
 // - SEO description
+// Now powered by Vercel AI Gateway — no Base44 integration credits required.
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -50,9 +52,9 @@ Generate the following:
 
 Be specific, creative, and data-driven.`;
 
-    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: {
+    const result = await chatCompletion(prompt, {
+      model: "gemini_3_flash",
+      jsonSchema: {
         type: "object",
         properties: {
           clips: {
@@ -104,4 +106,4 @@ Be specific, creative, and data-driven.`;
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}

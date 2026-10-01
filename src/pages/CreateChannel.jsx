@@ -64,8 +64,8 @@ export default function CreateChannel() {
     setError(null);
     try {
       const prompt = `A professional channel avatar for "${channelData.name}"${channelData.description ? ", " + channelData.description.slice(0, 100) : ""}, modern vibrant digital art, pink and fuchsia gradient style, eye-catching profile picture, centered, ultra detailed`;
-      const res = await base44.integrations.Core.GenerateImage({ prompt });
-      setAiAvatarUrl(res.url);
+      const res = await base44.functions.invoke("aiImageGen", { prompt });
+      setAiAvatarUrl(res.data.url);
       setAvatarPreview(res.url);
       setAvatarFile(null);
     } catch (e) {
@@ -81,8 +81,8 @@ export default function CreateChannel() {
     setError(null);
     try {
       const prompt = `A wide cinematic channel banner for "${channelData.name}"${channelData.description ? ", " + channelData.description.slice(0, 100) : ""}, modern vibrant digital art, pink and fuchsia gradient, sweeping landscape, ultra detailed, 16:9 aspect ratio`;
-      const res = await base44.integrations.Core.GenerateImage({ prompt });
-      setAiBannerUrl(res.url);
+      const res = await base44.functions.invoke("aiImageGen", { prompt });
+      setAiBannerUrl(res.data.url);
       setBannerPreview(res.url);
       setBannerFile(null);
     } catch (e) {

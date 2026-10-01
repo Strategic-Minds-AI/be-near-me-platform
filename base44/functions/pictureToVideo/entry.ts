@@ -1,14 +1,16 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { chatCompletion, generateVideo } from "../../shared/vercelAiGateway.ts";
 
 // pictureToVideo — the multi-picture-to-viral-video engine.
-// 1. Takes an array of uploaded picture URLs + optional user idea + optional category.
+// Now powered by Vercel AI Gateway (no Base44 integration credits required).
+// 1. Takes an array of picture URLs/base64 data URLs + optional user idea + category.
 // 2. Fetches the platform's top-performing videos as viral references.
-// 3. Uses InvokeLLM with vision (file_urls = all pictures) to analyze every picture
+// 3. Uses Vercel AI Gateway (Claude Opus 5 with vision) to analyze every picture
 //    + the viral formula from top videos + the user's idea → generates an optimized
 //    viral video prompt that COMBINES all pictures into one cohesive video.
 // 4. If suggest_prompt is true, returns only the analysis (no video generation).
 // 5. If regenerate is true, instructs the LLM to create a DIFFERENT concept.
-// 6. Otherwise, generates a 6-second vertical (9:16) video and saves it to the feed.
+// 6. Otherwise, generates a 6-second vertical (9:16) video via Vercel AI Gateway (Veo 3.1).
 
 export default async function(req) {
   try {
@@ -20,7 +22,7 @@ export default async function(req) {
     const { picture_urls, user_idea, category, suggest_prompt, regenerate } = body;
 
     const urls = Array.isArray(picture_urls) ? picture_urls.filter(Boolean) : [];
-    if (urls.length === 0) return Response.json({ error: "At least one picture URL required" }, { status: 400 });
+    if (urls.length === 0) return Response.json({ error: "At least one picture required" }, { status: 400 });
 
     // 1. Fetch top-performing videos as viral references
     const query = category ? { visibility: "public", category } : { visibility: "public" };
@@ -57,11 +59,10 @@ Return JSON with:
 - video_title: an optimized viral title (max 80 chars)
 - visual_prompt: a detailed cinematic prompt for AI video generation — vertical 9:16, specific scene describing how the picture(s) elements combine, lighting, camera movement, mood, ultra detailed. This is what the video generator receives, so be vivid and specific.`;
 
-    const analysis = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt,
-      file_urls: urls,
-      model: "claude_opus_5",
-      response_json_schema: {
+    const analysis = await chatCompletion(prompt, {
+      images: urls,
+      model: "gemini_3_flash",
+      jsonSchema: {
         type: "object",
         properties: {
           picture_analysis: { type: "string" },
@@ -78,7 +79,7 @@ Return JSON with:
       return Response.json({ analysis, video_url: null });
     }
 
-    // 3. Generate the video from the visual prompt
+    // 3. Generate the video from the visual prompt via Vercel AI Gateway
     const visualPrompt =
       analysis.visual_prompt ||
       analysis.viral_prompt ||
@@ -87,11 +88,7 @@ Return JSON with:
     let genResult = null;
     let generationError = null;
     try {
-      genResult = await base44.asServiceRole.integrations.Core.GenerateVideo({
-        prompt: visualPrompt,
-        duration: 6,
-        aspect_ratio: "9:16",
-      });
+      genResult = await generateVideo(visualPrompt, { duration: 6, aspectRatio: "9:16" });
     } catch (e) {
       generationError = e.message;
     }
@@ -100,7 +97,7 @@ Return JSON with:
       return Response.json({
         analysis,
         video_url: null,
-        error: generationError || "Video generation returned no URL — credits may be exhausted",
+        error: generationError || "Video generation returned no URL",
       });
     }
 

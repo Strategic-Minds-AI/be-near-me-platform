@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { chatCompletion } from "../../shared/vercelAiGateway.ts";
 
 // domainOperations — the Strategic Insights Domain Operations orchestrator.
 // Handles domain intake, sitemap validation, Google Search Console + GA4 data
@@ -80,11 +81,9 @@ Known competitors: ${compStr}
 
 For each competitor, research their top ranking keywords, top pages, content strategy, title/meta strategy, content gaps we can exploit, and estimated SERP position. Use web search to find real, current data. Be specific and actionable.`;
 
-  return await base44.integrations.Core.InvokeLLM({
-    prompt,
-    add_context_from_internet: true,
-    model: "gemini_3_flash",
-    response_json_schema: {
+  return await chatCompletion(prompt, {
+    webSearch: true,
+    jsonSchema: {
       type: "object",
       properties: {
         competitors: {

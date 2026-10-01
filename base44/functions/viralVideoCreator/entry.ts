@@ -1,14 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { chatCompletion, generateVideo } from "../../shared/vercelAiGateway.ts";
 
-// Viral Video Creator — the parity system.
+// Viral Video Creator — the parity system. Now powered by Vercel AI Gateway.
 // 1. Fetches the top-performing videos on the platform (by views).
-// 2. Uses InvokeLLM to analyze the "viral formula" — themes, title patterns,
-//    tags, categories — and generate a NEW video concept that mirrors them.
-// 3. Uses GenerateVideo to produce a 6-second vertical (9:16) video from the
-//    concept's visual prompt.
+// 2. Uses Vercel AI Gateway (Claude Opus 5) to analyze the "viral formula" and
+//    generate a NEW video concept that mirrors them.
+// 3. Uses Vercel AI Gateway (Veo 3.1) to produce a 6-second vertical (9:16) video.
 // 4. Saves the generated video to the Video entity so it lands in the feed.
 
-Deno.serve(async (req) => {
+export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -60,9 +60,9 @@ Using the analysis above, design a NEW video that mimics the winning patterns. I
 - category: The best-performing category from the analysis
 - visual_prompt: A detailed, cinematic visual prompt for AI video generation. Must include: vertical 9:16 aspect ratio, specific scene description, lighting, camera movement, mood, and ultra detailed. This prompt is what the video generator receives, so be vivid and specific.`;
 
-    const analysis = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: analysisPrompt,
-      response_json_schema: {
+    const analysis = await chatCompletion(analysisPrompt, {
+      model: "gemini_3_flash",
+      jsonSchema: {
         type: 'object',
         properties: {
           viral_formula: { type: 'string' },
@@ -85,26 +85,21 @@ Using the analysis above, design a NEW video that mimics the winning patterns. I
       },
     });
 
-    // 3. Generate the video from the concept's visual prompt
+    // 3. Generate the video from the concept's visual prompt via Vercel AI Gateway
     const concept = analysis.video_concept || {};
     const visualPrompt =
       concept.visual_prompt ||
       'A cinematic vertical 9:16 video, engaging and visually stunning, ultra detailed';
 
-    let genResult: any = null;
-    let generationError: string | null = null;
+    let genResult = null;
+    let generationError = null;
     try {
-      genResult = await base44.asServiceRole.integrations.Core.GenerateVideo({
-        prompt: visualPrompt,
-        duration: 6,
-        aspect_ratio: '9:16',
-      });
+      genResult = await generateVideo(visualPrompt, { duration: 6, aspectRatio: '9:16' });
     } catch (e) {
       generationError = e.message;
     }
 
     if (!genResult?.url) {
-      // Return the analysis even if video generation fails (e.g. credits exhausted)
       return Response.json({
         analysis: {
           viral_formula: analysis.viral_formula,
@@ -115,7 +110,7 @@ Using the analysis above, design a NEW video that mimics the winning patterns. I
         },
         concept,
         video_url: null,
-        error: generationError || 'Video generation returned no URL — credits may be exhausted',
+        error: generationError || 'Video generation returned no URL',
       });
     }
 
@@ -152,7 +147,7 @@ Using the analysis above, design a NEW video that mimics the winning patterns. I
     }
 
     // 4. Resolve creator's channel for attribution
-    let channel: any = null;
+    let channel = null;
     try {
       const chRes = await base44.entities.Channel.filter({ created_by: user.email });
       channel = Array.isArray(chRes) ? chRes[0] : chRes?.items?.[0];
@@ -202,4 +197,4 @@ Using the analysis above, design a NEW video that mimics the winning patterns. I
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-});
+}
