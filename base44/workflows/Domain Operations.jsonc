@@ -1,0 +1,44 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 */6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Autonomous domain operations heartbeat \u2014 runs full analysis on all due domains every 6 hours (sitemap validation, Google Search Console, GA4, competitor intelligence, action generation)",
+  "name": "Domain Operations",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "domain_operations",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "heartbeat": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "domainOperations"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Domain Operations Heartbeat",
+            "description": "Analyze all due domains: sitemap, GSC, GA4, competitors, actions"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "name": "DomainAction",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domain this action belongs to"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "submit_sitemap",
+        "fix_canonical",
+        "fix_noindex",
+        "create_content",
+        "fix_technical",
+        "monitor_competitor",
+        "create_ga4",
+        "verify_ownership",
+        "fix_sitemap",
+        "improve_ctr",
+        "build_internal_links",
+        "other"
+      ],
+      "default": "other"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "description": {
+      "type": "string",
+      "description": "What needs to be done"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "failed",
+        "skipped"
+      ],
+      "default": "pending"
+    },
+    "auto_executable": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this can be executed automatically"
+    },
+    "result": {
+      "type": "string",
+      "description": "Outcome after execution"
+    },
+    "receipt": {
+      "type": "string",
+      "description": "Audit trail / validation note"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "domain",
+    "action_type",
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

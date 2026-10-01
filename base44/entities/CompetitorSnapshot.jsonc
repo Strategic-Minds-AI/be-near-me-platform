@@ -1,0 +1,84 @@
+{
+  "name": "CompetitorSnapshot",
+  "type": "object",
+  "properties": {
+    "source_domain": {
+      "type": "string",
+      "description": "Which of our domains this competitor was analyzed for"
+    },
+    "competitor_domain": {
+      "type": "string",
+      "description": "The competitor's domain"
+    },
+    "snapshot_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "top_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "top_pages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "content_strategy": {
+      "type": "string",
+      "description": "Summary of competitor content approach"
+    },
+    "title_strategy": {
+      "type": "string",
+      "description": "Title tag / meta strategy observed"
+    },
+    "identified_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keyword/content gaps we can exploit"
+    },
+    "serp_position": {
+      "type": "number",
+      "description": "Average SERP position estimate"
+    },
+    "analysis_summary": {
+      "type": "string",
+      "description": "Full LLM-generated intelligence summary"
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "source_domain",
+    "competitor_domain",
+    "snapshot_date"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

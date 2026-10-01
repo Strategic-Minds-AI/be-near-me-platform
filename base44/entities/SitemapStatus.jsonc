@@ -1,0 +1,79 @@
+{
+  "name": "SitemapStatus",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domain this sitemap belongs to"
+    },
+    "sitemap_url": {
+      "type": "string",
+      "description": "The sitemap URL that was checked"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "found",
+        "missing",
+        "invalid",
+        "error"
+      ],
+      "default": "missing"
+    },
+    "url_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total URLs found in sitemap"
+    },
+    "sampled_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Sample of URLs from the sitemap"
+    },
+    "dead_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs returning non-200"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Validation issues found"
+    },
+    "last_checked_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "domain"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

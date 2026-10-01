@@ -24,6 +24,7 @@ import Truths from '@/pages/Truths';
 import VideoScraper from '@/pages/VideoScraper';
 import ViralVideoCreator from '@/pages/ViralVideoCreator';
 import SyncDashboard from '@/pages/SyncDashboard';
+import DomainOps from '@/pages/DomainOps';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -98,6 +99,11 @@ const AuthenticatedApp = () => {
       <Route path="/SyncDashboard" element={
         <LayoutWrapper currentPageName="SyncDashboard">
           <SyncDashboard />
+        </LayoutWrapper>
+      } />
+      <Route path="/DomainOps" element={
+        <LayoutWrapper currentPageName="DomainOps">
+          <DomainOps />
         </LayoutWrapper>
       } />
       <Route path="/Benchmark" element={

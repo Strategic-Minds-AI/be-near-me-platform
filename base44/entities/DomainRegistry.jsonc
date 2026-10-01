@@ -1,0 +1,100 @@
+{
+  "name": "DomainRegistry",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Root domain (e.g. benearme.com)"
+    },
+    "canonical_url": {
+      "type": "string",
+      "description": "Full canonical production URL (https://...)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "needs_attention",
+        "error",
+        "onboarding"
+      ],
+      "default": "onboarding"
+    },
+    "search_console_property": {
+      "type": "string",
+      "description": "GSC site URL (sc-domain:... or https://.../)"
+    },
+    "ga4_property_id": {
+      "type": "string",
+      "description": "GA4 property ID (numeric)"
+    },
+    "ga4_property_name": {
+      "type": "string"
+    },
+    "sitemap_url": {
+      "type": "string",
+      "description": "Discovered sitemap URL"
+    },
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Competitor domains"
+    },
+    "target_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "target_geography": {
+      "type": "string",
+      "default": "US"
+    },
+    "health_score": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 overall domain health score"
+    },
+    "last_analyzed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_action": {
+      "type": "string",
+      "description": "Next recommended action summary"
+    },
+    "analysis_frequency_hours": {
+      "type": "number",
+      "default": 6,
+      "description": "How often to run full analysis"
+    }
+  },
+  "required": [
+    "domain"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

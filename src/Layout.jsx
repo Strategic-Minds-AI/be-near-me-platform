@@ -165,6 +165,11 @@ export default function Layout({ children, currentPageName }) {
                         <Server className="w-4 h-4" /> Persistent Sync
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("DomainOps")} className="flex items-center gap-2 cursor-pointer">
+                        <Activity className="w-4 h-4" /> Domain Operations
+                      </Link>
+                    </DropdownMenuItem>
                     {user.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link to={createPageUrl("VideoScraper")} className="flex items-center gap-2 cursor-pointer">
