@@ -60,6 +60,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Compile Base44 backend functions
+        run: node scripts/validate-backend-functions.mjs
+
       - name: Deterministic governance and product-integrity checks
         run: node scripts/deterministic-validator.mjs
 
