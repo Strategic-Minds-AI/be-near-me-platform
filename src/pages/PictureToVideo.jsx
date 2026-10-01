@@ -196,8 +196,8 @@ export default function PictureToVideo() {
                     </div>
                   )}
                   {img.error && (
-                    <div className="absolute inset-0 bg-red-500/60 flex items-center justify-center p-1">
-                      <span className="text-[10px] text-white text-center">Failed</span>
+                    <div className="absolute inset-0 bg-red-500/70 flex items-center justify-center p-1">
+                      <span className="text-[9px] text-white text-center leading-tight line-clamp-4">{img.error}</span>
                     </div>
                   )}
                   <button
