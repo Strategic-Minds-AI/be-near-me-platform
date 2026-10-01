@@ -37,7 +37,7 @@ function SyncCard({ icon: Icon, title, onSync, syncing, children, accent }) {
           size="sm"
           onClick={onSync}
           disabled={syncing}
-          className="text-gray-400 hover:text-white hover:bg-white/10"
+          className="text-white hover:bg-white/20"
         >
           <RefreshCw className={`w-4 h-4 mr-1.5 ${syncing ? "animate-spin" : ""}`} />
           {syncing ? "Syncing..." : "Sync now"}
@@ -57,52 +57,52 @@ function DomainRow({ domain }) {
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center gap-3 py-3 px-2 hover:bg-white/5 rounded-lg transition-colors"
       >
-        {expanded ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
+        {expanded ? <ChevronDown className="w-4 h-4 text-white/80" /> : <ChevronRight className="w-4 h-4 text-white/80" />}
         <Globe className="w-4 h-4 text-pink-400 flex-shrink-0" />
         <span className="text-white font-medium text-sm flex-1 text-left">{domain.domain}</span>
         <span className={`text-xs px-2 py-0.5 rounded-full ${domain.status === "ACTIVE" ? "bg-green-500/20 text-green-300" : "bg-yellow-500/20 text-yellow-300"}`}>
           {domain.status}
         </span>
-        {domain.locked && <Lock className="w-3.5 h-3.5 text-gray-500" />}
+        {domain.locked && <Lock className="w-3.5 h-3.5 text-white/80" />}
         {expiringSoon && <AlertCircle className="w-4 h-4 text-amber-400" />}
       </button>
       {expanded && (
         <div className="px-8 pb-4 space-y-3">
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <p className="text-gray-500 text-xs">Expires</p>
+              <p className="text-white/80 text-xs">Expires</p>
               <p className={`text-white ${expiringSoon ? "text-amber-400" : ""}`}>{fmtDate(domain.expires_at)}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-xs">Registered</p>
+              <p className="text-white/80 text-xs">Registered</p>
               <p className="text-white">{fmtDate(domain.created_at_domain)}</p>
             </div>
           </div>
           {domain.nameservers?.length > 0 && (
             <div>
-              <p className="text-gray-500 text-xs mb-1">Nameservers</p>
+              <p className="text-white/80 text-xs mb-1">Nameservers</p>
               <div className="flex flex-wrap gap-1.5">
                 {domain.nameservers.map((ns, i) => (
-                  <span key={i} className="text-xs bg-white/5 text-gray-300 px-2 py-0.5 rounded-md">{ns}</span>
+                  <span key={i} className="text-xs bg-white/5 text-white px-2 py-0.5 rounded-md">{ns}</span>
                 ))}
               </div>
             </div>
           )}
           {domain.dns_records?.length > 0 && (
             <div>
-              <p className="text-gray-500 text-xs mb-1">DNS Records ({domain.dns_records.length})</p>
+              <p className="text-white/80 text-xs mb-1">DNS Records ({domain.dns_records.length})</p>
               <div className="space-y-1 max-h-40 overflow-y-auto">
                 {domain.dns_records.map((r, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs bg-white/5 rounded px-2 py-1">
                     <span className="text-pink-400 font-mono w-16">{r.type}</span>
-                    <span className="text-gray-400 flex-1 truncate">{r.name}</span>
-                    <span className="text-gray-300 truncate max-w-[140px]">{r.data}</span>
+                    <span className="text-white flex-1 truncate">{r.name}</span>
+                    <span className="text-white truncate max-w-[140px]">{r.data}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
-          <p className="text-gray-600 text-xs">Last synced: {fmtDateTime(domain.synced_at)}</p>
+          <p className="text-white/70 text-xs">Last synced: {fmtDateTime(domain.synced_at)}</p>
         </div>
       )}
     </div>
@@ -161,7 +161,7 @@ export default function SyncDashboard() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-center px-4">
         <AlertCircle className="w-10 h-10 text-pink-500" />
-        <p className="text-gray-300">Sync dashboard is admin-only.</p>
+        <p className="text-white">Sync dashboard is admin-only.</p>
       </div>
     );
   }
@@ -194,11 +194,11 @@ export default function SyncDashboard() {
         </div>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-white">Persistent Sync</h1>
-          <p className="text-sm text-gray-400">Google Analytics · Search Console · GoDaddy — synced every 6 hours</p>
+          <p className="text-sm text-white">Google Analytics · Search Console · GoDaddy — synced every 6 hours</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mt-2 mb-6 text-xs text-gray-400">
+      <div className="flex items-center gap-2 mt-2 mb-6 text-xs text-white">
         <Calendar className="w-4 h-4 text-pink-400" />
         Last sync: {latestSync > 0 ? fmtDateTime(new Date(latestSync).toISOString()) : "never — run a sync below"}
       </div>
@@ -213,7 +213,7 @@ export default function SyncDashboard() {
         {analyticsQ.isLoading ? (
           <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-pink-500" /></div>
         ) : Object.keys(analyticsByProp).length === 0 ? (
-          <p className="text-gray-500 text-sm py-4 text-center">No analytics data yet — click "Sync now" to pull from GA4.</p>
+          <p className="text-white/80 text-sm py-4 text-center">No analytics data yet — click "Sync now" to pull from GA4.</p>
         ) : (
           <div className="space-y-3">
             {Object.entries(analyticsByProp).map(([pid, { name, snapshots }]) => {
@@ -222,11 +222,11 @@ export default function SyncDashboard() {
                 <div key={pid} className="bg-white/5 rounded-xl p-3">
                   <p className="text-white font-medium text-sm mb-2">{name || pid}</p>
                   <div className="grid grid-cols-3 gap-2 text-xs">
-                    <div><p className="text-gray-500">Sessions</p><p className="text-white font-bold">{fmtNum(latest.sessions)}</p></div>
-                    <div><p className="text-gray-500">Users</p><p className="text-white font-bold">{fmtNum(latest.total_users)}</p></div>
-                    <div><p className="text-gray-500">Page views</p><p className="text-white font-bold">{fmtNum(latest.page_views)}</p></div>
+                    <div><p className="text-white/80">Sessions</p><p className="text-white font-bold">{fmtNum(latest.sessions)}</p></div>
+                    <div><p className="text-white/80">Users</p><p className="text-white font-bold">{fmtNum(latest.total_users)}</p></div>
+                    <div><p className="text-white/80">Page views</p><p className="text-white font-bold">{fmtNum(latest.page_views)}</p></div>
                   </div>
-                  <p className="text-gray-600 text-xs mt-2">{fmtDate(latest.date)} · {fmtDateTime(latest.synced_at)}</p>
+                  <p className="text-white/70 text-xs mt-2">{fmtDate(latest.date)} · {fmtDateTime(latest.synced_at)}</p>
                 </div>
               );
             })}
@@ -245,7 +245,7 @@ export default function SyncDashboard() {
           {searchQ.isLoading ? (
             <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-pink-500" /></div>
           ) : Object.keys(searchBySite).length === 0 ? (
-            <p className="text-gray-500 text-sm py-4 text-center">No search data yet — click "Sync now" to pull from Search Console.</p>
+            <p className="text-white/80 text-sm py-4 text-center">No search data yet — click "Sync now" to pull from Search Console.</p>
           ) : (
             <div className="space-y-3">
               {Object.entries(searchBySite).map(([siteUrl, snapshots]) => {
@@ -254,22 +254,22 @@ export default function SyncDashboard() {
                   <div key={siteUrl} className="bg-white/5 rounded-xl p-3">
                     <p className="text-white font-medium text-sm mb-2 truncate">{siteUrl}</p>
                     <div className="grid grid-cols-4 gap-2 text-xs">
-                      <div><span className="text-gray-500">Clicks </span><span className="text-white font-bold">{fmtNum(latest.clicks)}</span></div>
+                      <div><span className="text-white/80">Clicks </span><span className="text-white font-bold">{fmtNum(latest.clicks)}</span></div>
                       <div className="flex items-center gap-1"><Eye className="w-3 h-3 text-blue-400" /><span className="text-white font-bold">{fmtNum(latest.impressions)}</span></div>
-                      <div><span className="text-gray-500">CTR </span><span className="text-white font-bold">{fmtPct(latest.ctr)}</span></div>
-                      <div><span className="text-gray-500">Pos </span><span className="text-white font-bold">{latest.position?.toFixed(1)}</span></div>
+                      <div><span className="text-white/80">CTR </span><span className="text-white font-bold">{fmtPct(latest.ctr)}</span></div>
+                      <div><span className="text-white/80">Pos </span><span className="text-white font-bold">{latest.position?.toFixed(1)}</span></div>
                     </div>
                     {latest.top_queries?.length > 0 && (
                       <div className="mt-2">
-                        <p className="text-gray-500 text-xs mb-1">Top queries</p>
+                        <p className="text-white/80 text-xs mb-1">Top queries</p>
                         <div className="flex flex-wrap gap-1">
                           {latest.top_queries.slice(0, 5).map((q, i) => (
-                            <span key={i} className="text-xs bg-white/5 text-gray-300 px-2 py-0.5 rounded-md">{q.query} ({q.clicks})</span>
+                            <span key={i} className="text-xs bg-white/5 text-white px-2 py-0.5 rounded-md">{q.query} ({q.clicks})</span>
                           ))}
                         </div>
                       </div>
                     )}
-                    <p className="text-gray-600 text-xs mt-2">{fmtDate(latest.date)} · {fmtDateTime(latest.synced_at)}</p>
+                    <p className="text-white/70 text-xs mt-2">{fmtDate(latest.date)} · {fmtDateTime(latest.synced_at)}</p>
                   </div>
                 );
               })}
@@ -290,8 +290,8 @@ export default function SyncDashboard() {
             <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-pink-500" /></div>
           ) : domainData.length === 0 ? (
             <div className="py-4 text-center">
-              <p className="text-gray-500 text-sm mb-2">No domain data yet.</p>
-              <p className="text-gray-600 text-xs">Make sure GODADDY_API_KEY and GODADDY_API_SECRET are set in Secrets, then click "Sync now".</p>
+              <p className="text-white/80 text-sm mb-2">No domain data yet.</p>
+              <p className="text-white/70 text-xs">Make sure GODADDY_API_KEY and GODADDY_API_SECRET are set in Secrets, then click "Sync now".</p>
             </div>
           ) : (
             <div>
