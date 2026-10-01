@@ -39,6 +39,35 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
+/**
+ * @typedef {{
+ *   challenger_email: string,
+ *   challenge_text: string,
+ *   category: string,
+ *   infinity_coin_stake: number,
+ *   expires_days: number
+ * }} DareCreateInput
+ */
+
+/**
+ * @typedef {{
+ *   dareId: string,
+ *   action: string,
+ *   video_url?: string
+ * }} DareTransitionInput
+ */
+
+/** @param {DareCreateInput} data */
+function createDare(data) {
+  return base44.functions.invoke("updateDareState", { action: "create", ...data });
+}
+
+/** @param {DareTransitionInput} transition */
+function transitionDare(transition) {
+  const { dareId, action, ...payload } = transition;
+  return base44.functions.invoke("updateDareState", { dare_id: dareId, action, ...payload });
+}
+
 export default function Dares() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -70,7 +99,7 @@ export default function Dares() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.functions.invoke("updateDareState", { action: "create", ...data }),
+    mutationFn: createDare,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["outgoingDares"] });
       toast({ title: "Dare sent! 🎯", description: "Your kindness dare is on its way." });
@@ -80,8 +109,7 @@ export default function Dares() {
   });
 
   const updateDareMutation = useMutation({
-    mutationFn: ({ dareId, action, ...payload }) =>
-      base44.functions.invoke("updateDareState", { dare_id: dareId, action, ...payload }),
+    mutationFn: transitionDare,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["incomingDares"] });
       queryClient.invalidateQueries({ queryKey: ["outgoingDares"] });
@@ -204,7 +232,7 @@ export default function Dares() {
             </Button>
           )}
           {!incoming && dare.status === "submitted" && !dare.video_verified && (
-            <Badge className="bg-purple-500/20 text-purple-300">Awaiting independent verification</Badge>
+            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">Awaiting independent verification</Badge>
           )}
           {!incoming && dare.status === "verified" && !dare.reward_paid && (
             <Button size="sm" onClick={() => handleProcessReward(dare)} className="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full">
