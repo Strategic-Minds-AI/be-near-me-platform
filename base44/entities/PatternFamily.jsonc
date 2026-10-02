@@ -1,0 +1,86 @@
+{
+  "name": "PatternFamily",
+  "type": "object",
+  "properties": {
+    "family_id": {
+      "type": "string",
+      "description": "Registry file name (e.g. 'domain_packs', 'experience_recipes')"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable family name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "layout",
+        "color",
+        "typography",
+        "component",
+        "navigation",
+        "motion",
+        "state",
+        "content",
+        "conversion",
+        "visualization",
+        "ai",
+        "responsive",
+        "accessibility",
+        "brand",
+        "platform",
+        "composition",
+        "domain",
+        "quality"
+      ],
+      "description": "Which registry category this family belongs to"
+    },
+    "pattern_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of patterns in this family"
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Array of pattern definitions (full JSON objects)"
+    },
+    "registry_version": {
+      "type": "string",
+      "default": "2.0.0"
+    }
+  },
+  "required": [
+    "family_id",
+    "display_name",
+    "category",
+    "patterns"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

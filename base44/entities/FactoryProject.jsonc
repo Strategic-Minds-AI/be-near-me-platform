@@ -1,0 +1,131 @@
+{
+  "name": "FactoryProject",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name"
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "product_archetype": {
+      "type": "string",
+      "description": "Type of application being built (saas, marketplace, social, etc.)"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "mobile-web",
+          "ios-like",
+          "android-like",
+          "tablet",
+          "desktop-web",
+          "pwa"
+        ]
+      }
+    },
+    "primary_goal": {
+      "type": "string"
+    },
+    "target_audience": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "domain_pack_id": {
+      "type": "string",
+      "description": "Selected domain pack pattern ID"
+    },
+    "experience_recipe_id": {
+      "type": "string",
+      "description": "Selected experience recipe ID"
+    },
+    "seed": {
+      "type": "string",
+      "description": "Deterministic seed for reproducible selection"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "brief",
+        "brand_mode",
+        "composing",
+        "validating",
+        "approved",
+        "exported"
+      ],
+      "default": "brief"
+    },
+    "build_spec": {
+      "type": "object",
+      "description": "Full BuildSpec JSON (selected patterns, tokens, screens)"
+    },
+    "brand_spec": {
+      "type": "object",
+      "description": "Brand specification (colors, typography, logo direction)"
+    },
+    "selected_patterns": {
+      "type": "object",
+      "description": "Map of pattern family -> selected pattern IDs"
+    },
+    "screens": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Screen specifications"
+    },
+    "quality_profile": {
+      "type": "string",
+      "default": "standard"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

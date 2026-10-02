@@ -40,6 +40,7 @@ import BnmMessages from '@/pages/BnmMessages';
 import BnmMenu from '@/pages/BnmMenu';
 import BnmCreate from '@/pages/BnmCreate';
 import BnmTracker from '@/pages/BnmTracker';
+import FactoryBuilder from '@/pages/FactoryBuilder';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -168,6 +169,7 @@ const AuthenticatedApp = () => {
       <Route path="/inbox" element={<BnmInbox />} />
       <Route path="/messages" element={<BnmMessages />} />
       <Route path="/menu" element={<BnmMenu />} />
+      <Route path="/builder" element={<FactoryBuilder />} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
