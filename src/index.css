@@ -118,6 +118,41 @@ button:focus-visible {
     --bnm-pink: 328 100% 50%;
     --bnm-magenta: 294 96% 46%;
     --bnm-violet: 266 100% 56%;
+
+    /* Universal Frontend Factory — Semantic Color Roles */
+    --semantic-canvas: 240 10% 4%;
+    --semantic-canvas-subtle: 240 8% 7%;
+    --semantic-surface: 240 8% 11%;
+    --semantic-surface-raised: 240 8% 16%;
+    --semantic-surface-sunken: 240 10% 6%;
+    --semantic-surface-overlay: 240 8% 14%;
+    --semantic-text-primary: 0 0% 100%;
+    --semantic-text-secondary: 240 8% 72%;
+    --semantic-text-tertiary: 240 5% 55%;
+    --semantic-text-inverse: 240 10% 4%;
+    --semantic-border-subtle: 0 0% 100%;
+    --semantic-border-default: 0 0% 100%;
+    --semantic-border-strong: 0 0% 100%;
+    --semantic-border-focus: 328 100% 50%;
+    --semantic-action-primary: 328 100% 50%;
+    --semantic-action-primary-fg: 0 0% 100%;
+    --semantic-action-secondary: 240 8% 16%;
+    --semantic-action-secondary-fg: 0 0% 100%;
+    --semantic-action-disabled: 240 8% 20%;
+    --semantic-action-disabled-fg: 240 5% 45%;
+    --semantic-status-success: 142 71% 45%;
+    --semantic-status-warning: 38 92% 50%;
+    --semantic-status-danger: 0 84% 60%;
+    --semantic-status-info: 217 91% 60%;
+    --semantic-media-overlay: 0 0% 0%;
+    --semantic-media-scrim: 0 0% 0%;
+    --semantic-media-progress: 328 100% 50%;
+    --semantic-nav-active: 0 0% 100%;
+    --semantic-nav-inactive: 240 5% 55%;
+    --semantic-selection: 328 100% 50%;
+    --semantic-selection-fg: 0 0% 100%;
+    --semantic-chart-primary: 328 100% 50%;
+    --semantic-chart-secondary: 266 100% 56%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -161,6 +196,41 @@ button:focus-visible {
     --bnm-pink: 328 100% 50%;
     --bnm-magenta: 294 96% 46%;
     --bnm-violet: 266 100% 56%;
+
+    /* Universal Frontend Factory — Semantic Color Roles (dark) */
+    --semantic-canvas: 240 10% 4%;
+    --semantic-canvas-subtle: 240 8% 7%;
+    --semantic-surface: 240 8% 11%;
+    --semantic-surface-raised: 240 8% 16%;
+    --semantic-surface-sunken: 240 10% 6%;
+    --semantic-surface-overlay: 240 8% 14%;
+    --semantic-text-primary: 0 0% 100%;
+    --semantic-text-secondary: 240 8% 72%;
+    --semantic-text-tertiary: 240 5% 55%;
+    --semantic-text-inverse: 240 10% 4%;
+    --semantic-border-subtle: 0 0% 100%;
+    --semantic-border-default: 0 0% 100%;
+    --semantic-border-strong: 0 0% 100%;
+    --semantic-border-focus: 328 100% 50%;
+    --semantic-action-primary: 328 100% 50%;
+    --semantic-action-primary-fg: 0 0% 100%;
+    --semantic-action-secondary: 240 8% 16%;
+    --semantic-action-secondary-fg: 0 0% 100%;
+    --semantic-action-disabled: 240 8% 20%;
+    --semantic-action-disabled-fg: 240 5% 45%;
+    --semantic-status-success: 142 71% 45%;
+    --semantic-status-warning: 38 92% 50%;
+    --semantic-status-danger: 0 84% 60%;
+    --semantic-status-info: 217 91% 60%;
+    --semantic-media-overlay: 0 0% 0%;
+    --semantic-media-scrim: 0 0% 0%;
+    --semantic-media-progress: 328 100% 50%;
+    --semantic-nav-active: 0 0% 100%;
+    --semantic-nav-inactive: 240 5% 55%;
+    --semantic-selection: 328 100% 50%;
+    --semantic-selection-fg: 0 0% 100%;
+    --semantic-chart-primary: 328 100% 50%;
+    --semantic-chart-secondary: 266 100% 56%;
   }
 }
 

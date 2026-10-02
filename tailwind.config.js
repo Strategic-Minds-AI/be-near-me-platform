@@ -70,7 +70,43 @@ module.exports = {
   				pink: 'hsl(var(--bnm-pink))',
   				magenta: 'hsl(var(--bnm-magenta))',
   				violet: 'hsl(var(--bnm-violet))'
+  			},
+  			semantic: {
+  				canvas: 'hsl(var(--semantic-canvas))',
+  				'canvas-subtle': 'hsl(var(--semantic-canvas-subtle))',
+  				surface: 'hsl(var(--semantic-surface))',
+  				'surface-raised': 'hsl(var(--semantic-surface-raised))',
+  				'surface-sunken': 'hsl(var(--semantic-surface-sunken))',
+  				'surface-overlay': 'hsl(var(--semantic-surface-overlay))',
+  				'text-primary': 'hsl(var(--semantic-text-primary))',
+  				'text-secondary': 'hsl(var(--semantic-text-secondary))',
+  				'text-tertiary': 'hsl(var(--semantic-text-tertiary))',
+  				'text-inverse': 'hsl(var(--semantic-text-inverse))',
+  				'border-subtle': 'hsl(var(--semantic-border-subtle))',
+  				'border-default': 'hsl(var(--semantic-border-default))',
+  				'border-strong': 'hsl(var(--semantic-border-strong))',
+  				'border-focus': 'hsl(var(--semantic-border-focus))',
+  				action: 'hsl(var(--semantic-action-primary))',
+  				'action-fg': 'hsl(var(--semantic-action-primary-fg))',
+  				'status-success': 'hsl(var(--semantic-status-success))',
+  				'status-warning': 'hsl(var(--semantic-status-warning))',
+  				'status-danger': 'hsl(var(--semantic-status-danger))',
+  				'status-info': 'hsl(var(--semantic-status-info))',
+  				'nav-active': 'hsl(var(--semantic-nav-active))',
+  				'nav-inactive': 'hsl(var(--semantic-nav-inactive))'
   			}
+  		},
+  		boxShadow: {
+  			'ev-none': 'none',
+  			'ev-hairline': '0 0 0 1px rgba(255, 255, 255, 0.08)',
+  			'ev-low': '0 1px 3px 0 rgba(0, 0, 0, 0.3)',
+  			'ev-medium': '0 4px 12px 0 rgba(0, 0, 0, 0.4)',
+  			'ev-high': '0 12px 32px 0 rgba(0, 0, 0, 0.5)',
+  			'ev-ambient': '0 0 40px 0 rgba(0, 0, 0, 0.3)',
+  			'ev-dark-ambient': '0 0 1px 0 rgba(255, 255, 255, 0.14), 0 8px 24px -4px rgba(0, 0, 0, 0.6)',
+  			'ev-inset': 'inset 0 1px 3px 0 rgba(0, 0, 0, 0.4)',
+  			'ev-fab': '0 8px 24px -4px rgba(236, 72, 153, 0.5)',
+  			'ev-media-overlay': '0 0 0 1px rgba(255, 255, 255, 0.08)'
   		},
   		keyframes: {
   			'accordion-down': {
