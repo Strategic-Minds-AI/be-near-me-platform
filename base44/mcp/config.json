@@ -68,6 +68,81 @@
           "destructive_hint": false,
           "idempotent_hint": false
         }
+      },
+      {
+        "name": "cloud_browser_control",
+        "title": "Cloud browser control",
+        "description": "Controls the Xtreme Cloud Browser engine for on-demand web automation with stealth, CAPTCHA solving, and anti-bot bypass. Actions: 'navigate' (go to a URL), 'observe' (read visible text + URL + title), 'extract' (pull text/html/attribute/table/json from a CSS selector), 'screenshot' (capture page), 'execute' (run a raw engine action like click/fill/press/wait/crawl), 'health' (check engine status). Each call spins up a fresh isolated browser session and cleans up after. Use for scraping, skip tracing, competitor research, and data extraction from JS-heavy or bot-protected pages.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["navigate", "observe", "extract", "screenshot", "execute", "health"],
+              "description": "Browser action to perform. 'navigate' goes to a URL, 'observe' reads page text, 'extract' pulls structured data from a selector, 'screenshot' captures the page, 'execute' runs a raw engine action, 'health' checks engine status."
+            },
+            "url": {
+              "type": "string",
+              "description": "Target URL for 'navigate' action."
+            },
+            "selector": {
+              "type": "string",
+              "description": "CSS selector for 'extract' and 'execute' actions."
+            },
+            "mode": {
+              "type": "string",
+              "enum": ["text", "html", "attribute", "table", "json"],
+              "description": "Extraction mode for 'extract' action."
+            },
+            "attribute": {
+              "type": "string",
+              "description": "Attribute name for 'extract' mode='attribute'."
+            },
+            "engine_action": {
+              "type": "string",
+              "description": "Raw engine action_type for 'execute' (e.g. click, fill, press, wait, crawl)."
+            },
+            "value": {
+              "description": "Value for 'execute' action (e.g. text to fill, key to press)."
+            },
+            "options": {
+              "type": "object",
+              "description": "Additional engine options for 'execute' or 'navigate' (wait_until, timeout, etc)."
+            },
+            "max_chars": {
+              "type": "number",
+              "description": "Max characters for 'observe' action. Defaults to 20000."
+            }
+          },
+          "required": ["action"]
+        },
+        "handler": "cloudBrowserControl",
+        "annotations": {
+          "read_only_hint": true,
+          "destructive_hint": false,
+          "idempotent_hint": false
+        }
+      },
+      {
+        "name": "cloud_browser_skip_trace",
+        "title": "Cloud browser skip trace",
+        "description": "Uses the stealth cloud browser to discover trending videos across YouTube (bypassing anti-bot measures), classifies them into 10 distinct viral style templates via AI, and upserts them into the ViralTemplate library. Call when you want to refresh the viral template collection with the latest trending patterns.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "refresh": {
+              "type": "boolean",
+              "description": "If true, forces a full re-scan. If false or omitted, still runs discovery."
+            }
+          },
+          "required": []
+        },
+        "handler": "cloudBrowserSkipTrace",
+        "annotations": {
+          "read_only_hint": false,
+          "destructive_hint": false,
+          "idempotent_hint": true
+        }
       }
     ]
   }
