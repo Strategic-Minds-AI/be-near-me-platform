@@ -1,45 +1,32 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { LayoutTemplate, Search, Smartphone, Monitor, Workflow, X, SlidersHorizontal, FileText } from "lucide-react";
+import { LayoutTemplate, Search, SlidersHorizontal, X, FileText, Play, Sparkles, Wand2, Zap, Clock } from "lucide-react";
 import { PREVIEW_STYLES } from "@/lib/gallery/previewStyles.js";
-import { GALLERY_FAMILIES, familyFor, renderPreview } from "@/lib/gallery/previewRenderer.js";
-import {
-  loadConfig,
-  saveConfig,
-  themeToCssVars,
-  DEFAULT_CONFIG,
-  loadFont,
-  PRESETS,
-  FONT_OPTIONS,
-} from "@/lib/gallery/studioConfig.js";
-import DeviceFrame from "@/components/gallery/DeviceFrame.jsx";
+import { loadConfig, saveConfig, themeToCssVars, DEFAULT_CONFIG, loadFont } from "@/lib/gallery/studioConfig.js";
+import { VIRAL_TEMPLATES, VIRAL_CATEGORIES, renderViralPreview, viralCategoryFor } from "@/lib/gallery/viralPreviewRenderer.js";
 import StudioControls from "@/components/gallery/StudioControls.jsx";
 import StudioGenerators from "@/components/gallery/StudioGenerators.jsx";
 
-const TABS = [
-  { key: "all", label: "All", icon: LayoutTemplate },
-  { key: "desktop", label: "Desktop", icon: Monitor },
-  { key: "mobile", label: "Mobile", icon: Smartphone },
-  { key: "recipes", label: "Recipes", icon: Workflow },
-];
+const DIFFICULTY_STYLES = {
+  beginner: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  intermediate: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  advanced: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
+};
 
-function TemplatePreview({ template, platform, displayW = 232, config }) {
-  const { frame, designW, designH, html } = renderPreview(template, platform, config);
+function ViralPreview({ template, displayW = 232, config }) {
+  const { frame, designW, designH, html } = renderViralPreview(template, config);
+  const scale = displayW / designW;
   return (
-    <DeviceFrame type={frame} designW={designW} designH={designH} displayW={displayW}>
-      <div style={{ width: designW, height: designH }} dangerouslySetInnerHTML={{ __html: html }} />
-    </DeviceFrame>
+    <div style={{ width: designW, height: designH, transform: `scale(${scale})`, transformOrigin: "top center" }} dangerouslySetInnerHTML={{ __html: html }} />
   );
 }
 
 function TemplateDetailModal({ template, config, themeVars, onChange, onClose }) {
   const [tab, setTab] = useState("customize");
   if (!template) return null;
-  const platform = familyFor(template);
-  const displayW = platform === "mobile" ? 260 : 560;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
       <div className="relative w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col md:flex-row rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl">
         <button
           onClick={onClose}
@@ -48,22 +35,33 @@ function TemplateDetailModal({ template, config, themeVars, onChange, onClose })
         >
           <X className="w-5 h-5" />
         </button>
-        <div
-          className="flex-1 flex items-center justify-center p-6 bg-white/5 overflow-auto"
-          style={themeVars}
-        >
-          <TemplatePreview template={template} platform={platform} displayW={displayW} config={config} />
-        </div>
-        <div className="md:w-80 lg:w-96 flex flex-col border-t md:border-t-0 md:border-l border-white/10 max-h-[92vh]">
-          <div className="flex items-center gap-1 p-3 border-b border-white/10">
-            <div className="flex-1 min-w-0 px-1">
-              <div className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-pink-500/20 text-pink-300 mb-1">
-                {platform === "recipe" ? "Experience Recipe" : platform === "mobile" ? "Mobile Archetype" : "Desktop Archetype"}
-              </div>
-              <h2 className="text-sm font-black text-white truncate">{template.name}</h2>
-            </div>
+
+        {/* Preview side */}
+        <div className="flex-1 flex items-center justify-center p-6 bg-black/30 overflow-auto" style={themeVars}>
+          <div className="shrink-0">
+            <ViralPreview template={template} displayW={280} config={config} />
           </div>
-          <div className="flex items-center gap-1 px-3 pt-2">
+        </div>
+
+        {/* Details side */}
+        <div className="md:w-80 lg:w-96 flex flex-col border-t md:border-t-0 md:border-l border-white/10 max-h-[92vh]">
+          <div className="p-4 border-b border-white/10">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-pink-500/20 text-pink-300">
+                {template.category}
+              </span>
+              <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${DIFFICULTY_STYLES[template.difficulty]}`}>
+                {template.difficulty}
+              </span>
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-white/60">
+                <Clock className="w-2.5 h-2.5" />{template.avg_duration}s
+              </span>
+            </div>
+            <h2 className="text-lg font-black text-white">{template.name}</h2>
+            <p className="text-xs text-white/50 mt-1">{template.tagline}</p>
+          </div>
+
+          <div className="flex items-center gap-1 px-3 pt-3">
             <button
               onClick={() => setTab("customize")}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${
@@ -81,7 +79,8 @@ function TemplateDetailModal({ template, config, themeVars, onChange, onClose })
               <FileText className="w-3.5 h-3.5" />Spec
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: "thin" }}>
+
+          <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
             {tab === "customize" ? (
               <div className="flex flex-col gap-4">
                 <StudioControls config={config} onChange={onChange} />
@@ -89,17 +88,59 @@ function TemplateDetailModal({ template, config, themeVars, onChange, onClose })
               </div>
             ) : (
               <div className="flex flex-col gap-4 text-sm">
-                <div className="text-xs text-white/40 font-mono">{template.id}</div>
-                {template.layout_rule && (
+                <p className="text-white/80 leading-relaxed">{template.description}</p>
+
+                {template.hook_pattern && (
                   <div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Layout rule</div>
-                    <div className="text-white/80">{template.layout_rule}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Hook</div>
+                    <div className="text-white/80 text-xs">{template.hook_pattern}</div>
                   </div>
                 )}
-                {template.canonical_flow && (
+                {template.pacing && (
                   <div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Canonical flow</div>
-                    <div className="text-white/80">{template.canonical_flow}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Pacing</div>
+                    <div className="text-white/80 text-xs">{template.pacing}</div>
+                  </div>
+                )}
+                {template.music_style && (
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1">Music</div>
+                    <div className="text-white/80 text-xs">{template.music_style}</div>
+                  </div>
+                )}
+                {template.shot_list?.length > 0 && (
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1.5">Shot sequence</div>
+                    <ol className="space-y-1">
+                      {template.shot_list.map((shot, i) => (
+                        <li key={i} className="flex gap-2 text-xs text-white/80">
+                          <span className="font-bold text-pink-400">{i + 1}.</span>
+                          <span>{shot}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+                {template.visual_effects?.length > 0 && (
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1.5">Visual effects</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {template.visual_effects.map((fx) => (
+                        <span key={fx} className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/5 text-white/70 border border-white/10">
+                          {fx}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {template.color_palette?.length > 0 && (
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-1.5">Color palette</div>
+                    <div className="flex gap-1.5">
+                      {template.color_palette.map((c) => (
+                        <div key={c} className="w-7 h-7 rounded-lg border border-white/10" style={{ background: c }} title={c} />
+                      ))}
+                    </div>
                   </div>
                 )}
                 {template.best_for?.length > 0 && (
@@ -124,7 +165,7 @@ function TemplateDetailModal({ template, config, themeVars, onChange, onClose })
 }
 
 export default function VisualGallery() {
-  const [tab, setTab] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
   const [config, setConfig] = useState(() => loadConfig());
@@ -138,33 +179,19 @@ export default function VisualGallery() {
 
   const themeVars = useMemo(() => themeToCssVars(config), [config]);
 
-  const items = useMemo(() => {
-    const all = GALLERY_FAMILIES.flatMap((f) =>
-      f.items.map((it) => ({ ...it, _platform: familyFor(it) }))
-    );
-    return all.filter((it) => {
-      if (tab !== "all" && it._platform !== tab) return false;
+  const filtered = useMemo(() => {
+    return VIRAL_TEMPLATES.filter((t) => {
+      if (activeCategory !== "All" && viralCategoryFor(t) !== activeCategory) return false;
       if (!query) return true;
       const q = query.toLowerCase();
       return (
-        String(it.name).toLowerCase().includes(q) ||
-        String(it.id).toLowerCase().includes(q) ||
-        (it.best_for || []).some((b) => b.toLowerCase().includes(q)) ||
-        (it.domain || "").toLowerCase().includes(q)
+        t.name.toLowerCase().includes(q) ||
+        t.tagline.toLowerCase().includes(q) ||
+        t.category.toLowerCase().includes(q) ||
+        (t.best_for || []).some((b) => b.toLowerCase().includes(q))
       );
     });
-  }, [tab, query]);
-
-  const counts = useMemo(() => {
-    const c = { all: 0, desktop: 0, mobile: 0, recipes: 0 };
-    GALLERY_FAMILIES.forEach((f) =>
-      f.items.forEach((it) => {
-        c.all++;
-        c[familyFor(it)]++;
-      })
-    );
-    return c;
-  }, []);
+  }, [activeCategory, query]);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
@@ -178,9 +205,9 @@ export default function VisualGallery() {
               <LayoutTemplate className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black">Visual Template Gallery</h1>
+              <h1 className="text-xl font-black">Viral Template Gallery</h1>
               <p className="text-sm text-white/50">
-                Live rendered previews of every template — fully rebrandable in real time.
+                20 ultra high-quality video templates inspired by top viral trends.
               </p>
             </div>
           </div>
@@ -193,55 +220,39 @@ export default function VisualGallery() {
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
-                <span className="text-sm">🎨</span>
+                <Sparkles className="w-4 h-4 text-pink-400" />
               </div>
               <div>
-                <div className="text-sm font-bold flex items-center gap-2">
-                  Template Studio
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-pink-500/20 text-pink-300">
-                    Universal
-                  </span>
-                </div>
-                <div className="text-[11px] text-white/40">
-                  Recolor, rebrand, and recontent every template — live. Click any template for the full studio.
-                </div>
+                <div className="text-sm font-bold">Template Studio</div>
+                <div className="text-[11px] text-white/40">Recolor and rebrand every template — live.</div>
               </div>
             </div>
             <button
               onClick={() => setConfig({ ...DEFAULT_CONFIG })}
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/50 hover:text-white"
             >
-              ↻ Reset to brand
+              ↻ Reset
             </button>
           </div>
           <StudioControls config={config} onChange={setConfig} />
         </div>
 
-        {/* Tabs + Search */}
+        {/* Category pills + search */}
         <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
           <div className="flex items-center gap-1.5 flex-wrap">
-            {TABS.map((t) => {
-              const Icon = t.icon;
-              const on = tab === t.key;
+            {VIRAL_CATEGORIES.map((cat) => {
+              const on = activeCategory === cat;
               return (
                 <button
-                  key={t.key}
-                  onClick={() => setTab(t.key)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     on
                       ? "bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow-lg shadow-pink-500/30"
                       : "border border-white/10 text-white/50 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  {t.label}
-                  <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                      on ? "bg-white/25" : "bg-white/10"
-                    }`}
-                  >
-                    {counts[t.key]}
-                  </span>
+                  {cat}
                 </button>
               );
             })}
@@ -252,50 +263,58 @@ export default function VisualGallery() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search templates…"
-              className="pl-8 pr-3 py-2 text-sm rounded-lg border border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-pink-500/50 w-56"
+              className="pl-8 pr-3 py-2 text-sm rounded-lg border border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-pink-500/50 w-48"
             />
           </div>
         </div>
 
-        {/* Gallery Grid */}
+        {/* Template count */}
+        <div className="mb-4 text-xs text-white/40">
+          {filtered.length} of {VIRAL_TEMPLATES.length} templates
+        </div>
+
+        {/* Gallery Grid — 9:16 vertical previews */}
         <div style={themeVars}>
-          {items.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
-              <div className="text-sm font-semibold text-white/60">No templates match</div>
-              <div className="text-xs text-white/30 mt-1">Try a different tab or search term.</div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {items.map((it) => (
-                <button
-                  key={it._platform + "-" + it.id}
-                  onClick={() => setSelected(it)}
-                  className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl overflow-hidden text-left group transition-all hover:border-pink-500/30 hover:bg-white/[0.07] flex flex-col"
-                >
-                  <div className="flex items-center justify-center bg-white/5 py-5 overflow-hidden">
-                    <div className="origin-top transition-transform group-hover:scale-[1.02]">
-                      <TemplatePreview template={it} platform={it._platform} displayW={232} config={config} />
-                    </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filtered.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setSelected(t)}
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all hover:border-pink-500/40 hover:bg-white/[0.07]"
+              >
+                {/* 9:16 Preview */}
+                <div className="aspect-[9/16] overflow-hidden bg-black flex items-center justify-center">
+                  <div className="origin-top transition-transform duration-300 group-hover:scale-[1.03]">
+                    <ViralPreview template={t} displayW={170} config={config} />
                   </div>
-                  <div className="p-4 border-t border-white/10">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="text-sm font-bold truncate">{it.name}</h3>
-                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-white/60 shrink-0">
-                        {it._platform}
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-white/40 mt-1 line-clamp-2">
-                      {it.layout_rule || it.canonical_flow || (it.best_for || []).join(" · ")}
-                    </div>
-                    <div className="flex items-center gap-1.5 mt-2.5 text-[11px] font-semibold text-pink-400">
-                      View live preview
-                      <span className="transition-transform group-hover:translate-x-0.5">→</span>
-                    </div>
+                </div>
+
+                {/* Info overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+                  <h3 className="text-sm font-bold text-white truncate">{t.name}</h3>
+                  <p className="text-[10px] text-white/50 truncate mt-0.5">{t.tagline}</p>
+                </div>
+
+                {/* One-tap badge */}
+                <div className="absolute top-2 left-2 flex items-center gap-0.5 rounded-full bg-black/50 px-1.5 py-0.5 backdrop-blur-sm">
+                  <Zap className="w-2.5 h-2.5 text-pink-400" />
+                  <span className="text-[8px] font-bold text-white">1 TAP</span>
+                </div>
+
+                {/* Difficulty badge */}
+                <span className={`absolute top-2 right-2 rounded-full border px-1.5 py-0.5 text-[8px] font-bold uppercase backdrop-blur-sm ${DIFFICULTY_STYLES[t.difficulty]}`}>
+                  {t.difficulty}
+                </span>
+
+                {/* Hover play icon */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500/90 shadow-lg">
+                    <Play className="w-4 h-4 fill-white text-white" />
                   </div>
-                </button>
-              ))}
-            </div>
-          )}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
