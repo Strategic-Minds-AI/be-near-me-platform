@@ -1,0 +1,117 @@
+{
+  "name": "ViralTemplate",
+  "type": "object",
+  "properties": {
+    "style_name": {
+      "type": "string",
+      "description": "Name of the viral video style (e.g. 'Fast-Cut Transition Reel')"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-safe unique key for this style"
+    },
+    "category": {
+      "type": "string",
+      "description": "Content category this style maps to"
+    },
+    "tagline": {
+      "type": "string",
+      "description": "Short one-line summary of the style"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this style is and why it works"
+    },
+    "hook_pattern": {
+      "type": "string",
+      "description": "The opening hook structure that grabs attention in the first 1-2 seconds"
+    },
+    "pacing": {
+      "type": "string",
+      "description": "Edit rhythm and cut frequency"
+    },
+    "shot_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Typical shot sequence for this style"
+    },
+    "music_style": {
+      "type": "string",
+      "description": "Audio/music approach"
+    },
+    "caption_formula": {
+      "type": "string",
+      "description": "Caption/text overlay structure"
+    },
+    "example_creators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Real creators who popularized this style"
+    },
+    "example_video_titles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Example video titles in this style"
+    },
+    "viral_prompt_template": {
+      "type": "string",
+      "description": "Fill-in prompt template shown to the user / fed to the generator"
+    },
+    "visual_prompt_template": {
+      "type": "string",
+      "description": "Cinematic visual prompt template for AI video generation"
+    },
+    "thumbnail_style": {
+      "type": "string",
+      "description": "Thumbnail/cover visual approach"
+    },
+    "avg_duration": {
+      "type": "number",
+      "default": 6,
+      "description": "Typical duration in seconds"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "default": "beginner"
+    },
+    "discovered_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "style_name",
+    "slug",
+    "tagline",
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
