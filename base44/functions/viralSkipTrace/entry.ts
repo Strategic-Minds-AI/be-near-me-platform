@@ -1,20 +1,18 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { chatCompletion } from "../../shared/vercelAiGateway.ts";
 
-// viralSkipTrace — the "skip trace" system that finds top creators across
-// social media (via free YouTube search + oEmbed), reverse-engineers their
-// video styles including VISUAL DNA (colors, fonts, effects, symbols, outlines,
-// patterns, transitions), and classifies them into 10 distinct viral templates.
+// viralSkipTrace — discovers top creators across YouTube (free search + oEmbed),
+// classifies them into 10 viral style templates with basic fields, and saves them.
+// Visual DNA enrichment is handled separately by enrichVisualDna to keep this
+// function fast enough to complete within timeout.
 //
 // Powered by Vercel AI Gateway (no Base44 integration credits required).
-// YouTube oEmbed + search HTML parsing are free public endpoints.
 //
 // Input: { refresh?: boolean }
 // Output: { discovered, templates, styles }
 
 const YT_ID_RE = /watch\?v=([a-zA-Z0-9_-]{11})/g;
 
-// 10 broad search queries — each surfaces a different viral video FORMAT
 const STYLE_QUERIES = [
   "viral transition reel tiktok 2026",
   "storytime vlog storytelling",
@@ -63,7 +61,7 @@ export default async function (req: Request) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // 1. Discover top creators/videos across the 10 format queries (parallelized)
+    // 1. Discover top creators/videos (parallelized)
     const idLists = await Promise.all(STYLE_QUERIES.map((q) => getVideoIds(q)));
     const allIds = idLists.flatMap((ids, i) => ids.map((id) => ({ id, q: STYLE_QUERIES[i] })));
     const metas = await Promise.all(allIds.map((x) => getMeta(x.id)));
@@ -78,10 +76,8 @@ export default async function (req: Request) {
       return Response.json({ error: 'No videos discovered from YouTube' }, { status: 502 });
     }
 
-    // 2. Classify into 10 distinct viral styles with FULL VISUAL DNA via LLM
-    const classifyPrompt = `You are an expert viral content analyst and visual designer. Below is a dataset of real trending videos from YouTube. Identify the TOP 10 DISTINCT VIRAL VIDEO STYLES — each a repeatable FORMAT (not a topic).
-
-For EACH style, identify the COMPLETE VISUAL DNA top creators use: exact hex colors, font/typography style, editing effects, text overlay treatment, recurring symbols, transition style, lighting, and thumbnail text layout. Be specific — these feed an AI video generator.
+    // 2. Classify into 10 distinct viral styles (basic fields only — fast)
+    const classifyPrompt = `You are a viral content analyst. Below is a dataset of real trending videos from YouTube. Identify the TOP 10 DISTINCT VIRAL VIDEO STYLES — each a repeatable FORMAT/pattern (not a topic). Each style must be genuinely different in structure.
 
 DISCOVERED VIDEOS (title | creator | query):
 ${JSON.stringify(discovered)}
@@ -91,13 +87,7 @@ Return EXACTLY 10 styles as JSON. Each must have:
 - hook_pattern, pacing, shot_list (4-6 shots), music_style, caption_formula
 - example_creators (2-4 names), example_video_titles (2-3)
 - viral_prompt_template (with {USER_IDEA} placeholder), visual_prompt_template (vertical 9:16, with {USER_IDEA}), thumbnail_style
-- avg_duration (6 or 8), difficulty (beginner|intermediate|advanced)
-- color_palette: 4-6 hex codes (e.g. "#FF006E")
-- font_style: typography description
-- visual_effects: 3-5 editing techniques
-- text_overlay_style: on-screen text treatment
-- symbols_motifs: 2-4 recurring visual symbols
-- transition_style, lighting_style, thumbnail_text_pattern`;
+- avg_duration (6 or 8), difficulty (beginner|intermediate|advanced)`;
 
     const styles = await chatCompletion(classifyPrompt, {
       model: 'gemini_3_flash',
@@ -125,14 +115,6 @@ Return EXACTLY 10 styles as JSON. Each must have:
                 thumbnail_style: { type: 'string' },
                 avg_duration: { type: 'number' },
                 difficulty: { type: 'string' },
-                color_palette: { type: 'array', items: { type: 'string' } },
-                font_style: { type: 'string' },
-                visual_effects: { type: 'array', items: { type: 'string' } },
-                text_overlay_style: { type: "string" },
-                symbols_motifs: { type: "array", items: { type: "string" } },
-                transition_style: { type: "string" },
-                lighting_style: { type: "string" },
-                thumbnail_text_pattern: { type: "string" },
               },
             },
           },
@@ -163,15 +145,6 @@ Return EXACTLY 10 styles as JSON. Each must have:
       avg_duration: s.avg_duration || 6,
       difficulty: s.difficulty || 'beginner',
       discovered_at: now,
-      color_palette: s.color_palette || [],
-      font_style: s.font_style || '',
-      visual_effects: s.visual_effects || [],
-      text_overlay_style: s.text_overlay_style || '',
-      symbols_motifs: s.symbols_motifs || [],
-      transition_style: s.transition_style || '',
-      aspect_ratio: '9:16',
-      lighting_style: s.lighting_style || '',
-      thumbnail_text_pattern: s.thumbnail_text_pattern || '',
     }));
 
     let upserted = 0;
