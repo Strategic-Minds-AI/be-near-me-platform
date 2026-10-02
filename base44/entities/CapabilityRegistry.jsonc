@@ -1,0 +1,66 @@
+{
+  "name": "CapabilityRegistry",
+  "type": "object",
+  "properties": {
+    "family_id": {
+      "type": "string",
+      "description": "Registry file name (e.g. 'monetization_templates', 'industry_packs')"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable family name"
+    },
+    "category": {
+      "type": "string",
+      "description": "Registry category"
+    },
+    "entry_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of entries in this family"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Array of capability template entries (full JSON objects)"
+    },
+    "registry_version": {
+      "type": "string",
+      "default": "1.0.0"
+    }
+  },
+  "required": [
+    "family_id",
+    "display_name",
+    "category",
+    "entries"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
