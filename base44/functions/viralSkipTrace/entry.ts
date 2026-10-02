@@ -35,7 +35,7 @@ async function getVideoIds(query: string): Promise<string[]> {
       { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } }
     );
     const html = await r.text();
-    return [...new Set([...html.matchAll(YT_ID_RE)].map((m) => m[1]))].slice(0, 6);
+    return [...new Set([...html.matchAll(YT_ID_RE)].map((m) => m[1]))].slice(0, 4);
   } catch {
     return [];
   }
@@ -79,48 +79,25 @@ export default async function (req: Request) {
     }
 
     // 2. Classify into 10 distinct viral styles with FULL VISUAL DNA via LLM
-    const classifyPrompt = `You are an expert viral content analyst and visual designer. Below is a dataset of real trending videos discovered across YouTube, grouped by the search query that surfaced them. Your job is to identify the TOP 10 DISTINCT VIRAL VIDEO STYLES that top creators use — each style is a repeatable FORMAT/pattern (not a topic).
+    const classifyPrompt = `You are an expert viral content analyst and visual designer. Below is a dataset of real trending videos from YouTube. Identify the TOP 10 DISTINCT VIRAL VIDEO STYLES — each a repeatable FORMAT (not a topic).
 
-For EACH style, you must identify the COMPLETE VISUAL DNA that top creators use:
-- Color palette: the exact hex colors they gravitate toward (backgrounds, text, accents, overlays)
-- Font/typography style: font family, weight, case, treatment (outlines, shadows, gradients)
-- Visual effects: editing techniques (speed ramps, match cuts, zoom punches, glitch, etc.)
-- Text overlay style: how on-screen text is styled and placed (outline color, stroke, animation)
-- Symbols & motifs: recurring visual symbols, stickers, emojis, or graphic elements
-- Transition style: how shots connect (whip pans, hard cuts, cross dissolves, mask transitions)
-- Lighting style: the lighting approach that defines the look
-- Thumbnail text pattern: how text and faces are arranged on the cover/thumbnail
+For EACH style, identify the COMPLETE VISUAL DNA top creators use: exact hex colors, font/typography style, editing effects, text overlay treatment, recurring symbols, transition style, lighting, and thumbnail text layout. Be specific — these feed an AI video generator.
 
-Base your analysis on the real creators, titles, and the well-known visual conventions of each format. Be specific and actionable — these details will be fed to an AI video generator.
+DISCOVERED VIDEOS (title | creator | query):
+${JSON.stringify(discovered)}
 
-DISCOVERED VIDEOS (title | creator | format query):
-${JSON.stringify(discovered, null, 2)}
-
-Return EXACTLY 10 styles as a JSON array. Each style object must have:
-- style_name: a catchy name for the style (e.g. "Fast-Cut Transition Reel")
-- category: the best-fit content category (one of: gaming, music, vlogs, education, entertainment, sports, news, tech, comedy, film, howto, travel, food, fashion, art, science, pets, autos, other)
-- tagline: a one-line summary (max 80 chars)
-- description: what this style is and why it goes viral (2-3 sentences)
-- hook_pattern: the opening 1-2 second hook structure
-- pacing: edit rhythm and cut frequency
-- shot_list: 4-6 typical shots in sequence
-- music_style: audio/music approach
-- caption_formula: on-screen text/caption structure
-- example_creators: 2-4 real creator names from the dataset (or well-known ones) who use this style
-- example_video_titles: 2-3 example titles in this style
-- viral_prompt_template: a fill-in prompt a user would feed to an AI video generator to make a video in this style — include a {USER_IDEA} placeholder
-- visual_prompt_template: a cinematic visual prompt template for AI video generation (vertical 9:16), with a {USER_IDEA} placeholder, describing lighting, camera movement, mood, color palette, and effects
-- thumbnail_style: thumbnail/cover visual approach
-- avg_duration: typical duration in seconds (6 or 8)
-- difficulty: beginner | intermediate | advanced
-- color_palette: array of 4-6 hex color codes (e.g. "#FF006E") that define this style's look
-- font_style: typography description (family, weight, case, treatment)
-- visual_effects: array of 3-5 specific editing techniques/effects used
-- text_overlay_style: on-screen text treatment (outline, shadow, placement, animation)
-- symbols_motifs: array of 2-4 recurring visual symbols, stickers, or graphic elements
-- transition_style: how cuts/transitions between shots are executed
-- lighting_style: the lighting approach that defines the look
-- thumbnail_text_pattern: how text and faces are arranged on the thumbnail`;
+Return EXACTLY 10 styles as JSON. Each must have:
+- style_name, category (gaming|music|vlogs|education|entertainment|sports|news|tech|comedy|film|howto|travel|food|fashion|art|science|pets|autos|other), tagline (max 80 chars), description (2-3 sentences)
+- hook_pattern, pacing, shot_list (4-6 shots), music_style, caption_formula
+- example_creators (2-4 names), example_video_titles (2-3)
+- viral_prompt_template (with {USER_IDEA} placeholder), visual_prompt_template (vertical 9:16, with {USER_IDEA}), thumbnail_style
+- avg_duration (6 or 8), difficulty (beginner|intermediate|advanced)
+- color_palette: 4-6 hex codes (e.g. "#FF006E")
+- font_style: typography description
+- visual_effects: 3-5 editing techniques
+- text_overlay_style: on-screen text treatment
+- symbols_motifs: 2-4 recurring visual symbols
+- transition_style, lighting_style, thumbnail_text_pattern`;
 
     const styles = await chatCompletion(classifyPrompt, {
       model: 'gemini_3_flash',
