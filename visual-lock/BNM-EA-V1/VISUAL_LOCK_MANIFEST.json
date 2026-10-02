@@ -1,0 +1,74 @@
+{
+  "visual_lock_id": "BNM-EA-V1",
+  "status": "APPROVED",
+  "approved_at": "2026-10-02",
+  "operator_instruction": "APPROVE.SAVE THIS EXACT APP. NOTHING LESS. DEDICATED TO EVA AND ANASTASIA. INCLUDE A PAYMENT SYSTEM, ALL THE MONEY GOES TO THEM",
+  "archive": {
+    "sha256": "f4127ec90b3d3feb4ccce7ec1b42664e413993deaa30ccbb2df52a3c1099f203",
+    "library_file_id": "libfile_dcc538d99ca4819190a280c4aab93a51"
+  },
+  "source": {
+    "repo": "Strategic-Minds-AI/be-near-me-platform",
+    "base_sha": "9ca4895cebad14da708999b3c203ebb7adaa5e60",
+    "branch": "apex/bnm-eva-anastasia-v1",
+    "base44_app_id": "6abd9e05a56938f03c2c557b",
+    "base44_checkpoint_id": "6ac04508f47e4206a538752a"
+  },
+  "screens": [
+    {
+      "name": "01_HOME_FOR_YOU.png",
+      "sha256": "33e4d1deb106d45d4cae0dd71ead6647a02c40e18beaa15f377336788926aa3d",
+      "library_file_id": "libfile_393f752fbfd88191ac5e654ab3f943a0"
+    },
+    {
+      "name": "02_EXPLORE_NEARBY_MAP.png",
+      "sha256": "825990f6eff51eb4029044b132d58a08a801d8509b55843e5ff493e18ae18ed0",
+      "library_file_id": "libfile_51c5a17e6f9c8191ad7493422b44d0ea"
+    },
+    {
+      "name": "03_KINDNESS_CHALLENGE.png",
+      "sha256": "be407f0ddfa10b4c2617419f4cb32690e4352f962508fcf4e86200ff3bfb9d0e",
+      "library_file_id": "libfile_b1fc06bdd2dc819187f3147e4c4d3718"
+    },
+    {
+      "name": "04_CREATE_RECORD.png",
+      "sha256": "7bf196c1cef60d40a5283b797b962a5ac0af7ccb32853b5a8b9b95e1cdcfee97",
+      "library_file_id": "libfile_ebf69a064d288191bb8842b56d0e742e"
+    },
+    {
+      "name": "05_SEARCH_RESULTS.png",
+      "sha256": "63b1d62e77866511f30aa48332dfe80359b91b522cb803d0589ee64b84d6c0f2",
+      "library_file_id": "libfile_697cfa346ea481918807dadebb19db5a"
+    },
+    {
+      "name": "06_CREATOR_PROFILE.png",
+      "sha256": "ae8f4ccd2a88016216c74111888ad2f98f96adbff7ebfad2a59f63598c767c8b",
+      "library_file_id": "libfile_79b2ae5f18ac819191091b6a69cb8380"
+    },
+    {
+      "name": "07_CREATOR_STUDIO.png",
+      "sha256": "ca409bc0f4ab5e87ad1f466929160e80a642ddf0f245c830cfc3e46d7379491b",
+      "library_file_id": "libfile_bbcd0890f024819187c33d17e279b63e"
+    },
+    {
+      "name": "08_AI_COACH.png",
+      "sha256": "ae6c94f2e5220e8f12dd5a8d32119fb1345e372f425d39b6bc78af163ddf23f9",
+      "library_file_id": "libfile_a424e506686c8191a3e2b43cdb0fb851"
+    },
+    {
+      "name": "09_REWARDS_MARKETPLACE.png",
+      "sha256": "fd5c3a8325a1f33e89a5136f54a2731076d192c9a9e30185fde9a393167e7d7d",
+      "library_file_id": "libfile_8fef0bf804188191bc16b4751d33c724"
+    },
+    {
+      "name": "10_CHECKOUT_CLAIM_REWARD.png",
+      "sha256": "7c7c5534b8159b788ecc6c508888ff3a2dab5079d493c64896fac00f4fd3cebe",
+      "library_file_id": "libfile_36c6139074dc8191acf2d5991c61de1a"
+    }
+  ],
+  "parity": {
+    "minimum_score": 94,
+    "critical_fails_allowed": 0,
+    "visual_target": "the approved PNGs; no redesign"
+  }
+}
