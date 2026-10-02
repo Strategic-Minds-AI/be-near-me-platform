@@ -8,7 +8,7 @@ import {
   Factory, Boxes, Workflow, FileCode, ShieldCheck, Wrench,
   CloudUpload, Briefcase, Palette, BarChart3, CheckCircle2,
   AlertTriangle, XCircle, Clock, ArrowRight, Cpu, Package,
-  FileCheck, GitBranch, Settings, Activity,
+  FileCheck, GitBranch, Settings, Activity, Library,
 } from 'lucide-react';
 
 const MODULES = [
@@ -20,6 +20,7 @@ const MODULES = [
   { path: '/factory/repair', icon: Wrench, label: 'Repair Center', desc: 'Targeted recursive repair' },
   { path: '/factory/provisioning', icon: CloudUpload, label: 'Provisioning Center', desc: 'Plan-first, approval-gated' },
   { path: '/factory/consulting', icon: Briefcase, label: 'AI Consulting Factory', desc: '34 evidence-based generators' },
+  { path: '/factory/capabilities', icon: Library, label: 'Capability Registry', desc: '30 families · 486 templates' },
   { path: '/factory/frontend', icon: Palette, label: 'Frontend Factory', desc: 'Pattern registry + design compiler' },
   { path: '/factory/approvals', icon: ShieldCheck, label: 'Approvals', desc: 'Operator-gated actions' },
   { path: '/factory/usage', icon: BarChart3, label: 'Usage & Budgets', desc: 'Cost and quota tracking' },
@@ -31,6 +32,7 @@ export default function FactoryDashboard() {
   const [stats, setStats] = useState(null);
   const [recentRuns, setRecentRuns] = useState([]);
   const [adapterHealth, setAdapterHealth] = useState([]);
+  const [capabilities, setCapabilities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,11 +41,13 @@ export default function FactoryDashboard() {
 
   async function loadDashboard() {
     try {
-      const [genCount, runCount, artifactCount, adapterCount, runs, adapters] = await Promise.all([
+      const [genCount, runCount, artifactCount, adapterCount, capCount, capFamilies, runs, adapters] = await Promise.all([
         base44.entities.GeneratorDefinition.count(),
         base44.entities.GeneratorRun.count(),
         base44.entities.Artifact.count(),
         base44.entities.AdapterDefinition.count(),
+        base44.entities.CapabilityRegistry.count(),
+        base44.entities.CapabilityRegistry.filter({}, { sort: 'family_id', limit: 50, fields: ['family_id', 'display_name', 'entry_count'] }),
         base44.entities.GeneratorRun.filter({}, { sort: '-created_date', limit: 5 }),
         base44.entities.AdapterDefinition.filter({}, { sort: 'adapter_key', limit: 50 }),
       ]);
@@ -53,7 +57,10 @@ export default function FactoryDashboard() {
         runs: runCount,
         artifacts: artifactCount,
         adapters: adapterCount,
+        capabilityFamilies: capCount,
+        capabilityEntries: (capFamilies.items || []).reduce((sum, f) => sum + (f.entry_count || 0), 0),
       });
+      setCapabilities(capFamilies.items || []);
       setRecentRuns(runs.items || []);
       setAdapterHealth(adapters.items || []);
     } catch (err) {
@@ -104,12 +111,13 @@ export default function FactoryDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
             { label: 'Generators', value: stats?.generators || 0, icon: Boxes, color: 'text-pink-400' },
             { label: 'Runs', value: stats?.runs || 0, icon: Activity, color: 'text-blue-400' },
             { label: 'Artifacts', value: stats?.artifacts || 0, icon: Package, color: 'text-green-400' },
             { label: 'Adapters', value: stats?.adapters || 0, icon: Cpu, color: 'text-purple-400' },
+            { label: 'Capability Tpl.', value: stats?.capabilityEntries || 0, icon: Library, color: 'text-amber-400' },
           ].map((stat) => (
             <Card key={stat.label} className="bg-[hsl(var(--semantic-surface))] border-white/10 p-4">
               <div className="flex items-center justify-between">
@@ -146,6 +154,21 @@ export default function FactoryDashboard() {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* Capability Registry */}
+        <div>
+          <h2 className="text-lg font-bold mb-3">Capability Registry — {stats?.capabilityFamilies || 0} families · {stats?.capabilityEntries || 0} templates</h2>
+          <Card className="bg-[hsl(var(--semantic-surface))] border-white/10 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-80 overflow-y-auto">
+              {capabilities.map((cap) => (
+                <div key={cap.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/5">
+                  <span className="text-sm font-medium truncate">{cap.display_name}</span>
+                  <Badge variant="secondary" className="text-xs ml-2 shrink-0">{cap.entry_count}</Badge>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
 
         {/* Adapter Health */}
