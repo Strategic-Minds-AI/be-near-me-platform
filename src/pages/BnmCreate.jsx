@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { BnmPage, BnmHeader } from "@/components/bnm/BnmChrome";
 import VisualDnaBadge from "@/components/bnm/VisualDnaBadge";
 import ImageUploader from "@/components/bnm/ImageUploader";
+import TemplateStylePreview from "@/components/bnm/TemplateStylePreview";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -20,9 +21,9 @@ import {
   Sliders,
   Zap,
   Clapperboard,
+  AlertTriangle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getTemplateImage, PRESET_IMAGES } from "@/lib/factory/templateImages";
 
 const DIFFICULTY_STYLES = {
   beginner: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
@@ -37,27 +38,28 @@ const DURATIONS = [
 ];
 
 const QUICK_PRESETS = [
-  { id: "neon_city", title: "Neon City", emoji: "🌃" },
-  { id: "ocean_sunset", title: "Ocean Sunset", emoji: "🌅" },
-  { id: "cosmic_nebula", title: "Cosmic Nebula", emoji: "🌌" },
-  { id: "tokyo_night", title: "Tokyo Night", emoji: "🗼" },
-  { id: "mountain_aurora", title: "Mountain Aurora", emoji: "🏔️" },
-  { id: "desert_dunes", title: "Desert Dunes", emoji: "🏜️" },
-  { id: "underwater_coral", title: "Underwater", emoji: "🐠" },
-  { id: "volcanic_eruption", title: "Volcano", emoji: "🌋" },
-  { id: "cherry_blossom", title: "Cherry Blossom", emoji: "🌸" },
-  { id: "drone_race", title: "Drone Race", emoji: "🚁" },
+  { id: "neon_city", title: "Neon City", emoji: "🌃", gradient: "from-fuchsia-600 to-pink-500" },
+  { id: "ocean_sunset", title: "Ocean Sunset", emoji: "🌅", gradient: "from-amber-500 to-pink-500" },
+  { id: "cosmic_nebula", title: "Cosmic Nebula", emoji: "🌌", gradient: "from-purple-600 to-fuchsia-500" },
+  { id: "tokyo_night", title: "Tokyo Night", emoji: "🗼", gradient: "from-pink-500 to-rose-500" },
+  { id: "mountain_aurora", title: "Mountain Aurora", emoji: "🏔️", gradient: "from-cyan-500 to-emerald-500" },
+  { id: "desert_dunes", title: "Desert Dunes", emoji: "🏜️", gradient: "from-amber-400 to-orange-500" },
+  { id: "underwater_coral", title: "Underwater", emoji: "🐠", gradient: "from-cyan-400 to-blue-500" },
+  { id: "volcanic_eruption", title: "Volcano", emoji: "🌋", gradient: "from-red-500 to-orange-600" },
+  { id: "cherry_blossom", title: "Cherry Blossom", emoji: "🌸", gradient: "from-pink-400 to-rose-400" },
+  { id: "drone_race", title: "Drone Race", emoji: "🚁", gradient: "from-slate-400 to-fuchsia-500" },
 ];
 
 export default function BnmCreate() {
-  const [activeTemplate, setActiveTemplate] = useState(null); // for customize sheet
-  const [quickResult, setQuickResult] = useState(null); // { template_id, data }
-  const [quickLoadingId, setQuickLoadingId] = useState(null); // template id being quick-generated
+  const [activeTemplate, setActiveTemplate] = useState(null);
+  const [quickResult, setQuickResult] = useState(null);
+  const [quickLoadingId, setQuickLoadingId] = useState(null);
   const [idea, setIdea] = useState("");
   const [images, setImages] = useState([]);
   const [duration, setDuration] = useState(6);
   const [activeCategory, setActiveCategory] = useState("All");
   const [scanOpen, setScanOpen] = useState(false);
+  const [result, setResult] = useState(null);
 
   const { data: templates, isLoading } = useQuery({
     queryKey: ["viralTemplates"],
@@ -80,8 +82,10 @@ export default function BnmCreate() {
     return (templates || []).filter((t) => t.category === activeCategory);
   }, [templates, activeCategory]);
 
-  // ── Single-click quick generate ──
+  // ── Single-click quick generate (with validation) ──
   const quickGenerate = async (template) => {
+    // Validate template has required fields
+    if (!template?.id) return;
     setQuickLoadingId(template.id);
     setQuickResult(null);
     try {
@@ -91,7 +95,12 @@ export default function BnmCreate() {
         user_images: [],
         duration: template.avg_duration || 6,
       });
-      setQuickResult({ template_id: template.id, data: res.data });
+      const data = res.data;
+      // Validate the response actually has a video_url — mandatory
+      if (!data?.video_url) {
+        throw new Error(data?.error || "Template did not produce a video. Credits may be exhausted.");
+      }
+      setQuickResult({ template_id: template.id, data });
     } catch (e) {
       setQuickResult({
         template_id: template.id,
@@ -102,7 +111,7 @@ export default function BnmCreate() {
     }
   };
 
-  // ── Preset quick generate (AIVideoStudio presets) ──
+  // ── Preset quick generate ──
   const [presetLoading, setPresetLoading] = useState(null);
   const [presetResult, setPresetResult] = useState(null);
   const quickPreset = async (presetId) => {
@@ -110,6 +119,7 @@ export default function BnmCreate() {
     setPresetResult(null);
     try {
       const res = await base44.functions.invoke("aiVideoGen", { presetId });
+      if (!res.data?.url) throw new Error(res.data?.error || "Generation failed");
       setPresetResult(res.data);
     } catch (e) {
       setPresetResult({ error: e.message || "Generation failed" });
@@ -131,7 +141,6 @@ export default function BnmCreate() {
     },
     onSuccess: (data) => setResult(data),
   });
-  const [result, setResult] = useState(null);
 
   const handleGenerate = () => {
     if (!activeTemplate) return;
@@ -156,69 +165,61 @@ export default function BnmCreate() {
     <BnmPage>
       <BnmHeader title="Create" brand />
 
-      {/* Hero */}
-      <div className="px-5 pt-3 pb-4">
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-fuchsia-600/15 via-[#0a0a14] to-cyan-500/10 p-5">
+      {/* Hero — mobile optimized */}
+      <div className="px-4 pt-3 pb-4">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-fuchsia-600/15 via-[#0a0a14] to-cyan-500/10 p-4">
           <div className="flex items-center gap-2 text-white">
             <Sparkles className="h-5 w-5 text-fuchsia-400" />
-            <h2 className="text-lg font-extrabold tracking-tight">
+            <h2 className="text-base font-extrabold tracking-tight">
               One tap. Viral video.
             </h2>
           </div>
-          <p className="mt-1.5 text-sm leading-6 text-[#9ba6bb]">
-            Pick a style, tap once, and we'll generate a viral-ready video
-            instantly. Want more control? Tap the customize icon.
+          <p className="mt-1.5 text-xs leading-5 text-[#9ba6bb]">
+            Tap any template below — we generate a viral video instantly using
+            that style's exact colors, fonts, and effects.
           </p>
           <button
             onClick={() => setScanOpen(true)}
-            className="mt-3 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-300 transition hover:bg-cyan-500/20"
+            className="mt-2.5 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-300 transition hover:bg-cyan-500/20"
           >
-            <Radar className="h-3.5 w-3.5" /> Scan trending videos now
+            <Radar className="h-3.5 w-3.5" /> Scan trending videos
           </button>
         </div>
       </div>
 
-      {/* Quick Styles — cinematic one-tap presets */}
-      <div className="px-5 pb-2">
-        <div className="mb-3 flex items-center gap-2">
+      {/* Quick Cinematic Styles — horizontal scroll, mobile-first */}
+      <div className="pb-2">
+        <div className="mb-2 flex items-center gap-2 px-4">
           <Clapperboard className="h-4 w-4 text-fuchsia-400" />
-          <h3 className="text-sm font-bold uppercase tracking-wider text-[#8f9ab0]">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#8f9ab0]">
             Quick Cinematic Styles
           </h3>
         </div>
-        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar px-4 pb-2">
           {QUICK_PRESETS.map((p) => {
             const busy = presetLoading === p.id;
-            const img = PRESET_IMAGES[p.id];
             return (
               <button
                 key={p.id}
                 onClick={() => quickPreset(p.id)}
                 disabled={!!presetLoading}
-                className="group relative h-44 w-28 shrink-0 overflow-hidden rounded-2xl border border-white/10 transition disabled:opacity-60"
+                className="group relative h-36 w-20 shrink-0 overflow-hidden rounded-2xl border border-white/10 transition disabled:opacity-60"
               >
-                <img
-                  src={img}
-                  alt={p.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute inset-0 flex flex-col justify-end p-2.5">
-                  <span className="text-2xl">{p.emoji}</span>
-                  <p className="mt-0.5 text-xs font-bold leading-tight text-white">
+                <div className={`absolute inset-0 bg-gradient-to-br ${p.gradient}`} />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-1.5 text-center">
+                  <span className="text-2xl mb-1">{p.emoji}</span>
+                  <span className="text-[10px] font-bold leading-tight text-white drop-shadow">
                     {p.title}
-                  </p>
+                  </span>
                 </div>
-                <div className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-fuchsia-500/90 opacity-0 shadow-lg transition group-hover:opacity-100">
-                  <Zap className="h-3.5 w-3.5 text-white" />
+                <div className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-fuchsia-500/90 opacity-0 transition group-hover:opacity-100">
+                  <Zap className="h-2.5 w-2.5 text-white" />
                 </div>
                 {busy && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/70 backdrop-blur-sm">
-                    <Loader2 className="h-5 w-5 animate-spin text-fuchsia-400" />
-                    <span className="text-[10px] font-bold text-white">
-                      Generating…
-                    </span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/70 backdrop-blur-sm">
+                    <Loader2 className="h-4 w-4 animate-spin text-fuchsia-400" />
+                    <span className="text-[8px] font-bold text-white">Generating…</span>
                   </div>
                 )}
               </button>
@@ -229,15 +230,15 @@ export default function BnmCreate() {
 
       {/* Preset result */}
       {presetResult && !presetLoading && (
-        <div className="mx-5 mb-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4">
-          <div className="mb-3 flex items-center gap-2 text-emerald-300">
-            <CheckCircle2 className="h-5 w-5" />
-            <p className="font-bold">
+        <div className="mx-4 mb-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-3">
+          <div className="mb-2 flex items-center gap-2 text-emerald-300">
+            <CheckCircle2 className="h-4 w-4" />
+            <p className="text-sm font-bold">
               {presetResult.error ? "Generation failed" : "Your video is live!"}
             </p>
           </div>
           {presetResult.error ? (
-            <p className="text-sm text-red-300">{presetResult.error}</p>
+            <p className="text-xs text-red-300">{presetResult.error}</p>
           ) : (
             <>
               <video
@@ -247,13 +248,13 @@ export default function BnmCreate() {
                 loop
                 muted
                 playsInline
-                className="mx-auto max-h-[50vh] w-full rounded-xl"
+                className="mx-auto max-h-[45vh] w-full max-w-[220px] rounded-xl"
               />
               <Link
                 to="/home"
-                className="mt-3 flex items-center justify-center gap-1.5 rounded-full bg-white/10 py-2.5 text-sm font-bold text-white hover:bg-white/15"
+                className="mt-2 flex items-center justify-center gap-1.5 rounded-full bg-white/10 py-2.5 text-xs font-bold text-white hover:bg-white/15"
               >
-                <Play className="h-4 w-4" /> View on feed
+                <Play className="h-3.5 w-3.5" /> View on feed
               </Link>
             </>
           )}
@@ -262,13 +263,13 @@ export default function BnmCreate() {
 
       {/* Category pills */}
       {!isLoading && templates?.length > 0 && (
-        <div className="px-5 pb-3 pt-2">
+        <div className="px-4 pb-3 pt-2">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-bold capitalize transition ${
+                className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold capitalize transition ${
                   activeCategory === cat
                     ? "border-fuchsia-500 bg-fuchsia-500/20 text-fuchsia-300"
                     : "border-white/10 bg-white/[0.03] text-[#8f9ab0] hover:border-white/20"
@@ -281,11 +282,11 @@ export default function BnmCreate() {
         </div>
       )}
 
-      {/* Template grid — image-backed 9:16 cards */}
-      <div className="px-5 pb-6">
-        <div className="mb-3 flex items-center gap-2">
+      {/* Template grid — mobile-first 2-column with style-accurate previews */}
+      <div className="px-4 pb-6">
+        <div className="mb-2.5 flex items-center gap-2">
           <Film className="h-4 w-4 text-fuchsia-400" />
-          <h3 className="text-sm font-bold uppercase tracking-wider text-[#8f9ab0]">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#8f9ab0]">
             {isLoading ? "Loading styles…" : `${filteredTemplates.length} viral styles`}
           </h3>
         </div>
@@ -295,9 +296,8 @@ export default function BnmCreate() {
             <Loader2 className="h-7 w-7 animate-spin text-fuchsia-400" />
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {filteredTemplates.map((t) => {
-              const img = getTemplateImage(t);
               const busy = quickLoadingId === t.id;
               const hasResult = quickResult?.template_id === t.id && quickResult.data;
               const showVideo = hasResult && quickResult.data.video_url;
@@ -307,71 +307,78 @@ export default function BnmCreate() {
                   key={t.id}
                   className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition hover:border-fuchsia-500/40"
                 >
-                  {/* Image preview (9:16) */}
+                  {/* Style-accurate preview (9:16) — uses template's actual DNA */}
                   <button
                     onClick={() => quickGenerate(t)}
                     disabled={busy}
                     className="relative block aspect-[9/16] w-full overflow-hidden"
                   >
-                    <img
-                      src={img}
-                      alt={t.style_name}
-                      className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    {/* Color palette overlay */}
-                    {t.color_palette?.length > 0 && (
-                      <div className="absolute inset-x-0 top-0 h-1.5 flex">
-                        {t.color_palette.slice(0, 6).map((c, i) => (
-                          <div key={i} className="flex-1" style={{ backgroundColor: c }} />
-                        ))}
-                      </div>
+                    {t.thumbnail_url ? (
+                      <img
+                        src={t.thumbnail_url}
+                        alt={t.style_name}
+                        className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <TemplateStylePreview template={t} className="absolute inset-0 h-full w-full" />
                     )}
-                    {/* Gradient scrim for text legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30" />
+
+                    {/* Gradient scrim */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
                     {/* Difficulty badge */}
                     <span
-                      className={`absolute right-2 top-3 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase backdrop-blur-sm ${
+                      className={`absolute right-1.5 top-2 rounded-full border px-1.5 py-0.5 text-[8px] font-bold uppercase backdrop-blur-sm ${
                         DIFFICULTY_STYLES[t.difficulty] || DIFFICULTY_STYLES.beginner
                       }`}
                     >
                       {t.difficulty}
                     </span>
 
+                    {/* One-tap badge */}
+                    {!busy && (
+                      <div className="absolute left-1.5 top-2 flex items-center gap-0.5 rounded-full bg-black/50 px-1.5 py-0.5 backdrop-blur-sm">
+                        <Zap className="h-2.5 w-2.5 text-fuchsia-400" />
+                        <span className="text-[8px] font-bold text-white">1 TAP</span>
+                      </div>
+                    )}
+
                     {/* Text overlay */}
-                    <div className="absolute inset-x-0 bottom-0 p-3">
-                      <p className="text-sm font-extrabold leading-tight text-white drop-shadow-lg">
+                    <div className="absolute inset-x-0 bottom-0 p-2">
+                      <p className="text-xs font-extrabold leading-tight text-white drop-shadow-lg line-clamp-2">
                         {t.style_name}
                       </p>
-                      <p className="mt-0.5 text-[10px] leading-3 text-white/70 line-clamp-2">
+                      <p className="mt-0.5 text-[9px] leading-3 text-white/60 line-clamp-1">
                         {t.tagline}
                       </p>
                     </div>
 
-                    {/* One-tap badge */}
-                    {!busy && (
-                      <div className="absolute left-2 top-3 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
-                        <Zap className="h-3 w-3 text-fuchsia-400" />
-                        <span className="text-[9px] font-bold text-white">1 TAP</span>
-                      </div>
-                    )}
-
                     {/* Loading overlay */}
                     {busy && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/70 backdrop-blur-sm">
-                        <Loader2 className="h-6 w-6 animate-spin text-fuchsia-400" />
-                        <span className="text-[10px] font-bold text-white">
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/70 backdrop-blur-sm">
+                        <Loader2 className="h-5 w-5 animate-spin text-fuchsia-400" />
+                        <span className="text-[9px] font-bold text-white">
                           Generating…
                         </span>
                       </div>
                     )}
 
-                    {/* Success overlay */}
-                    {showVideo && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/90">
-                          <Play className="h-5 w-5 fill-white text-white" />
+                    {/* Success indicator */}
+                    {showVideo && !busy && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/90">
+                          <Play className="h-4 w-4 fill-white text-white" />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error indicator */}
+                    {showError && !busy && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-red-500/40">
+                        <div className="flex flex-col items-center gap-1">
+                          <AlertTriangle className="h-5 w-5 text-white" />
+                          <span className="text-[8px] font-bold text-white">Failed</span>
                         </div>
                       </div>
                     )}
@@ -380,18 +387,11 @@ export default function BnmCreate() {
                   {/* Customize button */}
                   <button
                     onClick={() => openCustomize(t)}
-                    className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition hover:bg-white/20"
+                    className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition hover:bg-white/20"
                     title="Customize"
                   >
-                    <Sliders className="h-3.5 w-3.5 text-white" />
+                    <Sliders className="h-3 w-3 text-white" />
                   </button>
-
-                  {/* Inline error indicator */}
-                  {showError && (
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-red-500/80 px-2 py-0.5">
-                      <span className="text-[9px] font-bold text-white">Failed</span>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -401,8 +401,7 @@ export default function BnmCreate() {
         {!isLoading && (!templates || templates.length === 0) && (
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
             <p className="text-sm text-[#8f9ab0]">
-              No viral templates yet. An admin needs to run the skip-trace first
-              to discover the top styles.
+              No viral templates yet. An admin needs to run the skip-trace first.
             </p>
           </div>
         )}
@@ -434,7 +433,7 @@ export default function BnmCreate() {
               loop
               muted
               playsInline
-              className="mx-auto max-h-[55vh] w-full rounded-xl"
+              className="mx-auto max-h-[55vh] w-full max-w-[260px] rounded-xl"
             />
             <p className="mt-2 text-center text-sm font-semibold text-white">
               {quickResult.data.analysis?.title}
@@ -457,10 +456,45 @@ export default function BnmCreate() {
         </div>
       )}
 
+      {/* Quick error sheet */}
+      {quickResult?.data?.error && !quickLoadingId && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setQuickResult(null)}
+          />
+          <div className="relative max-h-[50vh] w-full max-w-md overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[#0a0c14] p-5 pb-8 no-scrollbar">
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/20" />
+            <button
+              onClick={() => setQuickResult(null)}
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="mb-3 flex items-center gap-2 text-red-300">
+              <AlertTriangle className="h-5 w-5" />
+              <p className="font-bold">Generation failed</p>
+            </div>
+            <p className="text-sm text-red-300/80">{quickResult.data.error}</p>
+            {/credit|limit|quota|exhaust/i.test(quickResult.data.error) && (
+              <p className="mt-2 text-xs text-amber-300/70">
+                Integration credits refresh on Oct 12, 2026 — generation will work again then.
+              </p>
+            )}
+            <Button
+              onClick={() => setQuickResult(null)}
+              className="mt-4 w-full rounded-full bg-white/10 text-white hover:bg-white/15"
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Skip-trace scanner sheet */}
       {scanOpen && <ScanSheet onClose={() => setScanOpen(false)} />}
 
-      {/* Customize sheet (detailed) */}
+      {/* Customize sheet */}
       {activeTemplate && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center">
           <div
@@ -476,13 +510,19 @@ export default function BnmCreate() {
               <X className="h-4 w-4" />
             </button>
 
-            {/* Style header with image */}
+            {/* Style header with preview */}
             <div className="mb-4 flex gap-3">
-              <img
-                src={getTemplateImage(activeTemplate)}
-                alt=""
-                className="h-20 w-14 shrink-0 rounded-xl object-cover"
-              />
+              <div className="h-20 w-[45px] shrink-0 overflow-hidden rounded-xl">
+                {activeTemplate.thumbnail_url ? (
+                  <img
+                    src={activeTemplate.thumbnail_url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <TemplateStylePreview template={activeTemplate} className="h-full w-full" />
+                )}
+              </div>
               <div className="min-w-0 flex-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
                   {activeTemplate.category} · {activeTemplate.difficulty}
@@ -617,7 +657,7 @@ export default function BnmCreate() {
                   loop
                   muted
                   playsInline
-                  className="mx-auto max-h-[55vh] w-full rounded-xl"
+                  className="mx-auto max-h-[55vh] w-full max-w-[260px] rounded-xl"
                 />
                 <p className="mt-2 text-center text-sm font-semibold text-white">
                   {result.analysis?.title}
