@@ -1,37 +1,73 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import { generateImage } from "../../shared/vercelAiGateway.ts";
 
-/**
- * generateTemplateThumbnails — Admin-only function that generates real AI
- * thumbnail images for viral templates using each template's visual_prompt_template.
- *
- * For each template without a thumbnail_url (or when force=true):
- *   1. Builds a thumbnail prompt from the template's visual_prompt_template + style DNA
- *   2. Calls GenerateImage to produce a 9:16 vertical preview
- *   3. Updates the template's thumbnail_url field
- *
- * When integration credits are exhausted, returns a clear status so the
- * frontend can fall back to CSS-based TemplateStylePreview.
- */
-export default async function(req) {
+// Upload image bytes to a free public host (catbox.moe — no API key needed).
+// Returns a permanent public URL.
+async function uploadToPublicHost(imageBytes, filename) {
+  const blob = new Blob([imageBytes], { type: 'image/png' });
+  const fileObj = new File([blob], filename, { type: 'image/png' });
+  const formData = new FormData();
+  formData.append('reqtype', 'fileupload');
+  formData.append('fileToUpload', fileObj);
+  const res = await fetch('https://catbox.moe/user/api.php', {
+    method: 'POST',
+    body: formData,
+  });
+  const text = await res.text();
+  if (text.startsWith('https://')) return text.trim();
+  throw new Error('Image host returned: ' + text.slice(0, 200));
+}
+
+// generateTemplateThumbnails — regenerates polished AI thumbnail images for
+// existing ViralTemplate records using the Vercel AI Gateway (openai/gpt-image-2),
+// then uploads each image to public storage and stores the public URL.
+// No Base44 integration credits needed for generation (uses Vercel gateway);
+// UploadPublicFile uses Base44 credits for storage hosting.
+//
+// Input: { force?: boolean, template_id?: string, limit?: number }
+// Output: { generated, skipped, failed, results }
+
+function buildThumbPrompt(template) {
+  const palette = (template.color_palette || []).join(", ");
+  return [
+    `Create a polished, professional vertical 9:16 social media video thumbnail preview.`,
+    `Style: ${template.style_name} — ${template.tagline || ''}`,
+    template.visual_prompt_template
+      ? `Scene: ${template.visual_prompt_template.replace(/\{USER_IDEA\}/g, 'a visually stunning moment')}`
+      : '',
+    palette ? `Color palette: ${palette}` : '',
+    template.lighting_style ? `Lighting: ${template.lighting_style}` : '',
+    (template.visual_effects || []).length ? `Visual effects: ${template.visual_effects.join(', ')}` : '',
+    template.font_style ? `Typography style: ${template.font_style}` : '',
+    template.text_overlay_style ? `Text overlay: ${template.text_overlay_style}` : '',
+    template.thumbnail_text_pattern ? `Text placement: ${template.thumbnail_text_pattern}` : '',
+    (template.symbols_motifs || []).length ? `Visual motifs: ${template.symbols_motifs.join(', ')}` : '',
+    'Make it look like a real, high-quality TikTok/Reels thumbnail — cinematic, eye-catching, vibrant, professional color grading.',
+    'No readable text, no watermarks, no logos — pure visual preview that represents this viral style.',
+  ].filter(Boolean).join('\n');
+}
+
+export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
 
-    const body = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({})) || {};
     const force = body.force === true;
-    const templateId = body.template_id; // optional: generate for one template
+    const templateId = body.template_id;
+    const limit = body.limit || 8;
 
-    // Load templates
     let templates;
     if (templateId) {
       const t = await base44.asServiceRole.entities.ViralTemplate.get(templateId);
       templates = [t];
     } else {
+      const query = force ? {} : { thumbnail_url: { $exists: false } };
       const res = await base44.asServiceRole.entities.ViralTemplate.filter(
-        {},
-        { sort: "style_name", limit: 100 }
+        query,
+        { sort: "style_name", limit }
       );
       templates = res.items || [];
     }
@@ -42,72 +78,53 @@ export default async function(req) {
     let failed = 0;
 
     for (const template of templates) {
-      // Skip if already has thumbnail and not forcing
       if (template.thumbnail_url && !force) {
         skipped++;
         results.push({ id: template.id, status: "skipped", name: template.style_name });
         continue;
       }
 
-      // Build the thumbnail prompt from the template's visual DNA
-      const visualPrompt = template.visual_prompt_template || "";
-      const palette = (template.color_palette || []).join(", ");
-      const fontDesc = template.font_style || "bold sans-serif";
-      const lighting = template.lighting_style || "natural lighting";
-      const effects = (template.visual_effects || []).join(", ");
-
-      const thumbPrompt = [
-        `Vertical 9:16 social media video thumbnail preview.`,
-        visualPrompt ? `Scene: ${visualPrompt}` : "",
-        palette ? `Color palette: ${palette}` : "",
-        `Lighting: ${lighting}`,
-        effects ? `Visual effects: ${effects}` : "",
-        `Text style: ${fontDesc}`,
-        "Cinematic, high quality, eye-catching, designed for TikTok/Reels feed.",
-        "No text, no watermark, pure visual preview."
-      ].filter(Boolean).join(" ");
+      const thumbPrompt = buildThumbPrompt(template);
 
       try {
-        const imgRes = await base44.asServiceRole.integrations.Core.GenerateImage({
-          prompt: thumbPrompt,
-        });
-        const imageUrl = imgRes?.url;
+        // Generate image via Vercel AI Gateway (returns base64 data URL)
+        const imgRes = await generateImage(thumbPrompt, { model: 'openai/gpt-image-2' });
+        const dataUrl = imgRes?.url;
 
-        if (imageUrl) {
+        if (!dataUrl) {
+          failed++;
+          results.push({ id: template.id, status: "failed", name: template.style_name, error: "No image returned" });
+          continue;
+        }
+
+        // If it's already a hosted URL (not base64), store directly
+        if (dataUrl.startsWith('http') && !dataUrl.startsWith('data:')) {
           await base44.asServiceRole.entities.ViralTemplate.update(template.id, {
-            thumbnail_url: imageUrl,
+            thumbnail_url: dataUrl,
           });
           generated++;
-          results.push({ id: template.id, status: "generated", name: template.style_name, url: imageUrl });
+          results.push({ id: template.id, status: "generated", name: template.style_name, url: dataUrl.slice(0, 80) });
+          continue;
+        }
+
+        // It's a base64 data URL — upload to free public host
+        const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+        const imageBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
+        const publicUrl = await uploadToPublicHost(imageBytes, `template-${template.slug || template.id}.png`);
+
+        if (publicUrl) {
+          await base44.asServiceRole.entities.ViralTemplate.update(template.id, {
+            thumbnail_url: publicUrl,
+          });
+          generated++;
+          results.push({ id: template.id, status: "generated", name: template.style_name, url: publicUrl.slice(0, 80) });
         } else {
           failed++;
-          results.push({ id: template.id, status: "failed", name: template.style_name, error: "No image URL returned" });
+          results.push({ id: template.id, status: "failed", name: template.style_name, error: "Upload returned no URL" });
         }
       } catch (genErr) {
         failed++;
-        const errMsg = genErr.message || String(genErr);
-        const isCreditError = /credit|limit|quota|exhaust|not.?configured/i.test(errMsg);
-
-        results.push({
-          id: template.id,
-          status: "failed",
-          name: template.style_name,
-          error: errMsg,
-          credit_exhausted: isCreditError,
-        });
-
-        // If credits are exhausted, stop trying — all will fail
-        if (isCreditError) {
-          return Response.json({
-            status: "credits_exhausted",
-            message: "Integration credits are exhausted. Thumbnail generation will work after credits reset.",
-            generated,
-            skipped,
-            failed,
-            results: results.slice(0, 5),
-            credit_reset_date: "2026-10-12",
-          });
-        }
+        results.push({ id: template.id, status: "failed", name: template.style_name, error: genErr.message });
       }
     }
 

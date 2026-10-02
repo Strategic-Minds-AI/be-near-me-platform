@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 import { chatCompletion } from "../../shared/vercelAiGateway.ts";
+import { discoverVideos, slugify } from "../../shared/youtubeDiscovery.ts";
 
 // viralSkipTrace — discovers top creators across YouTube (free search + oEmbed),
 // classifies them into 10 viral style templates with basic fields, and saves them.
@@ -10,8 +11,6 @@ import { chatCompletion } from "../../shared/vercelAiGateway.ts";
 //
 // Input: { refresh?: boolean }
 // Output: { discovered, templates, styles }
-
-const YT_ID_RE = /watch\?v=([a-zA-Z0-9_-]{11})/g;
 
 const STYLE_QUERIES = [
   "viral transition reel tiktok 2026",
@@ -26,35 +25,6 @@ const STYLE_QUERIES = [
   "trend remix mashup edit",
 ];
 
-async function getVideoIds(query: string): Promise<string[]> {
-  try {
-    const r = await fetch(
-      `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
-      { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } }
-    );
-    const html = await r.text();
-    return [...new Set([...html.matchAll(YT_ID_RE)].map((m) => m[1]))].slice(0, 4);
-  } catch {
-    return [];
-  }
-}
-
-async function getMeta(id: string) {
-  try {
-    const r = await fetch(
-      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`
-    );
-    if (!r.ok) return null;
-    return await r.json();
-  } catch {
-    return null;
-  }
-}
-
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
-}
-
 export default async function (req: Request) {
   try {
     const base44 = createClientFromRequest(req);
@@ -62,15 +32,7 @@ export default async function (req: Request) {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     // 1. Discover top creators/videos (parallelized)
-    const idLists = await Promise.all(STYLE_QUERIES.map((q) => getVideoIds(q)));
-    const allIds = idLists.flatMap((ids, i) => ids.map((id) => ({ id, q: STYLE_QUERIES[i] })));
-    const metas = await Promise.all(allIds.map((x) => getMeta(x.id)));
-    const discovered: { title: string; channel: string; query: string }[] = [];
-    allIds.forEach((x, i) => {
-      if (metas[i]) {
-        discovered.push({ title: metas[i].title, channel: metas[i].author_name, query: x.q });
-      }
-    });
+    const discovered = await discoverVideos(STYLE_QUERIES, 4);
 
     if (discovered.length === 0) {
       return Response.json({ error: 'No videos discovered from YouTube' }, { status: 502 });

@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   Film,
   Play,
-  Radar,
   Clock,
   Image as ImageIcon,
   Sliders,
@@ -58,7 +57,6 @@ export default function BnmCreate() {
   const [images, setImages] = useState([]);
   const [duration, setDuration] = useState(6);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [scanOpen, setScanOpen] = useState(false);
   const [result, setResult] = useState(null);
 
   const { data: templates, isLoading } = useQuery({
@@ -178,12 +176,6 @@ export default function BnmCreate() {
             Tap any template below — we generate a viral video instantly using
             that style's exact colors, fonts, and effects.
           </p>
-          <button
-            onClick={() => setScanOpen(true)}
-            className="mt-2.5 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-300 transition hover:bg-cyan-500/20"
-          >
-            <Radar className="h-3.5 w-3.5" /> Scan trending videos
-          </button>
         </div>
       </div>
 
@@ -491,9 +483,6 @@ export default function BnmCreate() {
         </div>
       )}
 
-      {/* Skip-trace scanner sheet */}
-      {scanOpen && <ScanSheet onClose={() => setScanOpen(false)} />}
-
       {/* Customize sheet */}
       {activeTemplate && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center">
@@ -688,135 +677,6 @@ export default function BnmCreate() {
         </div>
       )}
     </BnmPage>
-  );
-}
-
-// ── Skip-trace scanner sheet ──
-function ScanSheet({ onClose }) {
-  const [scanResult, setScanResult] = useState(null);
-  const [customQuery, setCustomQuery] = useState("");
-
-  const scanMutation = useMutation({
-    mutationFn: async (query) => {
-      const res = await base44.functions.invoke("scanTopVideos", { query: query || undefined });
-      return res.data;
-    },
-    onSuccess: (data) => setScanResult(data),
-  });
-
-  const handleScan = () => {
-    setScanResult(null);
-    scanMutation.mutate(customQuery.trim());
-  };
-
-  const categoryColors = {
-    gaming: "bg-violet-500/15 text-violet-300 border-violet-500/30",
-    music: "bg-pink-500/15 text-pink-300 border-pink-500/30",
-    vlogs: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    howto: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    comedy: "bg-orange-500/15 text-orange-300 border-orange-500/30",
-    food: "bg-red-500/15 text-red-300 border-red-500/30",
-    travel: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-    fashion: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
-    sports: "bg-lime-500/15 text-lime-300 border-lime-500/30",
-    tech: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-    art: "bg-rose-500/15 text-rose-300 border-rose-500/30",
-    pets: "bg-teal-500/15 text-teal-300 border-teal-500/30",
-    entertainment: "bg-slate-500/15 text-slate-300 border-slate-500/30",
-  };
-
-  return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[#0a0c14] p-5 pb-8 no-scrollbar">
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/20" />
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10"
-        >
-          <X className="h-4 w-4" />
-        </button>
-
-        <div className="mb-4 flex items-center gap-2">
-          <Radar className="h-5 w-5 text-cyan-400" />
-          <h3 className="text-lg font-extrabold tracking-tight text-white">
-            Viral Skip-Trace Scanner
-          </h3>
-        </div>
-        <p className="mb-4 text-sm leading-6 text-[#9ba6bb]">
-          Scan what's trending right now across YouTube. See the top videos,
-          creators, and categories in real time.
-        </p>
-
-        <input
-          type="text"
-          value={customQuery}
-          onChange={(e) => setCustomQuery(e.target.value)}
-          placeholder="Custom search (optional) — e.g. 'viral cooking shorts'"
-          className="mb-3 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-[#788399]"
-        />
-
-        <Button
-          onClick={handleScan}
-          disabled={scanMutation.isPending}
-          className="w-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 py-5 text-sm font-bold text-white hover:opacity-90"
-        >
-          {scanMutation.isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Scanning trends…
-            </>
-          ) : (
-            <>
-              <Radar className="mr-2 h-4 w-4" /> Scan top videos
-            </>
-          )}
-        </Button>
-
-        {scanResult?.videos && (
-          <div className="mt-5">
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-[#8f9ab0]">
-              {scanResult.total} trending videos found
-            </p>
-            <div className="space-y-2">
-              {scanResult.videos.map((v, i) => (
-                <a
-                  key={i}
-                  href={v.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-2.5 transition hover:border-cyan-500/30 hover:bg-white/[0.06]"
-                >
-                  <img
-                    src={v.thumbnail}
-                    alt=""
-                    className="h-14 w-24 shrink-0 rounded-lg object-cover"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="line-clamp-2 text-xs font-semibold text-white">
-                      {v.title}
-                    </p>
-                    <p className="mt-0.5 text-[10px] text-[#788399]">{v.channel}</p>
-                    <span
-                      className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase ${
-                        categoryColors[v.category] || categoryColors.entertainment
-                      }`}
-                    >
-                      {v.category}
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {scanMutation.isError && (
-          <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-            {scanMutation.error?.message || "Scan failed. Try again."}
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
