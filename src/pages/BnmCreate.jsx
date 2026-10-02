@@ -17,8 +17,12 @@ import {
   Radar,
   Clock,
   Image as ImageIcon,
+  Sliders,
+  Zap,
+  Clapperboard,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getTemplateImage, PRESET_IMAGES } from "@/lib/factory/templateImages";
 
 const DIFFICULTY_STYLES = {
   beginner: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
@@ -32,12 +36,26 @@ const DURATIONS = [
   { value: 8, label: "8s", desc: "Extended" },
 ];
 
+const QUICK_PRESETS = [
+  { id: "neon_city", title: "Neon City", emoji: "🌃" },
+  { id: "ocean_sunset", title: "Ocean Sunset", emoji: "🌅" },
+  { id: "cosmic_nebula", title: "Cosmic Nebula", emoji: "🌌" },
+  { id: "tokyo_night", title: "Tokyo Night", emoji: "🗼" },
+  { id: "mountain_aurora", title: "Mountain Aurora", emoji: "🏔️" },
+  { id: "desert_dunes", title: "Desert Dunes", emoji: "🏜️" },
+  { id: "underwater_coral", title: "Underwater", emoji: "🐠" },
+  { id: "volcanic_eruption", title: "Volcano", emoji: "🌋" },
+  { id: "cherry_blossom", title: "Cherry Blossom", emoji: "🌸" },
+  { id: "drone_race", title: "Drone Race", emoji: "🚁" },
+];
+
 export default function BnmCreate() {
-  const [activeTemplate, setActiveTemplate] = useState(null);
+  const [activeTemplate, setActiveTemplate] = useState(null); // for customize sheet
+  const [quickResult, setQuickResult] = useState(null); // { template_id, data }
+  const [quickLoadingId, setQuickLoadingId] = useState(null); // template id being quick-generated
   const [idea, setIdea] = useState("");
   const [images, setImages] = useState([]);
   const [duration, setDuration] = useState(6);
-  const [result, setResult] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [scanOpen, setScanOpen] = useState(false);
 
@@ -62,6 +80,45 @@ export default function BnmCreate() {
     return (templates || []).filter((t) => t.category === activeCategory);
   }, [templates, activeCategory]);
 
+  // ── Single-click quick generate ──
+  const quickGenerate = async (template) => {
+    setQuickLoadingId(template.id);
+    setQuickResult(null);
+    try {
+      const res = await base44.functions.invoke("generateFromTemplate", {
+        template_id: template.id,
+        user_idea: "",
+        user_images: [],
+        duration: template.avg_duration || 6,
+      });
+      setQuickResult({ template_id: template.id, data: res.data });
+    } catch (e) {
+      setQuickResult({
+        template_id: template.id,
+        data: { error: e.message || "Generation failed" },
+      });
+    } finally {
+      setQuickLoadingId(null);
+    }
+  };
+
+  // ── Preset quick generate (AIVideoStudio presets) ──
+  const [presetLoading, setPresetLoading] = useState(null);
+  const [presetResult, setPresetResult] = useState(null);
+  const quickPreset = async (presetId) => {
+    setPresetLoading(presetId);
+    setPresetResult(null);
+    try {
+      const res = await base44.functions.invoke("aiVideoGen", { presetId });
+      setPresetResult(res.data);
+    } catch (e) {
+      setPresetResult({ error: e.message || "Generation failed" });
+    } finally {
+      setPresetLoading(null);
+    }
+  };
+
+  // ── Customize sheet generate ──
   const generateMutation = useMutation({
     mutationFn: async ({ template_id, user_idea, user_images, dur }) => {
       const res = await base44.functions.invoke("generateFromTemplate", {
@@ -74,6 +131,7 @@ export default function BnmCreate() {
     },
     onSuccess: (data) => setResult(data),
   });
+  const [result, setResult] = useState(null);
 
   const handleGenerate = () => {
     if (!activeTemplate) return;
@@ -86,7 +144,7 @@ export default function BnmCreate() {
     });
   };
 
-  const openTemplate = (t) => {
+  const openCustomize = (t) => {
     setActiveTemplate(t);
     setResult(null);
     setIdea("");
@@ -104,13 +162,12 @@ export default function BnmCreate() {
           <div className="flex items-center gap-2 text-white">
             <Sparkles className="h-5 w-5 text-fuchsia-400" />
             <h2 className="text-lg font-extrabold tracking-tight">
-              Make a viral video in seconds
+              One tap. Viral video.
             </h2>
           </div>
           <p className="mt-1.5 text-sm leading-6 text-[#9ba6bb]">
-            We skip-traced the top creators and cloned their exact styles —
-            colors, fonts, effects, transitions, everything. Pick a style, drop
-            your photos, choose the length, and get a viral-ready video.
+            Pick a style, tap once, and we'll generate a viral-ready video
+            instantly. Want more control? Tap the customize icon.
           </p>
           <button
             onClick={() => setScanOpen(true)}
@@ -121,9 +178,91 @@ export default function BnmCreate() {
         </div>
       </div>
 
+      {/* Quick Styles — cinematic one-tap presets */}
+      <div className="px-5 pb-2">
+        <div className="mb-3 flex items-center gap-2">
+          <Clapperboard className="h-4 w-4 text-fuchsia-400" />
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[#8f9ab0]">
+            Quick Cinematic Styles
+          </h3>
+        </div>
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+          {QUICK_PRESETS.map((p) => {
+            const busy = presetLoading === p.id;
+            const img = PRESET_IMAGES[p.id];
+            return (
+              <button
+                key={p.id}
+                onClick={() => quickPreset(p.id)}
+                disabled={!!presetLoading}
+                className="group relative h-44 w-28 shrink-0 overflow-hidden rounded-2xl border border-white/10 transition disabled:opacity-60"
+              >
+                <img
+                  src={img}
+                  alt={p.title}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-2.5">
+                  <span className="text-2xl">{p.emoji}</span>
+                  <p className="mt-0.5 text-xs font-bold leading-tight text-white">
+                    {p.title}
+                  </p>
+                </div>
+                <div className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-fuchsia-500/90 opacity-0 shadow-lg transition group-hover:opacity-100">
+                  <Zap className="h-3.5 w-3.5 text-white" />
+                </div>
+                {busy && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/70 backdrop-blur-sm">
+                    <Loader2 className="h-5 w-5 animate-spin text-fuchsia-400" />
+                    <span className="text-[10px] font-bold text-white">
+                      Generating…
+                    </span>
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Preset result */}
+      {presetResult && !presetLoading && (
+        <div className="mx-5 mb-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+          <div className="mb-3 flex items-center gap-2 text-emerald-300">
+            <CheckCircle2 className="h-5 w-5" />
+            <p className="font-bold">
+              {presetResult.error ? "Generation failed" : "Your video is live!"}
+            </p>
+          </div>
+          {presetResult.error ? (
+            <p className="text-sm text-red-300">{presetResult.error}</p>
+          ) : (
+            <>
+              <video
+                src={presetResult.url}
+                controls
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="mx-auto max-h-[50vh] w-full rounded-xl"
+              />
+              <Link
+                to="/home"
+                className="mt-3 flex items-center justify-center gap-1.5 rounded-full bg-white/10 py-2.5 text-sm font-bold text-white hover:bg-white/15"
+              >
+                <Play className="h-4 w-4" /> View on feed
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+
       {/* Category pills */}
       {!isLoading && templates?.length > 0 && (
-        <div className="px-5 pb-3">
+        <div className="px-5 pb-3 pt-2">
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {categories.map((cat) => (
               <button
@@ -142,9 +281,10 @@ export default function BnmCreate() {
         </div>
       )}
 
-      {/* Template grid */}
+      {/* Template grid — image-backed 9:16 cards */}
       <div className="px-5 pb-6">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex items-center gap-2">
+          <Film className="h-4 w-4 text-fuchsia-400" />
           <h3 className="text-sm font-bold uppercase tracking-wider text-[#8f9ab0]">
             {isLoading ? "Loading styles…" : `${filteredTemplates.length} viral styles`}
           </h3>
@@ -156,43 +296,105 @@ export default function BnmCreate() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {filteredTemplates.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => openTemplate(t)}
-                className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 text-left transition hover:border-fuchsia-500/40 hover:bg-white/[0.07]"
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-500/25 to-cyan-500/20">
-                    <Film className="h-4 w-4 text-fuchsia-300" />
-                  </span>
-                  <span
-                    className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase ${
-                      DIFFICULTY_STYLES[t.difficulty] || DIFFICULTY_STYLES.beginner
-                    }`}
+            {filteredTemplates.map((t) => {
+              const img = getTemplateImage(t);
+              const busy = quickLoadingId === t.id;
+              const hasResult = quickResult?.template_id === t.id && quickResult.data;
+              const showVideo = hasResult && quickResult.data.video_url;
+              const showError = hasResult && quickResult.data.error && !quickResult.data.video_url;
+              return (
+                <div
+                  key={t.id}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition hover:border-fuchsia-500/40"
+                >
+                  {/* Image preview (9:16) */}
+                  <button
+                    onClick={() => quickGenerate(t)}
+                    disabled={busy}
+                    className="relative block aspect-[9/16] w-full overflow-hidden"
                   >
-                    {t.difficulty}
-                  </span>
+                    <img
+                      src={img}
+                      alt={t.style_name}
+                      className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    {/* Color palette overlay */}
+                    {t.color_palette?.length > 0 && (
+                      <div className="absolute inset-x-0 top-0 h-1.5 flex">
+                        {t.color_palette.slice(0, 6).map((c, i) => (
+                          <div key={i} className="flex-1" style={{ backgroundColor: c }} />
+                        ))}
+                      </div>
+                    )}
+                    {/* Gradient scrim for text legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30" />
+
+                    {/* Difficulty badge */}
+                    <span
+                      className={`absolute right-2 top-3 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase backdrop-blur-sm ${
+                        DIFFICULTY_STYLES[t.difficulty] || DIFFICULTY_STYLES.beginner
+                      }`}
+                    >
+                      {t.difficulty}
+                    </span>
+
+                    {/* Text overlay */}
+                    <div className="absolute inset-x-0 bottom-0 p-3">
+                      <p className="text-sm font-extrabold leading-tight text-white drop-shadow-lg">
+                        {t.style_name}
+                      </p>
+                      <p className="mt-0.5 text-[10px] leading-3 text-white/70 line-clamp-2">
+                        {t.tagline}
+                      </p>
+                    </div>
+
+                    {/* One-tap badge */}
+                    {!busy && (
+                      <div className="absolute left-2 top-3 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
+                        <Zap className="h-3 w-3 text-fuchsia-400" />
+                        <span className="text-[9px] font-bold text-white">1 TAP</span>
+                      </div>
+                    )}
+
+                    {/* Loading overlay */}
+                    {busy && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/70 backdrop-blur-sm">
+                        <Loader2 className="h-6 w-6 animate-spin text-fuchsia-400" />
+                        <span className="text-[10px] font-bold text-white">
+                          Generating…
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Success overlay */}
+                    {showVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/90">
+                          <Play className="h-5 w-5 fill-white text-white" />
+                        </div>
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Customize button */}
+                  <button
+                    onClick={() => openCustomize(t)}
+                    className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition hover:bg-white/20"
+                    title="Customize"
+                  >
+                    <Sliders className="h-3.5 w-3.5 text-white" />
+                  </button>
+
+                  {/* Inline error indicator */}
+                  {showError && (
+                    <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-red-500/80 px-2 py-0.5">
+                      <span className="text-[9px] font-bold text-white">Failed</span>
+                    </div>
+                  )}
                 </div>
-                {/* Color strip */}
-                {t.color_palette?.length > 0 && (
-                  <div className="mb-2 flex gap-0.5 rounded-md overflow-hidden h-1.5">
-                    {t.color_palette.slice(0, 6).map((c, i) => (
-                      <div key={i} className="flex-1" style={{ backgroundColor: c }} />
-                    ))}
-                  </div>
-                )}
-                <p className="text-[13px] font-bold leading-tight text-white line-clamp-2">
-                  {t.style_name}
-                </p>
-                <p className="mt-1 text-[11px] leading-4 text-[#8f9ab0] line-clamp-2">
-                  {t.tagline}
-                </p>
-                <div className="mt-2 flex items-center gap-1 text-[10px] font-semibold text-fuchsia-400 opacity-0 transition group-hover:opacity-100">
-                  <Wand2 className="h-3 w-3" /> Use this style
-                </div>
-              </button>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -200,18 +402,65 @@ export default function BnmCreate() {
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
             <p className="text-sm text-[#8f9ab0]">
               No viral templates yet. An admin needs to run the skip-trace first
-              to discover the top 10 styles.
+              to discover the top styles.
             </p>
           </div>
         )}
       </div>
 
-      {/* Skip-trace scanner sheet */}
-      {scanOpen && (
-        <ScanSheet onClose={() => setScanOpen(false)} />
+      {/* Quick result sheet */}
+      {quickResult?.data?.video_url && !quickLoadingId && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setQuickResult(null)}
+          />
+          <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[#0a0c14] p-5 pb-8 no-scrollbar">
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/20" />
+            <button
+              onClick={() => setQuickResult(null)}
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="mb-4 flex items-center gap-2 text-emerald-300">
+              <CheckCircle2 className="h-5 w-5" />
+              <p className="font-bold">Your video is live on the feed!</p>
+            </div>
+            <video
+              src={quickResult.data.video_url}
+              controls
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="mx-auto max-h-[55vh] w-full rounded-xl"
+            />
+            <p className="mt-2 text-center text-sm font-semibold text-white">
+              {quickResult.data.analysis?.title}
+            </p>
+            <div className="mt-3 flex gap-2">
+              <Link
+                to="/home"
+                className="flex-1 rounded-full bg-white/10 py-3 text-center text-sm font-bold text-white hover:bg-white/15"
+              >
+                <Play className="mr-1.5 inline h-4 w-4" /> View on feed
+              </Link>
+              <Link
+                to="/tracker"
+                className="flex-1 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 py-3 text-center text-sm font-bold text-fuchsia-300 hover:bg-fuchsia-500/20"
+              >
+                Track performance
+              </Link>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* Generator sheet */}
+      {/* Skip-trace scanner sheet */}
+      {scanOpen && <ScanSheet onClose={() => setScanOpen(false)} />}
+
+      {/* Customize sheet (detailed) */}
       {activeTemplate && (
         <div className="fixed inset-0 z-[60] flex items-end justify-center">
           <div
@@ -227,18 +476,29 @@ export default function BnmCreate() {
               <X className="h-4 w-4" />
             </button>
 
-            {/* Style header */}
-            <div className="mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
-                {activeTemplate.category} · {activeTemplate.difficulty}
-              </span>
-              <h3 className="mt-1 text-xl font-extrabold tracking-tight text-white">
-                {activeTemplate.style_name}
-              </h3>
-              <p className="mt-1.5 text-sm leading-6 text-[#9ba6bb]">
-                {activeTemplate.description}
-              </p>
+            {/* Style header with image */}
+            <div className="mb-4 flex gap-3">
+              <img
+                src={getTemplateImage(activeTemplate)}
+                alt=""
+                className="h-20 w-14 shrink-0 rounded-xl object-cover"
+              />
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
+                  {activeTemplate.category} · {activeTemplate.difficulty}
+                </span>
+                <h3 className="mt-1 text-lg font-extrabold leading-tight tracking-tight text-white">
+                  {activeTemplate.style_name}
+                </h3>
+                <p className="mt-0.5 text-xs leading-5 text-[#9ba6bb] line-clamp-2">
+                  {activeTemplate.tagline}
+                </p>
+              </div>
             </div>
+
+            <p className="mb-4 text-sm leading-6 text-[#9ba6bb]">
+              {activeTemplate.description}
+            </p>
 
             {/* Visual DNA */}
             <div className="mb-4 rounded-xl border border-white/10 bg-white/[0.03] p-3">

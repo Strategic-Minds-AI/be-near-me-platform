@@ -71,6 +71,10 @@
       "type": "string",
       "description": "Thumbnail/cover visual approach"
     },
+    "thumbnail_url": {
+      "type": "string",
+      "description": "Preview image URL for the template card (9:16 vertical)"
+    },
     "avg_duration": {
       "type": "number",
       "default": 6,
