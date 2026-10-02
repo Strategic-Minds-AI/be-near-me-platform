@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Sparkles } from 'lucide-react';
 
 const ARCHETYPES = [
   'saas', 'marketplace', 'social', 'ecommerce', 'dashboard',
@@ -15,6 +16,9 @@ const PLATFORMS = ['mobile-web', 'ios-like', 'android-like', 'tablet', 'desktop-
 const DENSITIES = ['low', 'medium', 'high'];
 const INTERACTION_MODES = ['browse', 'create', 'transact', 'monitor', 'communicate', 'analyze'];
 const CONVERSION_MODES = ['none', 'signup', 'purchase', 'lead', 'booking', 'quote'];
+
+const glassInput = 'h-11 bg-[#1a1a1a] border border-white/10 text-white text-sm rounded-xl px-3.5 placeholder:text-white/30 focus:border-[#ff85e0]/40 focus:shadow-[0_0_20px_rgba(255,133,224,0.08)] transition-all';
+const glassSelect = 'h-11 bg-[#1a1a1a] border border-white/10 text-white text-sm rounded-xl px-3.5 focus:border-[#ff85e0]/40 focus:shadow-[0_0_20px_rgba(255,133,224,0.08)] transition-all appearance-none';
 
 export default function BriefForm({ onSubmit, initial }) {
   const [form, setForm] = useState({
@@ -48,72 +52,70 @@ export default function BriefForm({ onSubmit, initial }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-6 max-w-2xl mx-auto">
-      <div className="text-center mb-6">
-        <h2 className="text-white text-xl font-bold mb-1">Project Brief</h2>
-        <p className="text-white/50 text-sm">Define your project to generate compatible patterns</p>
+    <form onSubmit={handleSubmit} className="space-y-5 p-5 max-w-2xl mx-auto pb-8">
+      <div className="mb-2">
+        <h2 className="text-white text-2xl font-bold tracking-tight">Project Brief</h2>
+        <p className="text-[#a0a0a0] text-sm mt-1">Define your project to generate compatible patterns.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label className="text-white/70 text-xs">Project Name</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Project Name</Label>
           <Input
             value={form.name}
             onChange={(e) => update('name', e.target.value)}
             placeholder="My SaaS App"
-            className="bg-white/5 border-white/10 text-white"
+            className={glassInput}
             required
           />
         </div>
         <div>
-          <Label className="text-white/70 text-xs">Company</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Company</Label>
           <Input
             value={form.company_name}
             onChange={(e) => update('company_name', e.target.value)}
             placeholder="Acme Inc."
-            className="bg-white/5 border-white/10 text-white"
+            className={glassInput}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label className="text-white/70 text-xs">Product Archetype</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Product Archetype</Label>
           <select
             value={form.product_archetype}
             onChange={(e) => update('product_archetype', e.target.value)}
-            className="w-full h-9 rounded-md bg-white/5 border border-white/10 text-white text-sm px-3"
+            className={`w-full ${glassSelect}`}
           >
             {ARCHETYPES.map((a) => (
-              <option key={a} value={a} className="bg-[#1a1a1a]">
-                {a}
-              </option>
+              <option key={a} value={a} className="bg-[#1a1a1a]">{a}</option>
             ))}
           </select>
         </div>
         <div>
-          <Label className="text-white/70 text-xs">Industry</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Industry</Label>
           <Input
             value={form.industry}
             onChange={(e) => update('industry', e.target.value)}
             placeholder="Technology"
-            className="bg-white/5 border-white/10 text-white"
+            className={glassInput}
           />
         </div>
       </div>
 
       <div>
-        <Label className="text-white/70 text-xs">Platforms</Label>
-        <div className="flex flex-wrap gap-2 mt-1">
+        <Label className="text-white/70 text-xs mb-2 block">Platforms</Label>
+        <div className="flex flex-wrap gap-2">
           {PLATFORMS.map((p) => (
             <button
               key={p}
               type="button"
               onClick={() => togglePlatform(p)}
-              className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
+              className={`px-3.5 py-2 rounded-full text-xs font-medium border transition-all ${
                 form.platforms.includes(p)
-                  ? 'bg-pink-500/20 border-pink-500/40 text-pink-400'
-                  : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'
+                  ? 'bg-[#ff85e0] border-[#ff85e0] text-black shadow-[0_0_20px_rgba(255,133,224,0.2)]'
+                  : 'bg-[#1a1a1a] border-white/10 text-[#a0a0a0] hover:border-white/20'
               }`}
             >
               {p}
@@ -123,98 +125,93 @@ export default function BriefForm({ onSubmit, initial }) {
       </div>
 
       <div>
-        <Label className="text-white/70 text-xs">Primary Goal</Label>
+        <Label className="text-white/70 text-xs mb-1.5 block">Primary Goal</Label>
         <Textarea
           value={form.primary_goal}
           onChange={(e) => update('primary_goal', e.target.value)}
           placeholder="What should users accomplish? e.g. 'Manage CRM pipeline and track deals'"
-          className="bg-white/5 border-white/10 text-white"
-          rows={2}
+          className="bg-[#1a1a1a] border-white/10 text-white text-sm rounded-xl placeholder:text-white/30 focus:border-[#ff85e0]/40 focus:shadow-[0_0_20px_rgba(255,133,224,0.08)] transition-all min-h-24"
+          rows={3}
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         <div>
-          <Label className="text-white/70 text-xs">Density</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Density</Label>
           <select
             value={form.density}
             onChange={(e) => update('density', e.target.value)}
-            className="w-full h-9 rounded-md bg-white/5 border border-white/10 text-white text-sm px-3"
+            className={`w-full ${glassSelect}`}
           >
             {DENSITIES.map((d) => (
-              <option key={d} value={d} className="bg-[#1a1a1a]">
-                {d}
-              </option>
+              <option key={d} value={d} className="bg-[#1a1a1a]">{d}</option>
             ))}
           </select>
         </div>
         <div>
-          <Label className="text-white/70 text-xs">Interaction</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Interaction</Label>
           <select
             value={form.interaction_mode}
             onChange={(e) => update('interaction_mode', e.target.value)}
-            className="w-full h-9 rounded-md bg-white/5 border border-white/10 text-white text-sm px-3"
+            className={`w-full ${glassSelect}`}
           >
             {INTERACTION_MODES.map((m) => (
-              <option key={m} value={m} className="bg-[#1a1a1a]">
-                {m}
-              </option>
+              <option key={m} value={m} className="bg-[#1a1a1a]">{m}</option>
             ))}
           </select>
         </div>
         <div>
-          <Label className="text-white/70 text-xs">Conversion</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Conversion</Label>
           <select
             value={form.conversion_mode}
             onChange={(e) => update('conversion_mode', e.target.value)}
-            className="w-full h-9 rounded-md bg-white/5 border border-white/10 text-white text-sm px-3"
+            className={`w-full ${glassSelect}`}
           >
             {CONVERSION_MODES.map((c) => (
-              <option key={c} value={c} className="bg-[#1a1a1a]">
-                {c}
-              </option>
+              <option key={c} value={c} className="bg-[#1a1a1a]">{c}</option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label className="text-white/70 text-xs">Target Audience</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Target Audience</Label>
           <Input
             value={form.target_audience}
             onChange={(e) => update('target_audience', e.target.value)}
             placeholder="Sales teams, SMB owners"
-            className="bg-white/5 border-white/10 text-white"
+            className={glassInput}
           />
         </div>
         <div>
-          <Label className="text-white/70 text-xs">Brand Tone</Label>
+          <Label className="text-white/70 text-xs mb-1.5 block">Brand Tone</Label>
           <Input
             value={form.brand_tone}
             onChange={(e) => update('brand_tone', e.target.value)}
             placeholder="Professional, Friendly, Bold"
-            className="bg-white/5 border-white/10 text-white"
+            className={glassInput}
           />
         </div>
       </div>
 
       <div>
-        <Label className="text-white/70 text-xs">Deterministic Seed</Label>
+        <Label className="text-white/70 text-xs mb-1.5 block">Deterministic Seed</Label>
         <Input
           value={form.seed}
           onChange={(e) => update('seed', e.target.value)}
-          className="bg-white/5 border-white/10 text-white font-mono text-xs"
+          className={`${glassInput} font-mono text-xs`}
         />
-        <p className="text-white/30 text-[10px] mt-1">
+        <p className="text-white/30 text-[10px] mt-1.5">
           Same seed + same brief = same selection. Reproducible builds.
         </p>
       </div>
 
       <Button
         type="submit"
-        className="w-full bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white"
+        className="w-full h-12 bg-[#ff85e0] hover:bg-[#ff5cc7] text-black font-semibold text-sm rounded-xl shadow-[0_0_30px_rgba(255,133,224,0.25)]"
       >
+        <Sparkles className="w-4 h-4 mr-2" />
         Generate Compatible Patterns
       </Button>
     </form>

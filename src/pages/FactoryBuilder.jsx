@@ -140,38 +140,36 @@ export default function FactoryBuilder() {
   const canExport = validationReceipt?.result === 'PASS';
 
   return (
-    <div className="h-screen flex flex-col bg-[#070709] overflow-hidden">
+    <div className="h-screen flex flex-col bg-[#0a0a0a] overflow-hidden">
       <BuilderTopBar
         project={project}
         onValidate={handleValidate}
         onExport={() => alert('Export: ' + JSON.stringify(buildSpec, null, 2))}
         canExport={canExport}
       />
-      <div className="flex-1 flex min-h-0">
-        <BuilderLeftRail active={activePanel} onSelect={setActivePanel} />
 
+      {/* Main scrollable content */}
+      <div className="flex-1 overflow-y-auto bg-[#0a0a0a]">
         {activePanel === 'brief' && !project ? (
-          <div className="flex-1 overflow-y-auto bg-[#070709]">
-            <BriefForm onSubmit={handleBriefSubmit} />
-          </div>
+          <BriefForm onSubmit={handleBriefSubmit} />
         ) : activePanel === 'brief' && project ? (
-          <div className="flex-1 flex items-center justify-center bg-[#070709]">
+          <div className="flex-1 flex items-center justify-center min-h-full p-6">
             <div className="text-center">
-              <h2 className="text-white text-lg font-bold mb-2">{project.name}</h2>
-              <p className="text-white/50 text-sm mb-4">{project.product_archetype}</p>
+              <h2 className="text-white text-xl font-bold mb-2">{project.name}</h2>
+              <p className="text-[#a0a0a0] text-sm mb-4">{project.product_archetype}</p>
               <Button
                 onClick={() => {
                   setProject(null);
                   setBuildSpec(null);
                 }}
-                className="bg-white/10 text-white"
+                className="bg-[#1a1a1a] text-white border border-white/10 hover:bg-white/10 rounded-xl"
               >
                 New Project
               </Button>
             </div>
           </div>
         ) : (
-          <>
+          <div className="w-full">
             {currentFamily && (
               <BuilderLibrary
                 family={currentFamily}
@@ -184,10 +182,10 @@ export default function FactoryBuilder() {
             <BuilderCanvas viewport={viewport} onViewportChange={setViewport}>
               {project && (
                 <div className="w-full h-full bg-[#FAFAFA] p-4 overflow-y-auto">
-                  <div className="max-w-2xl mx-auto space-y-3">
+                  <div className="max-w-2xl mx-auto space-y-2">
                     <div className="text-gray-400 text-xs uppercase font-bold">Build Preview</div>
                     {compatibilityResult && (
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                         {Object.entries(compatibilityResult.selection || {}).map(([k, v]) => {
                           const family = registry[Object.values(FAMILY_MAP).find((f) => f && registry[f]?.some((p) => p.id === v))] || [];
                           const pattern = family.find((p) => p.id === v);
@@ -218,9 +216,11 @@ export default function FactoryBuilder() {
               isFrozen={selectedPattern && frozenPatterns.has(selectedPattern.id)}
               onToggleFreeze={toggleFreeze}
             />
-          </>
+          </div>
         )}
       </div>
+
+      {/* Validation status footer (glass panel) */}
       <BuilderValidationDrawer
         receipt={validationReceipt}
         onRepair={() => {
@@ -231,6 +231,9 @@ export default function FactoryBuilder() {
           alert('Repairs:\n' + repairs.join('\n'));
         }}
       />
+
+      {/* Bottom navigation dock */}
+      <BuilderLeftRail active={activePanel} onSelect={setActivePanel} />
     </div>
   );
 }

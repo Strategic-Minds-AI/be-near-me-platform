@@ -22,26 +22,28 @@ const NAV_ITEMS = [
 
 export default function BuilderLeftRail({ active, onSelect }) {
   return (
-    <nav className="w-16 flex flex-col items-center gap-1 py-3 bg-[#0D0D14] border-r border-white/10 shrink-0">
-      {NAV_ITEMS.map((item) => {
-        const Icon = item.icon;
-        const isActive = active === item.id;
-        return (
-          <button
-            key={item.id}
-            onClick={() => onSelect(item.id)}
-            className={`w-12 h-12 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-colors ${
-              isActive
-                ? 'bg-pink-500/20 text-pink-400'
-                : 'text-white/40 hover:text-white/70 hover:bg-white/5'
-            }`}
-            title={item.label}
-          >
-            <Icon className="w-5 h-5" />
-            <span className="text-[9px] font-medium">{item.label}</span>
-          </button>
-        );
-      })}
+    <nav className="relative shrink-0 bg-[#0a0a0a]/80 backdrop-blur-xl border-t border-white/10">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#ff85e0]/30 to-transparent" />
+      <div className="flex items-center gap-1 px-2 py-2 overflow-x-auto no-scrollbar">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const isActive = active === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => onSelect(item.id)}
+              className={`flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-xl transition-all shrink-0 ${
+                isActive
+                  ? 'bg-[#ff85e0]/15 text-[#ff85e0]'
+                  : 'text-[#a0a0a0] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.4 : 2} />
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </nav>
   );
 }

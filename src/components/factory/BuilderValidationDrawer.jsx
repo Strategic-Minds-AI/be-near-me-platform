@@ -1,6 +1,5 @@
 import React from 'react';
 import { CheckCircle, XCircle, AlertCircle, ShieldCheck } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 
 export default function BuilderValidationDrawer({ receipt, onRepair }) {
   const gates = receipt?.hard_gates || {};
@@ -11,95 +10,91 @@ export default function BuilderValidationDrawer({ receipt, onRepair }) {
   const passedCount = gateEntries.filter(([, v]) => v === true || v?.passed).length;
   const failedCount = gateEntries.filter(([, v]) => v === false || v?.passed === false).length;
 
+  const resultColor = result === 'PASS' ? 'text-green-400'
+    : result === 'FAIL' ? 'text-red-400'
+    : result === 'BLOCKED' ? 'text-amber-400'
+    : 'text-white/50';
+
+  const ResultIcon = result === 'PASS' ? CheckCircle
+    : result === 'FAIL' ? XCircle
+    : result === 'BLOCKED' ? AlertCircle
+    : ShieldCheck;
+
   return (
-    <div className="h-48 bg-[#0A0A0F] border-t border-white/10 shrink-0 flex">
-      {/* Result summary */}
-      <div className="w-48 p-3 border-r border-white/10 flex flex-col justify-center items-center">
-        {result === 'PASS' && <CheckCircle className="w-8 h-8 text-green-400 mb-1" />}
-        {result === 'FAIL' && <XCircle className="w-8 h-8 text-red-400 mb-1" />}
-        {result === 'BLOCKED' && <AlertCircle className="w-8 h-8 text-amber-400 mb-1" />}
-        {result === 'PENDING' && <ShieldCheck className="w-8 h-8 text-white/30 mb-1" />}
-        <div
-          className={`text-sm font-bold ${
-            result === 'PASS'
-              ? 'text-green-400'
-              : result === 'FAIL'
-              ? 'text-red-400'
-              : result === 'BLOCKED'
-              ? 'text-amber-400'
-              : 'text-white/40'
-          }`}
-        >
-          {result}
-        </div>
-        {receipt?.repair_round !== undefined && receipt.repair_round > 0 && (
-          <div className="text-white/30 text-[10px] mt-0.5">Round {receipt.repair_round}/5</div>
-        )}
-      </div>
-
-      {/* Gates */}
-      <div className="w-64 p-3 border-r border-white/10 overflow-y-auto">
-        <div className="text-white/40 text-[10px] uppercase font-bold mb-2">
-          Hard Gates ({passedCount} passed, {failedCount} failed)
-        </div>
-        <div className="space-y-1">
-          {gateEntries.map(([gate, val]) => {
-            const passed = val === true || val?.passed === true;
-            return (
-              <div key={gate} className="flex items-center gap-1.5">
-                {passed ? (
-                  <CheckCircle className="w-3 h-3 text-green-400 shrink-0" />
-                ) : (
-                  <XCircle className="w-3 h-3 text-red-400 shrink-0" />
-                )}
-                <span className="text-[11px] text-white/60 truncate">{gate}</span>
-              </div>
-            );
-          })}
-          {gateEntries.length === 0 && (
-            <div className="text-white/30 text-xs">No validation run yet</div>
-          )}
-        </div>
-      </div>
-
-      {/* Deltas */}
-      <div className="flex-1 p-3 overflow-y-auto">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-white/40 text-[10px] uppercase font-bold">
-            Deltas ({deltas.length})
+    <div className="shrink-0 bg-[#262626]/60 backdrop-blur-xl border-t border-white/10">
+      <div className="flex items-stretch">
+        {/* Result badge */}
+        <div className="px-4 py-3 flex items-center gap-2 border-r border-white/10 shrink-0">
+          <ResultIcon className={`w-5 h-5 ${resultColor}`} />
+          <div>
+            <div className={`text-sm font-bold ${resultColor}`}>{result}</div>
+            {receipt?.repair_round !== undefined && receipt.repair_round > 0 && (
+              <div className="text-white/30 text-[10px]">Round {receipt.repair_round}/5</div>
+            )}
           </div>
-          {deltas.length > 0 && result !== 'PASS' && (
-            <button
-              onClick={onRepair}
-              className="text-[10px] px-2 py-1 rounded-full bg-pink-500/20 text-pink-400 hover:bg-pink-500/30"
-            >
-              Auto-Repair
-            </button>
-          )}
         </div>
-        <div className="space-y-1">
-          {deltas.slice(0, 20).map((d, i) => (
-            <div key={i} className="flex items-start gap-2 text-xs">
-              <span
-                className={`shrink-0 font-bold ${
-                  d.severity === 'error'
-                    ? 'text-red-400'
-                    : d.severity === 'warning'
-                    ? 'text-amber-400'
-                    : 'text-blue-400'
-                }`}
-              >
-                {d.severity?.toUpperCase()}
-              </span>
-              <span className="text-white/60">{d.message}</span>
-              {d.correction && (
-                <span className="text-white/40 text-[11px]">→ {d.correction}</span>
-              )}
+
+        {/* Hard gates */}
+        <div className="flex-1 px-4 py-3 min-w-0 border-r border-white/10">
+          <div className="text-[#a0a0a0] text-[10px] uppercase font-bold tracking-wider mb-1">
+            Hard Gates ({passedCount} passed, {failedCount} failed)
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {gateEntries.slice(0, 6).map(([gate, val]) => {
+              const passed = val === true || val?.passed === true;
+              return (
+                <div key={gate} className="flex items-center gap-1">
+                  {passed ? (
+                    <CheckCircle className="w-3 h-3 text-green-400 shrink-0" />
+                  ) : (
+                    <XCircle className="w-3 h-3 text-red-400 shrink-0" />
+                  )}
+                  <span className="text-[11px] text-white/60 truncate max-w-20">{gate}</span>
+                </div>
+              );
+            })}
+            {gateEntries.length === 0 && (
+              <div className="text-white/30 text-xs">No validation run yet</div>
+            )}
+          </div>
+        </div>
+
+        {/* Deltas */}
+        <div className="flex-1 px-4 py-3 min-w-0">
+          <div className="flex items-center justify-between mb-1">
+            <div className="text-[#a0a0a0] text-[10px] uppercase font-bold tracking-wider">
+              Deltas ({deltas.length})
             </div>
-          ))}
-          {deltas.length === 0 && (
-            <div className="text-white/30 text-xs">No issues detected</div>
-          )}
+            {deltas.length > 0 && result !== 'PASS' && (
+              <button
+                onClick={onRepair}
+                className="text-[10px] px-2.5 py-1 rounded-full bg-[#ff85e0]/20 text-[#ff85e0] hover:bg-[#ff85e0]/30 font-medium"
+              >
+                Auto-Repair
+              </button>
+            )}
+          </div>
+          <div className="space-y-0.5">
+            {deltas.slice(0, 3).map((d, i) => (
+              <div key={i} className="flex items-start gap-2 text-xs">
+                <span
+                  className={`shrink-0 font-bold text-[10px] ${
+                    d.severity === 'error'
+                      ? 'text-red-400'
+                      : d.severity === 'warning'
+                      ? 'text-amber-400'
+                      : 'text-blue-400'
+                  }`}
+                >
+                  {d.severity?.toUpperCase()}
+                </span>
+                <span className="text-white/60 truncate">{d.message}</span>
+              </div>
+            ))}
+            {deltas.length === 0 && (
+              <div className="text-white/30 text-xs">No issues detected</div>
+            )}
+          </div>
         </div>
       </div>
     </div>
