@@ -1,0 +1,25 @@
+{
+  "policy_id": "BNM-EA-REVENUE-001",
+  "project": "Be Near Me",
+  "dedicated_to": [
+    "Eva",
+    "Anastasia"
+  ],
+  "platform_retained_share_bps": 0,
+  "beneficiary_pool_share_bps": 10000,
+  "beneficiary_pool_name": "Eva & Anastasia Beneficiary Pool",
+  "beneficiaries": [
+    "Eva",
+    "Anastasia"
+  ],
+  "beneficiary_internal_split": "UNCONFIGURED_REQUIRES_OPERATOR_AND_LEGAL_PAYOUT_CONFIGURATION",
+  "net_receipts_definition": "Gross platform-owned receipts less processor fees, refunds, chargebacks, taxes required to be collected/remitted, and legally restricted pass-through amounts. Charitable/pass-through funds are never reclassified as platform revenue.",
+  "live_settlement_state": "BLOCKED_UNTIL_VALID_LEGAL_DESTINATION_VERIFIED",
+  "invariants": [
+    "No platform owner revenue share may be retained from platform net receipts.",
+    "100% of platform net receipts are economically assigned to the Eva & Anastasia Beneficiary Pool.",
+    "No payout may be marked completed without a payment-processor settlement/transfer identifier.",
+    "No application UI may display fabricated earnings or payout values as real data.",
+    "If payout destination is not valid/verified, settlement remains pending; funds must not be redirected to an alternate beneficiary."
+  ]
+}
