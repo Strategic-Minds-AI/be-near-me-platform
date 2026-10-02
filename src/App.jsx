@@ -39,6 +39,7 @@ import BnmInbox from '@/pages/BnmInbox';
 import BnmMessages from '@/pages/BnmMessages';
 import BnmMenu from '@/pages/BnmMenu';
 import BnmCreate from '@/pages/BnmCreate';
+import BnmTracker from '@/pages/BnmTracker';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -159,6 +160,7 @@ const AuthenticatedApp = () => {
       <Route path="/home" element={<BnmHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
       <Route path="/create" element={<BnmCreate />} />
+      <Route path="/tracker" element={<BnmTracker />} />
       <Route path="/camera" element={<Camera />} />
       <Route path="/effects" element={<BnmEffects />} />
       <Route path="/nearby" element={<BnmNearby />} />

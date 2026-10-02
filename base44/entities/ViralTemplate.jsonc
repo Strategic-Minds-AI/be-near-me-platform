@@ -88,6 +88,52 @@
     "discovered_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "color_palette": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Hex color codes top creators use in this style (e.g. ['#FF006E','#0A0A0A'])"
+    },
+    "font_style": {
+      "type": "string",
+      "description": "Typography description: font family, weight, treatment (e.g. 'Bold sans-serif uppercase, white with black outline')"
+    },
+    "visual_effects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Visual effects and editing techniques used (e.g. 'speed ramp', 'match cut', 'whip pan')"
+    },
+    "text_overlay_style": {
+      "type": "string",
+      "description": "On-screen text treatment: outline, shadow, placement, animation"
+    },
+    "symbols_motifs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recurring visual symbols, stickers, or motifs in this style"
+    },
+    "transition_style": {
+      "type": "string",
+      "description": "How cuts/transitions between shots are executed"
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "default": "9:16",
+      "description": "Typical aspect ratio for this style"
+    },
+    "lighting_style": {
+      "type": "string",
+      "description": "Lighting approach (e.g. 'golden hour natural', 'neon ring light', 'flat even lighting')"
+    },
+    "thumbnail_text_pattern": {
+      "type": "string",
+      "description": "How text is placed on thumbnails (e.g. 'Large yellow text top-left, shocked face bottom-right')"
     }
   },
   "required": [

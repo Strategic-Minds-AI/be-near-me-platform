@@ -3,8 +3,8 @@ import { chatCompletion } from "../../shared/vercelAiGateway.ts";
 
 // viralSkipTrace — the "skip trace" system that finds top creators across
 // social media (via free YouTube search + oEmbed), reverse-engineers their
-// video styles, and classifies them into 10 distinct viral style templates.
-// Each template becomes a reusable pattern users can generate videos from.
+// video styles including VISUAL DNA (colors, fonts, effects, symbols, outlines,
+// patterns, transitions), and classifies them into 10 distinct viral templates.
 //
 // Powered by Vercel AI Gateway (no Base44 integration credits required).
 // YouTube oEmbed + search HTML parsing are free public endpoints.
@@ -15,7 +15,6 @@ import { chatCompletion } from "../../shared/vercelAiGateway.ts";
 const YT_ID_RE = /watch\?v=([a-zA-Z0-9_-]{11})/g;
 
 // 10 broad search queries — each surfaces a different viral video FORMAT
-// so the LLM can cluster them into 10 distinct styles.
 const STYLE_QUERIES = [
   "viral transition reel tiktok 2026",
   "storytime vlog storytelling",
@@ -79,10 +78,20 @@ export default async function (req: Request) {
       return Response.json({ error: 'No videos discovered from YouTube' }, { status: 502 });
     }
 
-    // 2. Classify into 10 distinct viral styles via LLM
-    const classifyPrompt = `You are a viral content analyst. Below is a dataset of real trending videos discovered across YouTube, grouped by the search query that surfaced them. Your job is to identify the TOP 10 DISTINCT VIRAL VIDEO STYLES that top creators use — each style is a repeatable FORMAT/pattern (not a topic).
+    // 2. Classify into 10 distinct viral styles with FULL VISUAL DNA via LLM
+    const classifyPrompt = `You are an expert viral content analyst and visual designer. Below is a dataset of real trending videos discovered across YouTube, grouped by the search query that surfaced them. Your job is to identify the TOP 10 DISTINCT VIRAL VIDEO STYLES that top creators use — each style is a repeatable FORMAT/pattern (not a topic).
 
-Each of the 10 styles must be genuinely different in structure: hook, pacing, shot sequence, music, and caption approach. Base them on the real creators and titles in the dataset, but generalize each into a reusable template anyone could follow.
+For EACH style, you must identify the COMPLETE VISUAL DNA that top creators use:
+- Color palette: the exact hex colors they gravitate toward (backgrounds, text, accents, overlays)
+- Font/typography style: font family, weight, case, treatment (outlines, shadows, gradients)
+- Visual effects: editing techniques (speed ramps, match cuts, zoom punches, glitch, etc.)
+- Text overlay style: how on-screen text is styled and placed (outline color, stroke, animation)
+- Symbols & motifs: recurring visual symbols, stickers, emojis, or graphic elements
+- Transition style: how shots connect (whip pans, hard cuts, cross dissolves, mask transitions)
+- Lighting style: the lighting approach that defines the look
+- Thumbnail text pattern: how text and faces are arranged on the cover/thumbnail
+
+Base your analysis on the real creators, titles, and the well-known visual conventions of each format. Be specific and actionable — these details will be fed to an AI video generator.
 
 DISCOVERED VIDEOS (title | creator | format query):
 ${JSON.stringify(discovered, null, 2)}
@@ -100,10 +109,18 @@ Return EXACTLY 10 styles as a JSON array. Each style object must have:
 - example_creators: 2-4 real creator names from the dataset (or well-known ones) who use this style
 - example_video_titles: 2-3 example titles in this style
 - viral_prompt_template: a fill-in prompt a user would feed to an AI video generator to make a video in this style — include a {USER_IDEA} placeholder
-- visual_prompt_template: a cinematic visual prompt template for AI video generation (vertical 9:16), with a {USER_IDEA} placeholder, describing lighting, camera movement, mood
+- visual_prompt_template: a cinematic visual prompt template for AI video generation (vertical 9:16), with a {USER_IDEA} placeholder, describing lighting, camera movement, mood, color palette, and effects
 - thumbnail_style: thumbnail/cover visual approach
 - avg_duration: typical duration in seconds (6 or 8)
-- difficulty: beginner | intermediate | advanced`;
+- difficulty: beginner | intermediate | advanced
+- color_palette: array of 4-6 hex color codes (e.g. "#FF006E") that define this style's look
+- font_style: typography description (family, weight, case, treatment)
+- visual_effects: array of 3-5 specific editing techniques/effects used
+- text_overlay_style: on-screen text treatment (outline, shadow, placement, animation)
+- symbols_motifs: array of 2-4 recurring visual symbols, stickers, or graphic elements
+- transition_style: how cuts/transitions between shots are executed
+- lighting_style: the lighting approach that defines the look
+- thumbnail_text_pattern: how text and faces are arranged on the thumbnail`;
 
     const styles = await chatCompletion(classifyPrompt, {
       model: 'gemini_3_flash',
@@ -131,6 +148,14 @@ Return EXACTLY 10 styles as a JSON array. Each style object must have:
                 thumbnail_style: { type: 'string' },
                 avg_duration: { type: 'number' },
                 difficulty: { type: 'string' },
+                color_palette: { type: 'array', items: { type: 'string' } },
+                font_style: { type: 'string' },
+                visual_effects: { type: 'array', items: { type: 'string' } },
+                text_overlay_style: { type: "string" },
+                symbols_motifs: { type: "array", items: { type: "string" } },
+                transition_style: { type: "string" },
+                lighting_style: { type: "string" },
+                thumbnail_text_pattern: { type: "string" },
               },
             },
           },
@@ -161,6 +186,15 @@ Return EXACTLY 10 styles as a JSON array. Each style object must have:
       avg_duration: s.avg_duration || 6,
       difficulty: s.difficulty || 'beginner',
       discovered_at: now,
+      color_palette: s.color_palette || [],
+      font_style: s.font_style || '',
+      visual_effects: s.visual_effects || [],
+      text_overlay_style: s.text_overlay_style || '',
+      symbols_motifs: s.symbols_motifs || [],
+      transition_style: s.transition_style || '',
+      aspect_ratio: '9:16',
+      lighting_style: s.lighting_style || '',
+      thumbnail_text_pattern: s.thumbnail_text_pattern || '',
     }));
 
     let upserted = 0;

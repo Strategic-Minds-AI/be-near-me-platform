@@ -160,13 +160,21 @@ export async function generateVideo(prompt, opts = {}) {
   const duration = opts.duration || 6;
   const aspectRatio = opts.aspectRatio || "9:16";
 
+  const requestBody = { model, prompt, duration, aspectRatio };
+
+  // Image-to-video: if an image (base64 data URL or URL) is provided, pass it
+  // so Veo animates the user's actual image in the requested style.
+  if (opts.image) {
+    requestBody.image = opts.image;
+  }
+
   const res = await fetch(`${GATEWAY_BASE}/videos/generations`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${getApiKey()}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ model, prompt, duration, aspectRatio }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!res.ok) {
