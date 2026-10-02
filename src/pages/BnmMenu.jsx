@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, CircleHelp, Heart, MapPin, Settings, Sparkles, TrendingUp, User, Video } from "lucide-react";
+import { ChevronRight, CircleHelp, Heart, LayoutTemplate, MapPin, Settings, Sparkles, TrendingUp, User, Video } from "lucide-react";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
 
 const items = [
@@ -9,6 +9,7 @@ const items = [
   { label: "Liked Videos", to: "/LikedVideos", Icon: Heart },
   { label: "Local Business", to: "/nearby", Icon: MapPin },
   { label: "Creator Tools", to: "/CreatorStudio", Icon: Sparkles },
+  { label: "Template Gallery", to: "/gallery", Icon: LayoutTemplate },
   { label: "Video Tracker", to: "/tracker", Icon: TrendingUp },
   { label: "Help & Support", to: "/Contact", Icon: CircleHelp },
 ];

@@ -42,6 +42,7 @@ import BnmCreate from '@/pages/BnmCreate';
 import BnmTracker from '@/pages/BnmTracker';
 import FactoryBuilder from '@/pages/FactoryBuilder';
 import FactoryDashboard from '@/pages/FactoryDashboard';
+import VisualGallery from '@/pages/VisualGallery';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -172,6 +173,11 @@ const AuthenticatedApp = () => {
       <Route path="/menu" element={<BnmMenu />} />
       <Route path="/builder" element={<FactoryBuilder />} />
       <Route path="/factory" element={<FactoryDashboard />} />
+      <Route path="/gallery" element={
+        <LayoutWrapper currentPageName="VisualGallery">
+          <VisualGallery />
+        </LayoutWrapper>
+      } />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
