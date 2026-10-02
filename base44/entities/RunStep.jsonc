@@ -1,0 +1,158 @@
+{
+  "name": "RunStep",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Reference to GeneratorRun"
+    },
+    "run_key": {
+      "type": "string",
+      "description": "Denormalized run key for filtering"
+    },
+    "step_key": {
+      "type": "string",
+      "description": "Unique step key within the run (matches DAG node id)"
+    },
+    "step_type": {
+      "type": "string",
+      "enum": [
+        "transform",
+        "template",
+        "ai_generate",
+        "ai_evaluate",
+        "code_execute",
+        "test",
+        "validate_schema",
+        "validate_content",
+        "validate_security",
+        "validate_visual",
+        "adapter_read",
+        "adapter_write",
+        "approval",
+        "branch",
+        "fanout",
+        "reduce",
+        "package",
+        "checksum",
+        "export"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "passed",
+        "failed",
+        "blocked",
+        "cancelled",
+        "dead_letter",
+        "waiting_approval"
+      ],
+      "default": "pending"
+    },
+    "attempt_count": {
+      "type": "number",
+      "default": 0
+    },
+    "max_attempts": {
+      "type": "number",
+      "default": 3
+    },
+    "node_config": {
+      "type": "object",
+      "description": "DAG node configuration"
+    },
+    "input": {
+      "type": "object",
+      "description": "Step input data"
+    },
+    "output": {
+      "type": "object",
+      "description": "Step output data"
+    },
+    "error": {
+      "type": "object",
+      "description": "Structured error on failure"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Idempotency key for side-effecting steps"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "number",
+      "default": 0
+    },
+    "cost_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "tokens_used": {
+      "type": "number",
+      "default": 0
+    },
+    "logs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Per-step execution logs"
+    },
+    "child_run_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Child run IDs for fanout/compose nodes"
+    }
+  },
+  "required": [
+    "run_id",
+    "step_key",
+    "step_type",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "name": "AdapterDefinition",
+  "type": "object",
+  "properties": {
+    "adapter_key": {
+      "type": "string",
+      "description": "Unique adapter key (e.g. 'ai-gateway', 'github', 'supabase')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable adapter name"
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0.0"
+    },
+    "manifest": {
+      "type": "object",
+      "description": "Full AdapterManifest JSON per schema"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Capability list (e.g. ['read', 'write', 'deploy'])"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "risk_class": {
+            "type": "string",
+            "enum": [
+              "READ",
+              "DRAFT",
+              "BRANCH_WRITE",
+              "PROTECTED"
+            ]
+          },
+          "idempotent": {
+            "type": "boolean"
+          },
+          "requires_approval": {
+            "type": "boolean"
+          },
+          "timeout_seconds": {
+            "type": "number"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Action definitions with risk classification"
+    },
+    "config_schema": {
+      "type": "object",
+      "description": "JSON Schema for adapter configuration"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "health_status": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "not_configured",
+        "error",
+        "disabled",
+        "unknown"
+      ],
+      "default": "not_configured"
+    },
+    "health_message": {
+      "type": "string",
+      "description": "Health check detail or NOT_CONFIGURED reason"
+    },
+    "health_checked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "secret_references": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Secret IDs required (never values)"
+    },
+    "connection_instructions": {
+      "type": "string",
+      "description": "How to configure this adapter"
+    }
+  },
+  "required": [
+    "adapter_key",
+    "name",
+    "version",
+    "manifest",
+    "capabilities",
+    "actions",
+    "enabled",
+    "health_status"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "name": "Approval",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Reference to GeneratorRun (optional for non-run approvals)"
+    },
+    "action_key": {
+      "type": "string",
+      "description": "What action requires approval (e.g. 'provisioning.live-deploy')"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "expired",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "request": {
+      "type": "object",
+      "description": "Approval request payload (risk class, action details, diff summary)"
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": [
+        "READ",
+        "DRAFT",
+        "BRANCH_WRITE",
+        "PROTECTED"
+      ],
+      "default": "DRAFT"
+    },
+    "resolved_by": {
+      "type": "string",
+      "description": "User email who resolved"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Approval or rejection reason"
+    }
+  },
+  "required": [
+    "action_key",
+    "status",
+    "risk_class"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

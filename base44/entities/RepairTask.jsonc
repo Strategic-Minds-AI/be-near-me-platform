@@ -1,0 +1,128 @@
+{
+  "name": "RepairTask",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Reference to GeneratorRun"
+    },
+    "run_key": {
+      "type": "string",
+      "description": "Denormalized run key"
+    },
+    "validation_receipt_id": {
+      "type": "string",
+      "description": "Receipt that triggered this repair"
+    },
+    "target_step_key": {
+      "type": "string",
+      "description": "Step to repair"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "in_progress",
+        "completed",
+        "failed",
+        "skipped"
+      ],
+      "default": "open"
+    },
+    "failure_layer": {
+      "type": "string",
+      "enum": [
+        "schema",
+        "completeness",
+        "lint",
+        "typecheck",
+        "compile",
+        "unit_test",
+        "integration_test",
+        "e2e",
+        "visual_regression",
+        "accessibility",
+        "security",
+        "data_integrity",
+        "artifact_integrity",
+        "acceptance_criteria"
+      ],
+      "description": "Which validation layer failed"
+    },
+    "repair_spec": {
+      "type": "object",
+      "description": "Repair specification: target component, failure detail, patch strategy"
+    },
+    "patch_applied": {
+      "type": "object",
+      "description": "What was patched"
+    },
+    "regression_result": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "passed",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "repair_round": {
+      "type": "number",
+      "default": 1,
+      "description": "Which repair iteration (1-5)"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "receipt": {
+      "type": "object",
+      "description": "Post-repair validation receipt"
+    }
+  },
+  "required": [
+    "run_id",
+    "target_step_key",
+    "status",
+    "failure_layer",
+    "repair_spec"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "name": "ProvisioningPlan",
+  "type": "object",
+  "properties": {
+    "plan_key": {
+      "type": "string",
+      "description": "Unique plan identifier"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Reference to FactoryProject"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Provisioning template key (e.g. 'github-repo', 'vercel-project')"
+    },
+    "plan": {
+      "type": "object",
+      "description": "Full ProvisioningPlan JSON per schema"
+    },
+    "desired_state": {
+      "type": "object",
+      "description": "Target infrastructure state"
+    },
+    "current_state": {
+      "type": "object",
+      "description": "Known current state"
+    },
+    "diff": {
+      "type": "object",
+      "description": "Computed diff between current and desired"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Ordered actions to reach desired state"
+    },
+    "risk_summary": {
+      "type": "object",
+      "description": "Risk classification summary"
+    },
+    "credential_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Required secret references (never secret values)"
+    },
+    "rollback": {
+      "type": "object",
+      "description": "Rollback plan"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "pending_approval",
+        "approved",
+        "executing",
+        "completed",
+        "failed",
+        "rolled_back"
+      ],
+      "default": "draft"
+    },
+    "approval_id": {
+      "type": "string",
+      "description": "Reference to Approval once approved"
+    },
+    "executed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "receipts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Execution receipts from each action"
+    }
+  },
+  "required": [
+    "plan_key",
+    "template_id",
+    "plan",
+    "desired_state",
+    "actions",
+    "risk_summary",
+    "rollback",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "name": "AuditEvent",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "description": "Event name (e.g. 'generator.run.created', 'approval.resolved')"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Entity type (e.g. 'GeneratorRun', 'Artifact')"
+    },
+    "entity_id": {
+      "type": "string",
+      "description": "Entity ID"
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "User email who triggered the event"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event payload (no secrets)"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "default": "info"
+    }
+  },
+  "required": [
+    "event_type",
+    "entity_type",
+    "entity_id",
+    "payload"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "name": "GeneratorVersion",
+  "type": "object",
+  "properties": {
+    "generator_definition_id": {
+      "type": "string",
+      "description": "Reference to parent GeneratorDefinition"
+    },
+    "generator_key": {
+      "type": "string",
+      "description": "Denormalized key for filtering"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver version string"
+    },
+    "definition": {
+      "type": "object",
+      "description": "Immutable full GeneratorDefinition JSON at this version"
+    },
+    "definition_sha256": {
+      "type": "string",
+      "description": "SHA-256 of canonicalized definition"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "validated",
+        "approved",
+        "frozen",
+        "deprecated"
+      ],
+      "default": "draft"
+    },
+    "frozen_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "change_summary": {
+      "type": "string",
+      "description": "What changed in this version"
+    },
+    "input_schema": {
+      "type": "object"
+    },
+    "output_contract": {
+      "type": "object"
+    },
+    "workflow_dag": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "generator_definition_id",
+    "generator_key",
+    "version",
+    "definition",
+    "definition_sha256",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

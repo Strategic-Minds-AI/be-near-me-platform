@@ -1,0 +1,133 @@
+{
+  "name": "Artifact",
+  "type": "object",
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "description": "Unique artifact identifier"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Reference to GeneratorRun"
+    },
+    "run_key": {
+      "type": "string",
+      "description": "Denormalized run key"
+    },
+    "generator_key": {
+      "type": "string",
+      "description": "Generator that produced this artifact"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "description": "Artifact filename"
+    },
+    "media_type": {
+      "type": "string",
+      "description": "MIME type (text/plain, application/json, application/zip, etc.)"
+    },
+    "storage_ref": {
+      "type": "string",
+      "description": "Private file URI from UploadPrivateFile, or inline content ref"
+    },
+    "content": {
+      "type": "string",
+      "description": "Inline content for small text artifacts (under 100KB)"
+    },
+    "sha256": {
+      "type": "string",
+      "description": "SHA-256 hash of artifact content"
+    },
+    "size_bytes": {
+      "type": "number",
+      "default": 0
+    },
+    "source_step": {
+      "type": "string",
+      "description": "Step key that produced this artifact"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Artifact IDs this artifact depends on"
+    },
+    "validation_state": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "passed",
+        "failed",
+        "not_required"
+      ],
+      "default": "pending"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional artifact metadata"
+    },
+    "is_compound": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this is a compound package containing other artifacts"
+    },
+    "child_artifact_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "artifact_id",
+    "run_id",
+    "name",
+    "media_type",
+    "sha256"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

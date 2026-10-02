@@ -1,0 +1,169 @@
+{
+  "name": "GeneratorDefinition",
+  "type": "object",
+  "properties": {
+    "generator_key": {
+      "type": "string",
+      "description": "Unique registry key (e.g. 'code.web-app')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable generator name"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "code",
+        "ai",
+        "business",
+        "consulting",
+        "marketing",
+        "data",
+        "infra",
+        "design"
+      ],
+      "description": "Generator category"
+    },
+    "generator_type": {
+      "type": "string",
+      "description": "Specific type within category (e.g. 'web-app', 'pwa')"
+    },
+    "current_version": {
+      "type": "string",
+      "description": "Latest approved version (semver)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "validated",
+        "approved",
+        "deprecated",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "definition": {
+      "type": "object",
+      "description": "Full GeneratorDefinition JSON per DSL spec"
+    },
+    "input_schema": {
+      "type": "object",
+      "description": "JSON Schema for generator inputs"
+    },
+    "output_contract": {
+      "type": "object",
+      "description": "Output contract schema"
+    },
+    "workflow_dag": {
+      "type": "object",
+      "description": "Compiled DAG (nodes + edges)"
+    },
+    "model_policy": {
+      "type": "object",
+      "description": "AI model selection and usage policy"
+    },
+    "validation_policy": {
+      "type": "object",
+      "description": "Which validators to run and thresholds"
+    },
+    "repair_policy": {
+      "type": "object",
+      "description": "Repair strategy and max rounds"
+    },
+    "security_policy": {
+      "type": "object",
+      "description": "Sandbox, secret, and scan requirements"
+    },
+    "approval_policy": {
+      "type": "object",
+      "description": "Approval gates and risk thresholds"
+    },
+    "limits": {
+      "type": "object",
+      "description": "Concurrency, cost, token, timeout limits"
+    },
+    "export_policy": {
+      "type": "object",
+      "description": "Export formats and packaging rules"
+    },
+    "definition_sha256": {
+      "type": "string",
+      "description": "SHA-256 of canonicalized definition JSON"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Declared capabilities"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "canonical-seed",
+        "operator-created",
+        "derived",
+        "imported"
+      ],
+      "default": "canonical-seed"
+    }
+  },
+  "required": [
+    "generator_key",
+    "name",
+    "category",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

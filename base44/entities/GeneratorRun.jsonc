@@ -1,0 +1,150 @@
+{
+  "name": "GeneratorRun",
+  "type": "object",
+  "properties": {
+    "run_key": {
+      "type": "string",
+      "description": "Unique run identifier"
+    },
+    "generator_id": {
+      "type": "string",
+      "description": "Reference to GeneratorDefinition"
+    },
+    "generator_key": {
+      "type": "string",
+      "description": "Denormalized generator key"
+    },
+    "generator_version": {
+      "type": "string",
+      "description": "Semver version used for this run"
+    },
+    "generator_version_id": {
+      "type": "string",
+      "description": "Reference to GeneratorVersion"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Reference to FactoryProject"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "VALIDATING_INPUT",
+        "PLANNING",
+        "WAITING_APPROVAL",
+        "QUEUED",
+        "RUNNING",
+        "VALIDATING",
+        "REPAIRING",
+        "PASSED",
+        "FAILED",
+        "BLOCKED",
+        "CANCELLED",
+        "EXPORTED"
+      ],
+      "default": "DRAFT"
+    },
+    "input": {
+      "type": "object",
+      "description": "Normalized input object"
+    },
+    "input_hash": {
+      "type": "string",
+      "description": "SHA-256 of normalized input JSON"
+    },
+    "seed": {
+      "type": "string",
+      "description": "Deterministic seed for reproducibility"
+    },
+    "run_manifest": {
+      "type": "object",
+      "description": "Immutable manifest with definition hash, template versions, adapter versions, model policy version"
+    },
+    "parent_run_id": {
+      "type": "string",
+      "description": "Parent run if this is a child run"
+    },
+    "child_generator_key": {
+      "type": "string",
+      "description": "Generator key invoked as child"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "total_cost_cents": {
+      "type": "number",
+      "default": 0
+    },
+    "total_tokens_used": {
+      "type": "number",
+      "default": 0
+    },
+    "error": {
+      "type": "object",
+      "description": "Structured error if failed"
+    },
+    "result_summary": {
+      "type": "string",
+      "description": "Human-readable result summary"
+    },
+    "artifact_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "run_key",
+    "generator_id",
+    "generator_key",
+    "generator_version",
+    "status",
+    "input_hash"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
