@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Camera, ImagePlus, Loader2, Save } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { uploadFileProxy } from "@/lib/uploadHelper";
 import {
   Avatar,
@@ -16,7 +16,7 @@ import {
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -44,7 +44,7 @@ export default function BnmLockedSettings() {
     queryKey: ["bnm-settings-channel", user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Channel.filter(
+        await bnmData.entities.Channel.filter(
           { created_by: user.email },
           { sort: "-created_date", limit: 1 }
         )
@@ -83,7 +83,7 @@ export default function BnmLockedSettings() {
 
       if (!name || !handle) throw new Error("Name and handle are required.");
 
-      await base44.entities.Channel.update(channel.id, {
+      await bnmData.entities.Channel.update(channel.id, {
         name,
         handle,
         description: form.description.trim(),
@@ -116,7 +116,7 @@ export default function BnmLockedSettings() {
           <div className="mt-4 text-center">
             <GradientButton
               type="button"
-              onClick={() => base44.auth.redirectToLogin(window.location.href)}
+              onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
             >
               Sign In
             </GradientButton>
