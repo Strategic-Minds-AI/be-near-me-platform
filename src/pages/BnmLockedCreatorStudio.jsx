@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   BarChart3, CalendarDays, Eye, Heart, Leaf, MessageCircle, Play, Plus, Sparkles, Trophy, Users
 } from "lucide-react";
@@ -14,25 +14,25 @@ const isProductionContent = (video) => {
 };
 
 export default function BnmLockedCreatorStudio() {
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => base44.auth.me() });
+  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => bnmData.auth.me() });
   const { data: channels = [] } = useQuery({
     queryKey: ["bnm-studio-channel-v2", user?.email],
     enabled: !!user?.email,
-    queryFn: async () => asItems(await base44.entities.Channel.filter({ created_by: user.email }, "-created_date", 1)),
+    queryFn: async () => asItems(await bnmData.entities.Channel.filter({ created_by: user.email }, "-created_date", 1)),
   });
   const channel = channels[0] || null;
 
   const { data: rawVideos = [] } = useQuery({
     queryKey: ["bnm-studio-videos-v2", channel?.id],
     enabled: !!channel?.id,
-    queryFn: async () => asItems(await base44.entities.Video.filter({ channel_id: channel.id }, "-created_date", 50)),
+    queryFn: async () => asItems(await bnmData.entities.Video.filter({ channel_id: channel.id }, "-created_date", 50)),
   });
   const videos = rawVideos.filter(isProductionContent);
 
   const { data: earnings = [] } = useQuery({
     queryKey: ["bnm-studio-earnings-v2", channel?.id],
     enabled: !!channel?.id,
-    queryFn: async () => asItems(await base44.entities.CreatorEarning.filter({ channel_id: channel.id }, "-created_date", 200)),
+    queryFn: async () => asItems(await bnmData.entities.CreatorEarning.filter({ channel_id: channel.id }, "-created_date", 200)),
   });
 
   if (!channel) {
