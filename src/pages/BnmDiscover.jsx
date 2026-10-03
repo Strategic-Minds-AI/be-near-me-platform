@@ -12,7 +12,7 @@ import {
   Plane,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   BnmLockedScreen,
   EmptyState,
@@ -44,7 +44,7 @@ export default function BnmDiscover() {
     queryKey: ["bnmDiscoverVideosV2"],
     queryFn: async () =>
       asItems(
-        await base44.entities.Video.filter(
+        await bnmData.entities.Video.filter(
           { visibility: "public" },
           { sort: "-created_date", limit: 24 }
         )
