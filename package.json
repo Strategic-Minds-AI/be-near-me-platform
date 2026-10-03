@@ -73,6 +73,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@base44/vite-plugin": "^1.0.44",
     "@eslint/js": "^9.19.0",
     "@types/node": "^22.13.5",
     "@types/react": "^18.2.66",
@@ -87,10 +88,9 @@
     "globals": "^15.14.0",
     "postcss": "^8.5.28",
     "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.2",
-    "vite": "^6.1.0",
-    "@base44/vite-plugin": "^1.0.44",
-    "tailwindcss-animate": "^1.0.7"
+    "vite": "^6.1.0"
   },
   "overrides": {
     "axios": "1.20.0",
