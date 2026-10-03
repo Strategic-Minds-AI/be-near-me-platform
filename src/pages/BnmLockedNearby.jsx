@@ -52,7 +52,7 @@ export default function BnmLockedNearby() {
           <div className="absolute inset-0 opacity-80 [background-image:linear-gradient(rgba(76,118,187,.14)_1px,transparent_1px),linear-gradient(90deg,rgba(76,118,187,.14)_1px,transparent_1px)] [background-size:24px_24px]" />
           <div className="absolute -left-16 top-[70px] h-32 w-[560px] rotate-[-10deg] rounded-[50%] border-[16px] border-[#173b62]/80" />
           <div className="absolute -left-4 top-[205px] h-24 w-[470px] rotate-[12deg] rounded-[50%] border-[11px] border-[#102f53]/70" />
-          <div className="absolute left-[34%] top-[42%] text-[11px] font-black tracking-[.24em] text-[#6e86af]/70">AUSTIN</div>
+          <div className="absolute left-[31%] top-[42%] text-[10px] font-black tracking-[.2em] text-[#6e86af]/70">{locationState === "enabled" ? "YOUR LOCATION" : "LOCATION OFF"}</div>
 
           {locationState === "enabled" ? (
             <div className="absolute left-[49%] top-[54%] h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#377aff]/20 ring-1 ring-[#5da0ff]/80">
