@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   BnmLockedScreen,
   Glass,
@@ -16,7 +16,7 @@ export default function Contact() {
     event.preventDefault();
     setStatus("sending");
     try {
-      await base44.entities.Lead.create({
+      await bnmData.entities.Lead.create({
         form_type: "contact",
         name: form.name.trim(),
         email: form.email.trim(),
