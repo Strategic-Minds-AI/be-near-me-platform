@@ -6,6 +6,8 @@ export const BNM_REWARDS = [
     points: 2000,
     category: "Apparel",
     internal: true,
+    redeemable: false,
+    availability: "coming_soon",
     visual: "hoodie",
   },
   {
@@ -15,6 +17,8 @@ export const BNM_REWARDS = [
     points: 800,
     category: "Apparel",
     internal: true,
+    redeemable: false,
+    availability: "coming_soon",
     visual: "bottle",
   },
   {
@@ -24,6 +28,8 @@ export const BNM_REWARDS = [
     points: 700,
     category: "Apparel",
     internal: true,
+    redeemable: false,
+    availability: "coming_soon",
     visual: "tote",
   },
   {
@@ -34,6 +40,8 @@ export const BNM_REWARDS = [
     category: "Impact",
     internal: false,
     requires_verified_partner: true,
+    redeemable: false,
+    availability: "partner_required",
     visual: "leaf",
   },
 ];
