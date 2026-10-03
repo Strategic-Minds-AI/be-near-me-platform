@@ -26,6 +26,8 @@ import BnmLockedNearby from '@/pages/BnmLockedNearby';
 import BnmLockedChallenge from '@/pages/BnmLockedChallenge';
 import BnmLockedSearch from '@/pages/BnmLockedSearch';
 import BnmLockedProfile from '@/pages/BnmLockedProfile';
+import BnmLockedCreateChannel from '@/pages/BnmLockedCreateChannel';
+import BnmLockedSettings from '@/pages/BnmLockedSettings';
 import BnmLockedCreatorStudio from '@/pages/BnmLockedCreatorStudio';
 import BnmLockedAiCoach from '@/pages/BnmLockedAiCoach';
 import BnmLockedRewards from '@/pages/BnmLockedRewards';
@@ -96,6 +98,8 @@ const AuthenticatedApp = () => {
       <Route path="/challenge/:challengeId" element={<BnmLockedChallenge />} />
       <Route path="/search" element={<BnmLockedSearch />} />
       <Route path="/profile" element={<BnmLockedProfile />} />
+      <Route path="/create-channel" element={<BnmLockedCreateChannel />} />
+      <Route path="/settings" element={<BnmLockedSettings />} />
       <Route path="/creator-studio" element={<BnmLockedCreatorStudio />} />
       <Route path="/ai-coach" element={<BnmLockedAiCoach />} />
       <Route path="/rewards" element={<BnmLockedRewards />} />
