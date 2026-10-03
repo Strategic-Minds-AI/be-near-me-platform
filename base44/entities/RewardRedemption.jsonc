@@ -1,0 +1,24 @@
+{
+  "name": "RewardRedemption",
+  "type": "object",
+  "properties": {
+    "idempotency_key": {"type": "string"},
+    "reward_id": {"type": "string"},
+    "reward_name": {"type": "string"},
+    "points_debited": {"type": "number"},
+    "delivery_method": {"type": "string", "enum": ["ship", "pickup"]},
+    "status": {"type": "string", "enum": ["pending", "completed", "failed", "cancelled"], "default": "pending"},
+    "channel_id": {"type": "string"},
+    "user_email": {"type": "string"},
+    "fulfillment_state": {"type": "string", "enum": ["not_requested", "pending_verification", "ready", "fulfilled", "blocked"], "default": "pending_verification"},
+    "failure_reason": {"type": "string"},
+    "completed_at": {"type": "string", "format": "date-time"}
+  },
+  "required": ["idempotency_key", "reward_id", "points_debited", "channel_id", "user_email"],
+  "rls": {
+    "create": {"created_by": "{{user.email}}"},
+    "read": {"$or": [{"created_by": "{{user.email}}"}, {"user_condition": {"role": "admin"}}]},
+    "update": {"$or": [{"created_by": "{{user.email}}"}, {"user_condition": {"role": "admin"}}]},
+    "delete": {"user_condition": {"role": "admin"}}
+  }
+}
