@@ -12,7 +12,6 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
 import Benchmark from '@/pages/Benchmark';
-import Camera from '@/pages/Camera';
 import Wallet from '@/pages/Wallet';
 import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
 import AIVideoStudio from '@/pages/AIVideoStudio';
@@ -84,7 +83,6 @@ const AuthenticatedApp = () => {
       {/* MCP OAuth consent page — mounted outside the app layout; it handles
           the signed-out case itself, so it must not sit behind an auth guard. */}
       <Route path="/oauth/consent" element={<OAuthConsent />} />
-      <Route path="/Camera" element={<Camera />} />
       <Route path="/About" element={<About />} />
       <Route path="/Contact" element={<Contact />} />
       <Route path="/AIBuddy" element={
