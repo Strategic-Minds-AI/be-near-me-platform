@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { Heart, MessageCircle, Send, Share2, UserPlus } from "lucide-react";
+import { Heart, MessageCircle, Send, Share2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import VideoPlayer from "@/components/video/VideoPlayer";
 import {
