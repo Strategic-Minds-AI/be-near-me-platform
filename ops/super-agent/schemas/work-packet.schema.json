@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://strategicmindsai.com/schemas/bnm-work-packet-v1.json",
+  "title": "BNM Super-Agent Work Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id","project_id","action_class","task_type","idempotency_key"],
+  "properties": {
+    "id": {"type":"string","minLength":1,"maxLength":120},
+    "project_id": {"const":"BNM-EA-V1"},
+    "action_class": {"enum":["READ","DRAFT","BRANCH_WRITE","PREVIEW_WRITE","PROTECTED"]},
+    "task_type": {"enum":["http_check","file_check","npm_build","targeted_lint","runtime_snapshot"]},
+    "idempotency_key": {"type":"string","minLength":1,"maxLength":180},
+    "params": {"type":"object"},
+    "max_attempts": {"type":"integer","minimum":1,"maximum":5,"default":2},
+    "timeout_ms": {"type":"integer","minimum":1000,"maximum":600000,"default":60000},
+    "created_at": {"type":"string","format":"date-time"},
+    "validation_contract": {"type":"object"},
+    "rollback_pointer": {"type":["string","null"]}
+  }
+}

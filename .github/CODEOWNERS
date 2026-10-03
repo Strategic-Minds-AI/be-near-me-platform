@@ -1,0 +1,5 @@
+* @xps-admin
+/docs/ @xps-admin
+/ops/super-agent/ @xps-admin
+/Dockerfile* @xps-admin
+/compose.yaml @xps-admin
