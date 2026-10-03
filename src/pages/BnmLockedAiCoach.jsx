@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Heart, Leaf, MapPin, Mic, PawPrint, Send, Sparkles, Users } from "lucide-react";
-import { BnmLockedScreen, EmptyState, Glass, Pill, asItems } from "@/components/bnm/LockedShell";
+import { BnmLockedScreen, Glass, Pill, asItems } from "@/components/bnm/LockedShell";
 
 function extractText(result) {
   return result?.data?.content || result?.data?.text || result?.content || result?.text || result?.data?.response || "I’m here to help you find a positive next step.";
@@ -52,7 +52,29 @@ export default function BnmLockedAiCoach() {
 
         <section className="mt-3">
           <div className="mb-2 flex items-end justify-between"><div><h2 className="text-[22px] font-black"><MapPin className="mr-1 inline h-5 w-5 text-[#45bfff]"/>Try this near you</h2><p className="text-[10px] text-[#8fa2c2]">Only real public community activity is shown here.</p></div></div>
-          {posts.length ? <div className="grid grid-cols-3 gap-2">{posts.slice(0,3).map((p)=><Glass key={p.id} className="overflow-hidden"><div className="aspect-square bg-gradient-to-br from-[#153c67] to-[#4c194f]">{p.image_url ? <img src={p.image_url} alt="" className="h-full w-full object-cover"/> : <div className="grid h-full place-items-center"><Heart className="h-8 w-8 text-[#ff4bb4]"/></div>}</div><div className="p-2"><div className="line-clamp-3 text-[10px] font-bold leading-4">{p.content || "Community activity"}</div></div></Glass>)}</div> : <EmptyState icon={MapPin} title="No public suggestions yet" body="The AI will not invent nearby opportunities." />}
+          {posts.length ? (
+            <div className="grid grid-cols-3 gap-2">
+              {posts.slice(0,3).map((p)=><Glass key={p.id} className="overflow-hidden"><div className="aspect-square bg-gradient-to-br from-[#153c67] to-[#4c194f]">{p.image_url ? <img src={p.image_url} alt="" className="h-full w-full object-cover"/> : <div className="grid h-full place-items-center"><Heart className="h-8 w-8 text-[#ff4bb4]"/></div>}</div><div className="p-2"><div className="line-clamp-3 text-[10px] font-bold leading-4">{p.content || "Community activity"}</div></div></Glass>)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                [Leaf,"Environment"],
+                [Users,"People"],
+                [PawPrint,"Animals"],
+              ].map(([Icon,label])=>(
+                <Glass key={label} className="overflow-hidden">
+                  <div className="grid aspect-square place-items-center bg-[linear-gradient(135deg,#112845,#171934_55%,#2d1731)]">
+                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#1a2148]"><Icon className="h-6 w-6 text-[#9d83ff]"/></div>
+                  </div>
+                  <div className="p-2">
+                    <div className="text-[9px] font-black">{label}</div>
+                    <div className="mt-1 text-[8px] leading-3 text-[#8193b5]">Verified nearby result slot</div>
+                  </div>
+                </Glass>
+              ))}
+            </div>
+          )}
         </section>
 
         <div className="mt-3 flex items-center gap-2 rounded-full border border-[#8c69c8] bg-[#0b1731] p-2 pl-4">
