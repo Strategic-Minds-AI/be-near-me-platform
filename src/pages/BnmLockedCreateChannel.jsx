@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { Camera, ImagePlus, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { uploadFileProxy } from "@/lib/uploadHelper";
 import {
   BnmLockedScreen,
@@ -15,7 +15,7 @@ import {
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -43,7 +43,7 @@ export default function BnmLockedCreateChannel() {
     queryKey: ["bnm-create-channel-existing", user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Channel.filter(
+        await bnmData.entities.Channel.filter(
           { created_by: user.email },
           { sort: "-created_date", limit: 1 }
         )
@@ -69,7 +69,7 @@ export default function BnmLockedCreateChannel() {
       if (avatarFile) avatarUrl = await uploadFileProxy(avatarFile);
       if (bannerFile) bannerUrl = await uploadFileProxy(bannerFile);
 
-      return base44.entities.Channel.create({
+      return bnmData.entities.Channel.create({
         name,
         handle,
         description: form.description.trim(),
@@ -99,7 +99,7 @@ export default function BnmLockedCreateChannel() {
           <div className="mt-4 text-center">
             <GradientButton
               type="button"
-              onClick={() => base44.auth.redirectToLogin(window.location.href)}
+              onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
             >
               Sign In
             </GradientButton>
