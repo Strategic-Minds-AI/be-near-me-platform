@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import {
-  Bell, Compass, Heart, Home, MapPin, MessageCircle, Plus, Search, Sparkles, User
+  Bell, Heart, Home, MapPin, MessageCircle, Plus, Search, Sparkles, User
 } from "lucide-react";
 
 const cx = (...v) => v.filter(Boolean).join(" ");
