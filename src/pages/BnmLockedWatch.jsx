@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { Heart, MessageCircle, Send, Share2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import VideoPlayer from "@/components/video/VideoPlayer";
 import {
   Avatar,
@@ -17,7 +17,7 @@ import {
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -37,7 +37,7 @@ export default function BnmLockedWatch() {
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ["bnm-watch-video", videoId],
     queryFn: async () =>
-      asItems(await base44.entities.Video.filter({ id: videoId }, { limit: 1 })),
+      asItems(await bnmData.entities.Video.filter({ id: videoId }, { limit: 1 })),
     enabled: Boolean(videoId),
   });
 
@@ -48,12 +48,12 @@ export default function BnmLockedWatch() {
     queryFn: async () => {
       if (video?.channel_id) {
         return asItems(
-          await base44.entities.Channel.filter({ id: video.channel_id }, { limit: 1 })
+          await bnmData.entities.Channel.filter({ id: video.channel_id }, { limit: 1 })
         );
       }
       if (video?.created_by) {
         return asItems(
-          await base44.entities.Channel.filter(
+          await bnmData.entities.Channel.filter(
             { created_by: video.created_by },
             { limit: 1 }
           )
@@ -70,7 +70,7 @@ export default function BnmLockedWatch() {
     queryKey: ["bnm-watch-comments", videoId],
     queryFn: async () =>
       asItems(
-        await base44.entities.Comment.filter(
+        await bnmData.entities.Comment.filter(
           { video_id: videoId },
           { sort: "-created_date", limit: 50 }
         )
@@ -82,7 +82,7 @@ export default function BnmLockedWatch() {
     queryKey: ["bnm-watch-reaction", videoId, user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Reaction.filter(
+        await bnmData.entities.Reaction.filter(
           {
             target_id: videoId,
             target_type: "video",
@@ -98,7 +98,7 @@ export default function BnmLockedWatch() {
     queryKey: ["bnm-watch-subscription", channel?.id, user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Subscription.filter(
+        await bnmData.entities.Subscription.filter(
           { channel_id: channel.id, created_by: user.email },
           { limit: 1 }
         )
@@ -111,7 +111,7 @@ export default function BnmLockedWatch() {
 
   useEffect(() => {
     if (!video?.id) return;
-    base44.entities.Video.update(video.id, {
+    bnmData.entities.Video.update(video.id, {
       views: Number(video.views || 0) + 1,
     }).catch(() => {});
   }, [video?.id]);
@@ -120,22 +120,22 @@ export default function BnmLockedWatch() {
     mutationFn: async () => {
       if (!user?.email || !video?.id) return;
       if (reaction?.reaction === "like") {
-        await base44.entities.Reaction.delete(reaction.id);
-        await base44.entities.Video.update(video.id, {
+        await bnmData.entities.Reaction.delete(reaction.id);
+        await bnmData.entities.Video.update(video.id, {
           likes: Math.max(0, Number(video.likes || 1) - 1),
         });
         return;
       }
       if (reaction) {
-        await base44.entities.Reaction.update(reaction.id, { reaction: "like" });
+        await bnmData.entities.Reaction.update(reaction.id, { reaction: "like" });
       } else {
-        await base44.entities.Reaction.create({
+        await bnmData.entities.Reaction.create({
           target_type: "video",
           target_id: video.id,
           reaction: "like",
         });
       }
-      await base44.entities.Video.update(video.id, {
+      await bnmData.entities.Video.update(video.id, {
         likes: Number(video.likes || 0) + 1,
       });
     },
@@ -151,10 +151,10 @@ export default function BnmLockedWatch() {
     mutationFn: async () => {
       if (!user?.email || !channel?.id) return;
       if (subscriptions[0]) {
-        await base44.entities.Subscription.delete(subscriptions[0].id);
+        await bnmData.entities.Subscription.delete(subscriptions[0].id);
         return;
       }
-      await base44.entities.Subscription.create({
+      await bnmData.entities.Subscription.create({
         channel_id: channel.id,
         channel_name: channel.name,
         channel_avatar: channel.avatar_url,
@@ -171,13 +171,13 @@ export default function BnmLockedWatch() {
     mutationFn: async () => {
       const text = commentText.trim();
       if (!text || !video?.id || !user?.email) return;
-      await base44.entities.Comment.create({
+      await bnmData.entities.Comment.create({
         video_id: video.id,
         text,
         author_name: user.full_name || "Be Near Me member",
         author_avatar: "",
       });
-      await base44.entities.Video.update(video.id, {
+      await bnmData.entities.Video.update(video.id, {
         comments_count: Number(video.comments_count || 0) + 1,
       });
     },
