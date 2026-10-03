@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { ChevronRight, Clock3, Heart, Leaf, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { BnmLockedScreen, Glass, GradientButton, MediaBackdrop, Pill, asItems } from "@/components/bnm/LockedShell";
 
@@ -13,13 +13,13 @@ function daysRemaining(expiresAt) {
 
 export default function BnmLockedChallenge() {
   const { challengeId } = useParams();
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => base44.auth.me() });
+  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => bnmData.auth.me() });
   const { data: dares = [], isLoading } = useQuery({
     queryKey: ["bnm-lock-dares-v2", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const incoming = asItems(await base44.entities.Dare.filter({ challenger_email: user.email }, "-created_date", 25));
-      const outgoing = asItems(await base44.entities.Dare.filter({ initiator_email: user.email }, "-created_date", 25));
+      const incoming = asItems(await bnmData.entities.Dare.filter({ challenger_email: user.email }, "-created_date", 25));
+      const outgoing = asItems(await bnmData.entities.Dare.filter({ initiator_email: user.email }, "-created_date", 25));
       return [...incoming, ...outgoing].filter((item, index, arr) => arr.findIndex((x) => x.id === item.id) === index);
     },
   });
