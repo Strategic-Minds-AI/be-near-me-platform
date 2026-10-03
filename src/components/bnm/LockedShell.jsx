@@ -8,9 +8,9 @@ const cx = (...v) => v.filter(Boolean).join(" ");
 export function BnmWordmark({ compact = false }) {
   return (
     <Link to="/home" className="flex items-center gap-1 font-black tracking-[-0.055em] text-white" aria-label="Be Near Me home">
-      <span className={compact ? "text-[22px]" : "text-[28px]"}>Be Near</span>
-      <span className={cx("bg-gradient-to-r from-[#22c9ff] via-[#8b5cff] to-[#ff39b7] bg-clip-text text-transparent", compact ? "text-[22px]" : "text-[28px]")}>Me</span>
-      <MapPin className={compact ? "h-5 w-5" : "h-6 w-6"} fill="#9b5cff" stroke="#ff46b8" />
+      <span className={compact ? "text-[20px]" : "text-[24px]"}>Be Near</span>
+      <span className={cx("bg-gradient-to-r from-[#22c9ff] via-[#8b5cff] to-[#ff39b7] bg-clip-text text-transparent", compact ? "text-[20px]" : "text-[24px]")}>Me</span>
+      <MapPin className={compact ? "h-4.5 w-4.5" : "h-5 w-5"} fill="#9b5cff" stroke="#ff46b8" />
     </Link>
   );
 }
@@ -23,30 +23,30 @@ const tabs = [
   { label: "Live", to: "/Live", match: ["/Live", "/live"] },
 ];
 
-export function BnmTopChrome({ rewards = false, locationLabel = "Near You" }) {
+export function BnmTopChrome({ rewards = false, locationLabel = "Near You", activeSection = null }) {
   const { pathname } = useLocation();
   const allTabs = rewards ? [...tabs, { label: "Rewards", to: "/rewards", match: ["/rewards", "/reward-checkout"] }] : tabs;
   return (
-    <header className="relative z-40 bg-[#031126]/95 px-4 pb-1 pt-[max(env(safe-area-inset-top),12px)] backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-[430px] items-center gap-3">
+    <header className="relative z-40 w-full overflow-hidden bg-[#031126]/95 px-3 pb-1 pt-[max(env(safe-area-inset-top),10px)] backdrop-blur-2xl">
+      <div className="mx-auto flex w-full max-w-[430px] min-w-0 items-center gap-2">
         <BnmWordmark />
-        <div className="ml-auto flex items-center gap-2">
-          <button type="button" className="flex h-10 max-w-[132px] items-center gap-2 rounded-full border border-[#6d70ff]/60 bg-[#17234a] px-3 text-[12px] font-bold text-white">
+        <div className="ml-auto flex min-w-0 items-center gap-1.5">
+          <button type="button" className="flex h-9 min-w-0 max-w-[108px] items-center gap-1.5 rounded-full border border-[#6d70ff]/60 bg-[#17234a] px-2.5 text-[10px] font-bold text-white">
             <MapPin className="h-4 w-4 text-[#bd8cff]" />
             <span className="truncate">{locationLabel}</span>
             <span className="text-[#92a4ce]">⌄</span>
           </button>
-          <Link to="/inbox" className="relative grid h-9 w-9 place-items-center text-white/90" aria-label="Notifications">
-            <Bell className="h-6 w-6" />
+          <Link to="/inbox" className="relative grid h-8 w-8 shrink-0 place-items-center text-white/90" aria-label="Notifications">
+            <Bell className="h-5 w-5" />
             <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-[#ff38ad] ring-2 ring-[#031126]" />
           </Link>
         </div>
       </div>
-      <nav className={cx("mx-auto mt-3 grid max-w-[430px] items-end gap-1", rewards ? "grid-cols-6" : "grid-cols-5")} aria-label="Be Near Me sections">
+      <nav className={cx("mx-auto mt-2.5 grid w-full max-w-[430px] items-end gap-0", rewards ? "grid-cols-6" : "grid-cols-5")} aria-label="Be Near Me sections">
         {allTabs.map((tab) => {
-          const active = tab.match.some((p) => pathname === p || pathname.startsWith(p + "/"));
+          const active = activeSection ? tab.label === activeSection : tab.match.some((p) => pathname === p || pathname.startsWith(p + "/"));
           return (
-            <Link key={tab.label} to={tab.to} className={cx("relative pb-3 text-center text-[12px] font-semibold transition", active ? "text-white" : "text-[#8797c6]")}>
+            <Link key={tab.label} to={tab.to} className={cx("min-w-0 relative pb-2.5 text-center font-semibold transition", rewards ? "text-[9px]" : "text-[10px]", active ? "text-white" : "text-[#8797c6]")}>
               {tab.label}
               {active && <span className="absolute inset-x-[20%] bottom-1 h-[3px] rounded-full bg-gradient-to-r from-[#ff43c2] via-[#ad4dff] to-[#24c7ff] shadow-[0_0_12px_rgba(83,117,255,.75)]" />}
             </Link>
@@ -67,10 +67,10 @@ const bottom = [
 
 export function BnmBottomChrome() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#20365b] bg-[#020c1c]/95 pb-[max(env(safe-area-inset-bottom),8px)] backdrop-blur-2xl" aria-label="Primary navigation">
-      <div className="mx-auto flex h-[70px] max-w-[430px] items-center justify-around px-2">
+    <nav className="fixed inset-x-0 bottom-0 z-50 w-full overflow-hidden border-t border-[#20365b] bg-[#020c1c]/95 pb-[max(env(safe-area-inset-bottom),8px)] backdrop-blur-2xl" aria-label="Primary navigation">
+      <div className="mx-auto flex h-[68px] w-full max-w-[430px] min-w-0 items-center px-1">
         {bottom.map(({ to, label, Icon, create, badge }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => cx("group relative flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-semibold", isActive ? "text-white" : "text-[#8494bd]")}>
+          <NavLink key={to} to={to} className={({ isActive }) => cx("group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[9px] font-semibold", isActive ? "text-white" : "text-[#8494bd]")}>
             {({ isActive }) => (
               <>
                 {create ? (
@@ -93,12 +93,12 @@ export function BnmBottomChrome() {
   );
 }
 
-export function BnmLockedScreen({ children, rewards = false, locationLabel = "Near You", className = "" }) {
+export function BnmLockedScreen({ children, rewards = false, locationLabel = "Near You", activeSection = null, className = "" }) {
   return (
-    <div className={cx("min-h-[100dvh] bg-[#020b19] text-white", className)}>
+    <div className={cx("min-h-[100dvh] w-full max-w-full overflow-x-hidden bg-[#020b19] text-white", className)}>
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(31,93,255,.16),transparent_35%),radial-gradient(circle_at_90%_10%,rgba(188,54,255,.12),transparent_35%)]" />
-      <BnmTopChrome rewards={rewards} locationLabel={locationLabel} />
-      <main className="relative z-10 mx-auto max-w-[430px] pb-[92px]">{children}</main>
+      <BnmTopChrome rewards={rewards} locationLabel={locationLabel} activeSection={activeSection} />
+      <main className="relative z-10 mx-auto w-full max-w-[430px] min-w-0 overflow-x-hidden pb-[92px]">{children}</main>
       <BnmBottomChrome />
     </div>
   );

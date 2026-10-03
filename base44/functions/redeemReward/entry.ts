@@ -22,6 +22,9 @@ export default async function(req: Request) {
     if (reward.requiresVerifiedPartner) {
       return Response.json({ success: false, error: "This reward requires a verified partner before redemption" }, { status: 409 });
     }
+    if (!reward.redeemable) {
+      return Response.json({ success: false, error: "This reward is not available for verified fulfillment yet" }, { status: 409 });
+    }
 
     const existingResult = await base44.entities.RewardRedemption.filter({ idempotency_key: idempotencyKey }, { limit: 1 });
     const existing = items(existingResult)[0];

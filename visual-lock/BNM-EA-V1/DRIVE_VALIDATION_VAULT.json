@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "project_id": "BNM-EA-V1",
+  "drive_root": {
+    "id": "14DnMrk40txcvqnpLhocERI_ztfvaSoVo",
+    "url": "https://drive.google.com/drive/folders/14DnMrk40txcvqnpLhocERI_ztfvaSoVo",
+    "drive_id": "0AEEBle9IEp8gUk9PVA",
+    "authority": "_STRATEGIC_MINDS_AI_OS"
+  },
+  "folders": {
+    "source_truth": {
+      "id": "1g3IWBs4eDj3slQe9bTe5149AcGfoaj7h",
+      "name": "00_SOURCE_TRUTH"
+    },
+    "screen_masters": {
+      "id": "1Q5wSmhfaHJLxfLzQjO247wyCl7oFU38u",
+      "name": "01_SCREEN_MASTERS"
+    },
+    "preview_captures": {
+      "id": "1_ebp7BEej6wmAkVzPQfZmMj0SxZCaJGa",
+      "name": "02_PREVIEW_CAPTURES"
+    },
+    "validation_receipts": {
+      "id": "1QlHOSUyd_IMVGOuLl3-2ep-y6gRbBkCY",
+      "name": "03_VALIDATION_RECEIPTS"
+    }
+  },
+  "approved_master_files": [
+    "01_HOME_FOR_YOU.png",
+    "02_EXPLORE_NEARBY_MAP.png",
+    "03_KINDNESS_CHALLENGE.png",
+    "04_CREATE_RECORD.png",
+    "05_SEARCH_RESULTS.png",
+    "06_CREATOR_PROFILE.png",
+    "07_CREATOR_STUDIO.png",
+    "08_AI_COACH.png",
+    "09_REWARDS_MARKETPLACE.png",
+    "10_CHECKOUT_CLAIM_REWARD.png"
+  ],
+  "write_policy": {
+    "screen_masters": "create-only; approved masters only",
+    "preview_captures": "create-only; exact preview/SHA evidence only",
+    "validation_receipts": "create-only; evidence-bound receipts only",
+    "no_overwrite": true,
+    "no_delete": true
+  },
+  "current_status": {
+    "drive_structure_verified": true,
+    "approved_master_source": "conversation/library approved PNG masters",
+    "browser_capture_gate": "PASS_CDP_HEADLESS_CHROME",
+    "canonical_viewport": "390x844",
+    "horizontal_overflow_failures": 0,
+    "final_visual_pass": "PASS_10",
+    "final_structural_parity_score": 95.5,
+    "required_threshold": 94,
+    "critical_visual_failures": 0,
+    "final_evidence_sha": "cd8377ad00fb26a66f99fe902a66f4c21d571283",
+    "final_evidence_deployment": "dpl_8z4iUmhuXX2HJoYMkrFN5uxjenUp",
+    "final_evidence_preview": "https://be-near-me-platform-qt7iq9hun-strategic-minds-advisory.vercel.app",
+    "final_screenshot_path": "public/visual-validation/BNM-EA-V1/2026-10-03/pass10/",
+    "drive_receipt_document_id": "121QVHEEev-HLEpJTazooMf7lFOlhbKColT66EU0tD-U",
+    "drive_receipt_document_url": "https://docs.google.com/document/d/121QVHEEev-HLEpJTazooMf7lFOlhbKColT66EU0tD-U/edit?usp=drivesdk",
+    "drive_receipt_contains_master_candidate_comparisons": true,
+    "supplemental_pass5_commit": "1b8c7fdb3e4bb336230abb91725dcb84c902c49b",
+    "production_release": "NOT_EXECUTED",
+    "operator_release_approval_required": true
+  }
+}

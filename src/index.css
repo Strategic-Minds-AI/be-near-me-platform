@@ -249,3 +249,19 @@ button:focus-visible {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
+
+/* BNM-EA-V1 mobile lock: never allow shell/content to widen the viewport. */
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+}

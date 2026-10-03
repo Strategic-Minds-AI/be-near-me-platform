@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { X, RefreshCw, Sticker, ImagePlus, Loader2, Check, AlertCircle, Upload as UploadIcon } from "lucide-react";
+import { X, RefreshCw, Sticker, ImagePlus, Loader2, Check, AlertCircle, Upload as UploadIcon, Music2, Timer, Sparkles, Gauge, Wand2 } from "lucide-react";
 import { uploadFileProxy } from "@/lib/uploadHelper";
 
 const FILTERS = {
@@ -29,7 +29,7 @@ function pickMime() {
   return "video/webm";
 }
 
-export default function Camera() {
+export default function Camera({ embedded = false, caption = "", contentTags = [] }) {
   const navigate = useNavigate();
   const [facing, setFacing] = useState("user");
   const [filter, setFilter] = useState("none");
@@ -41,6 +41,10 @@ export default function Camera() {
   const [error, setError] = useState(null);
   const [posting, setPosting] = useState(false);
   const [ready, setReady] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [beauty, setBeauty] = useState(false);
+  const [timerDelay, setTimerDelay] = useState(0);
+  const [countdown, setCountdown] = useState(0);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -108,7 +112,8 @@ export default function Camera() {
     if (c.height !== 1280) c.height = 1280;
     const ctx = c.getContext("2d");
     ctx.save();
-    ctx.filter = FILTERS[filter] || "none";
+    const filterParts = [FILTERS[filter] || "none", beauty ? "brightness(1.05) saturate(1.05) contrast(.98)" : ""].filter(Boolean);
+    ctx.filter = filterParts.join(" ");
     const mirror = facing === "user";
     if (mirror) { ctx.translate(c.width, 0); ctx.scale(-1, 1); }
     const vRatio = v.videoWidth / v.videoHeight || 9 / 16;
@@ -126,7 +131,7 @@ export default function Camera() {
       ctx.fillText(s.emoji, s.x, s.y);
     });
     rafRef.current = requestAnimationFrame(draw);
-  }, [filter, facing, stickers]);
+  }, [filter, facing, stickers, beauty]);
 
   useEffect(() => {
     rafRef.current = requestAnimationFrame(draw);
@@ -172,6 +177,23 @@ export default function Camera() {
     setRecording(false);
   };
 
+  const handleRecordPress = () => {
+    if (recording) return stopRecording();
+    if (!ready || countdown > 0) return;
+    if (!timerDelay) return startRecording();
+
+    let remaining = timerDelay;
+    setCountdown(remaining);
+    const countdownTimer = setInterval(() => {
+      remaining -= 1;
+      setCountdown(remaining);
+      if (remaining <= 0) {
+        clearInterval(countdownTimer);
+        startRecording();
+      }
+    }, 1000);
+  };
+
   const retake = () => {
     setRecordedUrl(null);
     videoBlobRef.current = null;
@@ -190,11 +212,11 @@ export default function Camera() {
       }
       const newVideo = await base44.entities.Video.create({
         title: `Clip ${new Date().toLocaleString()}`,
-        description: "",
+        description: String(caption || "").trim(),
         url: vRes.file_url,
         thumbnail_url: thumbUrl,
         category: "entertainment",
-        tags: ["camera", "bnearme"],
+        tags: ["camera", "bnearme", ...contentTags.map((tag) => String(tag).toLowerCase()).filter(Boolean)].slice(0, 8),
         visibility: "public",
         monetized: false,
         processing_status: "done",
@@ -259,7 +281,7 @@ export default function Camera() {
   const ringPct = Math.min(elapsed / MAX_SECONDS, 1);
 
   return (
-    <div className="fixed inset-0 bg-black z-[60] flex items-center justify-center overflow-hidden">
+    <div className={embedded ? "relative h-[430px] w-full bg-black flex items-center justify-center overflow-hidden" : "fixed inset-0 bg-black z-[60] flex items-center justify-center overflow-hidden"}>
       {/* hidden source video */}
       <video ref={videoRef} playsInline muted className="hidden" />
 
@@ -278,9 +300,9 @@ export default function Camera() {
         <button onClick={() => navigate("/home")} className="w-10 h-10 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white">
           <X className="w-5 h-5" />
         </button>
-        <div className="px-3 py-1 rounded-full bg-black/40 backdrop-blur text-white text-sm font-medium">
-          {recording ? `${elapsed.toFixed(1)}s / ${MAX_SECONDS}s` : "B Near Me · Camera"}
-        </div>
+        <button disabled className="flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-[11px] font-semibold text-white/75 backdrop-blur">
+          <Music2 className="h-3.5 w-3.5" /> Add Sound
+        </button>
         <button
           onClick={() => setFacing((f) => (f === "user" ? "environment" : "user"))}
           disabled={recording || !!recordedUrl}
@@ -289,6 +311,43 @@ export default function Camera() {
           <RefreshCw className="w-5 h-5" />
         </button>
       </div>
+
+      <div className="absolute right-2 top-16 z-20 flex flex-col gap-2 text-white">
+        <button
+          onClick={() => setFacing((f) => (f === "user" ? "environment" : "user"))}
+          disabled={recording || !!recordedUrl}
+          className="flex w-12 flex-col items-center gap-1 rounded-2xl bg-black/35 px-1 py-2 text-[8px] font-bold backdrop-blur disabled:opacity-40"
+        >
+          <RefreshCw className="h-4.5 w-4.5" /> Flip
+        </button>
+        <button disabled className="flex w-12 flex-col items-center gap-1 rounded-2xl bg-black/35 px-1 py-2 text-[8px] font-bold text-white/45 backdrop-blur">
+          <Gauge className="h-4.5 w-4.5" /> Speed
+        </button>
+        <button
+          onClick={() => setShowFilters((v) => !v)}
+          className={`flex w-12 flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[8px] font-bold backdrop-blur ${showFilters ? "bg-[#784fff]/70" : "bg-black/35"}`}
+        >
+          <Wand2 className="h-4.5 w-4.5" /> Filters
+        </button>
+        <button
+          onClick={() => setTimerDelay((v) => v ? 0 : 3)}
+          className={`flex w-12 flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[8px] font-bold backdrop-blur ${timerDelay ? "bg-[#784fff]/70" : "bg-black/35"}`}
+        >
+          <Timer className="h-4.5 w-4.5" /> {timerDelay ? "3s" : "Timer"}
+        </button>
+        <button
+          onClick={() => setBeauty((v) => !v)}
+          className={`flex w-12 flex-col items-center gap-1 rounded-2xl px-1 py-2 text-[8px] font-bold backdrop-blur ${beauty ? "bg-[#ff3fae]/70" : "bg-black/35"}`}
+        >
+          <Sparkles className="h-4.5 w-4.5" /> Beauty
+        </button>
+      </div>
+
+      {countdown > 0 && (
+        <div className="absolute inset-0 z-30 grid place-items-center bg-black/20 pointer-events-none">
+          <div className="grid h-24 w-24 place-items-center rounded-full border-2 border-white/50 bg-black/45 text-5xl font-black text-white backdrop-blur">{countdown}</div>
+        </div>
+      )}
 
       {/* error */}
       {error && (
@@ -318,28 +377,35 @@ export default function Camera() {
       {/* bottom controls */}
       {!recordedUrl && (
         <div className="absolute bottom-0 inset-x-0 z-20 pb-6 pt-3 bg-gradient-to-t from-black/70 to-transparent">
-          {/* filter rail */}
-          <div className="flex gap-2 overflow-x-auto px-4 pb-3 no-scrollbar">
-            {FILTER_ORDER.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition ${
-                  filter === f ? "bg-white text-black" : "bg-white/10 text-white"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
+          {showFilters && (
+            <div className="flex gap-2 overflow-x-auto px-4 pb-3 no-scrollbar">
+              {FILTER_ORDER.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap capitalize transition ${
+                    filter === f ? "bg-white text-black" : "bg-white/10 text-white"
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="mb-2 flex items-center justify-center gap-4 text-[10px] font-bold">
+            <button className="text-white">Video</button>
+            <button disabled className="text-white/40">Photo</button>
+            <button disabled className="text-white/40">Templates</button>
           </div>
 
           <div className="flex items-center justify-around px-6">
-            <button onClick={() => setShowChars((s) => !s)} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white">
-              <Sticker className="w-6 h-6" />
+            <button onClick={() => setShowChars((s) => !s)} className="flex w-12 flex-col items-center justify-center gap-1 text-white">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 backdrop-blur"><Sticker className="w-5 h-5" /></span><span className="text-[8px] font-bold">Effects</span>
             </button>
 
             {/* record button */}
-            <button onClick={recording ? stopRecording : startRecording} disabled={!ready} className="relative w-20 h-20 disabled:opacity-40">
+            <button onClick={handleRecordPress} disabled={!ready || countdown > 0} className="relative w-20 h-20 disabled:opacity-40">
               <svg className="absolute inset-0 -rotate-90" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="4" />
                 <circle cx="40" cy="40" r="36" fill="none" stroke="#ec4899" strokeWidth="4" strokeLinecap="round"
@@ -350,8 +416,8 @@ export default function Camera() {
               </span>
             </button>
 
-            <button onClick={() => navigate(createPageUrl("Upload"))} className="w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-white">
-              <ImagePlus className="w-6 h-6" />
+            <button onClick={() => navigate(createPageUrl("Upload"))} className="flex w-12 flex-col items-center justify-center gap-1 text-white">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 backdrop-blur"><ImagePlus className="w-5 h-5" /></span><span className="text-[8px] font-bold">Upload</span>
             </button>
           </div>
 
