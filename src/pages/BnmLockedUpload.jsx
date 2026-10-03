@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { Film, ImagePlus, Loader2, Upload as UploadIcon, X } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { uploadFileProxy } from "@/lib/uploadHelper";
 import {
   BnmLockedScreen,
@@ -24,7 +24,7 @@ const CATEGORIES = [
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -55,7 +55,7 @@ export default function BnmLockedUpload() {
     queryKey: ["bnm-upload-channel", user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Channel.filter(
+        await bnmData.entities.Channel.filter(
           { created_by: user.email },
           { sort: "-created_date", limit: 1 }
         )
@@ -112,7 +112,7 @@ export default function BnmLockedUpload() {
         .filter(Boolean)
         .slice(0, 8);
 
-      const newVideo = await base44.entities.Video.create({
+      const newVideo = await bnmData.entities.Video.create({
         title: form.title.trim(),
         description: form.description.trim(),
         url: videoUrl,
@@ -133,7 +133,7 @@ export default function BnmLockedUpload() {
       });
 
       const subscribers = asItems(
-        await base44.entities.Subscription.filter(
+        await bnmData.entities.Subscription.filter(
           { channel_id: channel.id },
           { limit: 50 }
         )
@@ -142,7 +142,7 @@ export default function BnmLockedUpload() {
       if (subscribers.length) {
         await Promise.all(
           subscribers.slice(0, 50).map((subscriber) =>
-            base44.entities.Notification.create({
+            bnmData.entities.Notification.create({
               type: "new_video",
               title: "New video",
               message: "A creator you follow posted a new video.",
@@ -158,7 +158,7 @@ export default function BnmLockedUpload() {
         );
       }
 
-      await base44.entities.Channel.update(channel.id, {
+      await bnmData.entities.Channel.update(channel.id, {
         videos_count: Number(channel.videos_count || 0) + 1,
       });
 
@@ -185,7 +185,7 @@ export default function BnmLockedUpload() {
           <div className="mt-4 text-center">
             <GradientButton
               type="button"
-              onClick={() => base44.auth.redirectToLogin(window.location.href)}
+              onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
             >
               Sign In
             </GradientButton>
