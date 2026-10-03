@@ -33,72 +33,72 @@ export default function BnmLockedChallenge() {
   return (
     <BnmLockedScreen activeSection="Kindness">
       <div className="px-2 pt-1">
-        <MediaBackdrop src={selected?.video_url} className="min-h-[360px] border border-[#263f68]">
+        <MediaBackdrop src={selected?.video_url} className="min-h-[268px] border border-[#263f68]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_18%,rgba(255,74,176,.2),transparent_30%),linear-gradient(180deg,rgba(1,8,19,.05),rgba(2,8,18,.1)_35%,rgba(1,6,16,.92)_100%)]" />
-          <div className="relative flex min-h-[360px] flex-col p-4">
+          <div className="relative flex min-h-[268px] flex-col p-3">
             <div className="flex items-center justify-between">
               <Pill active><Leaf className="h-3.5 w-3.5" /> Kindness Challenge</Pill>
               <Pill>{status}</Pill>
             </div>
             <div className="mt-auto">
-              <h1 className="max-w-[340px] text-[34px] font-black leading-[.96] tracking-[-.045em]">{title}</h1>
-              <p className="mt-3 max-w-[345px] text-[12px] leading-5 text-[#dce6f6]">
+              <h1 className="max-w-[340px] text-[29px] font-black leading-[.96] tracking-[-.045em]">{title}</h1>
+              <p className="mt-2 max-w-[345px] text-[10px] leading-4 text-[#dce6f6]">
                 A small moment of kindness can make someone’s day. Keep it safe, respectful, and genuinely helpful.
               </p>
             </div>
           </div>
         </MediaBackdrop>
 
-        <div className="mt-2 grid grid-cols-3 gap-2">
-          <Glass className="p-3">
+        <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+          <Glass className="p-2.5">
             <Clock3 className="h-4.5 w-4.5 text-[#ab7bff]" />
-            <div className="mt-2 text-[18px] font-black">{days === "—" ? "—" : days + "d"}</div>
-            <div className="text-[9px] leading-4 text-[#8497b9]">Time left</div>
+            <div className="mt-1.5 text-[16px] font-black">{days === "—" ? "—" : days + "d"}</div>
+            <div className="text-[8px] leading-3 text-[#8497b9]">Time left</div>
           </Glass>
-          <Glass className="p-3">
+          <Glass className="p-2.5">
             <Users className="h-4.5 w-4.5 text-[#66c8ff]" />
-            <div className="mt-2 text-[18px] font-black">—</div>
-            <div className="text-[9px] leading-4 text-[#8497b9]">People joined</div>
+            <div className="mt-1.5 text-[16px] font-black">—</div>
+            <div className="text-[8px] leading-3 text-[#8497b9]">People joined</div>
           </Glass>
-          <Glass className="p-3">
+          <Glass className="p-2.5">
             <Heart className="h-4.5 w-4.5 text-[#ff4eaf]" />
-            <div className="mt-2 text-[18px] font-black">{reward === null ? "—" : reward}</div>
-            <div className="text-[9px] leading-4 text-[#8497b9]">Reward units</div>
+            <div className="mt-1.5 text-[16px] font-black">{reward === null ? "—" : reward}</div>
+            <div className="text-[8px] leading-3 text-[#8497b9]">Reward units</div>
           </Glass>
         </div>
 
-        <Glass className="mt-2 p-4">
+        <Glass className="mt-1.5 p-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-[18px] font-black">Challenge Rules</h2>
+            <h2 className="text-[16px] font-black">Challenge Rules</h2>
             <span className="text-[9px] font-bold text-[#8496b7]">4 simple steps</span>
           </div>
-          <div className="mt-4 space-y-3.5">
+          <div className="mt-2.5 space-y-2">
             {[
               ["1","Hold the door open for someone","Choose a safe public setting and never pressure someone to be recorded."],
               ["2","Capture the moment only with consent","A proof clip can focus on you or the action without filming strangers."],
               ["3","Share a kind caption","Keep names, locations, and personal details private unless they are intentionally public."],
               ["4","Submit for verification","Rewards only unlock after the real challenge record meets its validation rules."],
             ].map(([n,h,b]) => (
-              <div key={n} className="grid grid-cols-[38px_1fr] gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-[#c846ff] to-[#4b79ff] text-[13px] font-black shadow-[0_0_16px_rgba(120,75,255,.25)]">{n}</span>
+              <div key={n} className="grid grid-cols-[31px_1fr] gap-2.5">
+                <span className="grid h-7.5 w-7.5 place-items-center rounded-full bg-gradient-to-br from-[#c846ff] to-[#4b79ff] text-[11px] font-black shadow-[0_0_12px_rgba(120,75,255,.22)]">{n}</span>
                 <div>
-                  <div className="text-[12px] font-black leading-4">{h}</div>
-                  <div className="mt-0.5 text-[10px] leading-4 text-[#8fa1c3]">{b}</div>
+                  <div className="text-[10px] font-black leading-3.5">{h}</div>
+                  <div className="mt-0.5 text-[8px] leading-3 text-[#8fa1c3]">{b}</div>
                 </div>
               </div>
             ))}
           </div>
         </Glass>
 
-        <Link to="/Dares" className="mt-3 block">
-          <GradientButton className="w-full py-3.5 text-[15px]">
+        <Link to="/Dares" className="mt-2 block">
+          <GradientButton className="w-full py-2.5 text-[13px]">
             <Sparkles className="mr-1 inline h-4.5 w-4.5" />
             {selected ? "Open Challenge" : "Join / Create Challenge"}
             <ChevronRight className="ml-2 inline h-4.5 w-4.5" />
           </GradientButton>
         </Link>
 
-        <div className="mt-3 grid grid-cols-3 gap-2 pb-3 text-center text-[8px] leading-3 text-[#8295b8]">
+        <div className="mt-2 grid grid-cols-3 gap-2 pb-2 text-center text-[7px] leading-3 text-[#8295b8]">
           <div><Users className="mx-auto mb-1 h-4.5 w-4.5 text-[#d15dff]" />Kinder community</div>
           <div><ShieldCheck className="mx-auto mb-1 h-4.5 w-4.5 text-[#5fe0ff]" />Safe and respectful</div>
           <div><Heart className="mx-auto mb-1 h-4.5 w-4.5 text-[#ff5ab9]" />Positive action</div>
