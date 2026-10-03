@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, Heart, MessageCircle, UserPlus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   BnmLockedScreen,
   EmptyState,
@@ -14,7 +14,7 @@ import {
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -33,7 +33,7 @@ export default function BnmInbox() {
     queryKey: ["bnmInbox", user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Notification.filter(
+        await bnmData.entities.Notification.filter(
           { created_by: user.email },
           { sort: "-created_date", limit: 100 }
         )
@@ -91,7 +91,7 @@ export default function BnmInbox() {
             <div className="mt-4 text-center">
               <GradientButton
                 type="button"
-                onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
               >
                 Sign In
               </GradientButton>
