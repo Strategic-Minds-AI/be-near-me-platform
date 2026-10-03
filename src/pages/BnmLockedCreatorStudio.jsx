@@ -38,9 +38,89 @@ export default function BnmLockedCreatorStudio() {
   if (!channel) {
     return (
       <BnmLockedScreen activeSection="Creators">
-        <div className="pt-6">
-          <EmptyState icon={Sparkles} title="Creator Studio unlocks with a channel" body="Create a channel first. Studio analytics never use fabricated activity." />
-          <div className="px-4 pt-3"><Link to="/CreateChannel"><GradientButton className="w-full">Create Channel</GradientButton></Link></div>
+        <div className="px-3 pt-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h1 className="text-[26px] font-black leading-none tracking-[-.04em]">Creator Studio</h1>
+              <p className="mt-1 text-[11px] text-[#9aadd0]">Create a kinder, brighter world.</p>
+            </div>
+            <Link to="/profile" className="rounded-full border border-[#526ba0] bg-[#102044] px-3.5 py-2 text-[9px] font-black">View Profile ›</Link>
+          </div>
+
+          <div className="mt-4 flex items-center gap-3">
+            <div className="grid h-[62px] w-[62px] shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#30c8ff] via-[#9650ff] to-[#ff3aa9] p-[2px]">
+              <div className="grid h-full w-full place-items-center rounded-full bg-[#0a1730]"><Sparkles className="h-6 w-6 text-[#9c83ff]" /></div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[16px] font-black">Creator channel not set up</div>
+              <div className="mt-0.5 text-[9px] text-[#96a8ca]">Create a channel to unlock live analytics.</div>
+              <div className="mt-1.5"><Pill><Leaf className="h-3 w-3" /> Kindness Creator</Pill></div>
+            </div>
+            <Link to="/CreateChannel"><GradientButton className="px-3 py-2 text-[9px]">Create</GradientButton></Link>
+          </div>
+
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            <Metric icon={Eye} value="—" label="Views" accent="text-[#9f7aff]" />
+            <Metric icon={Heart} value="—" label="Likes" accent="text-[#ff4eaf]" />
+            <Metric icon={MessageCircle} value="—" label="Comments" accent="text-[#43c8ff]" />
+            <Metric icon={Play} value="0" label="Posts" accent="text-[#6b9cff]" />
+          </div>
+
+          <Glass className="mt-3 p-3">
+            <SectionTitle title="Recent Post Performance" />
+            <div className="flex gap-3">
+              <div className="grid h-[105px] w-[132px] shrink-0 place-items-center rounded-[13px] border border-[#263f67] bg-[linear-gradient(135deg,#0e213f,#17172e_55%,#29152f)]">
+                <Play className="h-7 w-7 text-[#6e5db8]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="h-3 w-[86%] rounded-full bg-[#1a2b47]" />
+                <div className="mt-2 h-2.5 w-[64%] rounded-full bg-[#14243e]" />
+                <div className="mt-4 grid grid-cols-2 gap-2 text-[9px] text-[#899bbb]">
+                  <span>♥ —</span><span>◯ —</span><span>▷ —</span><span>Impact —</span>
+                </div>
+                <p className="mt-2 text-[8px] leading-3 text-[#7f92b6]">Real post analytics appear here after publishing.</p>
+              </div>
+            </div>
+          </Glass>
+
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Glass className="p-3">
+              <div className="flex items-center justify-between"><b className="text-[11px]">Audience Activity</b><BarChart3 className="h-4 w-4 text-[#955cff]" /></div>
+              <div className="mt-3 grid h-20 grid-cols-8 items-end gap-1">
+                {[22,34,28,44,38,54,42,66].map((h,i)=><span key={i} className="rounded-t bg-[#172a48]" style={{height:h+"%"}} />)}
+              </div>
+              <div className="mt-1 text-[8px] text-[#788bac]">Placeholder geometry only</div>
+            </Glass>
+
+            <Glass className="p-3">
+              <div className="flex items-center justify-between"><b className="text-[11px]">Creator Rewards</b><Trophy className="h-4 w-4 text-[#ffbd4b]" /></div>
+              <div className="mt-3 text-[23px] font-black text-[#ffd15d]">★ 0</div>
+              <div className="mt-1 text-[9px] text-[#8fa1c1]">Kindness points</div>
+              <div className="mt-2 text-[9px] text-[#8fa1c1]">No recorded cash earnings</div>
+            </Glass>
+          </div>
+
+          <Glass className="mt-3 p-3">
+            <div className="text-[11px] font-black">Top Community Categories</div>
+            <div className="mt-3 space-y-2">
+              {["Category","Category","Category"].map((label,i)=>(
+                <div key={i} className="grid grid-cols-[70px_1fr_22px] items-center gap-2 text-[8px] text-[#8092b5]">
+                  <span>{label}</span>
+                  <span className="h-2 rounded-full bg-[#162741]" />
+                  <span>—</span>
+                </div>
+              ))}
+            </div>
+          </Glass>
+
+          <Glass className="mt-3 p-3">
+            <div className="text-[11px] font-black">Quick Actions</div>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <Link to="/CreateChannel" className="rounded-[13px] border border-[#3a4e79] bg-[#101e3b] p-3 text-center"><Plus className="mx-auto h-5 w-5 text-[#ff53b6]"/><b className="mt-2 block text-[9px]">Create Channel</b></Link>
+              <div className="rounded-[13px] border border-[#2d4164] bg-[#0c1930] p-3 text-center opacity-60"><CalendarDays className="mx-auto h-5 w-5 text-[#77a4ff]"/><b className="mt-2 block text-[9px]">Schedule</b></div>
+              <div className="rounded-[13px] border border-[#2d4164] bg-[#0c1930] p-3 text-center opacity-60"><Users className="mx-auto h-5 w-5 text-[#9c83ff]"/><b className="mt-2 block text-[9px]">Collaborate</b></div>
+            </div>
+          </Glass>
         </div>
       </BnmLockedScreen>
     );
