@@ -10,6 +10,9 @@ function child(args) {
 }
 
 function exitCode(proc) {
+  if (proc.exitCode !== null) {
+    return Promise.resolve({ code: proc.exitCode, signal: proc.signalCode });
+  }
   return new Promise((resolve, reject) => {
     proc.once("error", reject);
     proc.once("exit", (code, signal) => resolve({ code, signal }));
@@ -20,6 +23,9 @@ const supervisor = child(["ops/super-agent/supervisor.mjs"]);
 
 try {
   await sleep(3000);
+  if (supervisor.exitCode !== null) {
+    process.exit(supervisor.exitCode || 1);
+  }
   const validator = child(["scripts/validate-super-agent-runtime.mjs"]);
   const result = await exitCode(validator);
   if (result.code !== 0) {
