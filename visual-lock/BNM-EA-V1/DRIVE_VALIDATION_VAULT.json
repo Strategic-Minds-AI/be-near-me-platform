@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "project_id": "BNM-EA-V1",
+  "drive_root": {
+    "id": "14DnMrk40txcvqnpLhocERI_ztfvaSoVo",
+    "url": "https://drive.google.com/drive/folders/14DnMrk40txcvqnpLhocERI_ztfvaSoVo",
+    "drive_id": "0AEEBle9IEp8gUk9PVA",
+    "authority": "_STRATEGIC_MINDS_AI_OS"
+  },
+  "folders": {
+    "source_truth": {
+      "id": "1g3IWBs4eDj3slQe9bTe5149AcGfoaj7h",
+      "name": "00_SOURCE_TRUTH"
+    },
+    "screen_masters": {
+      "id": "1Q5wSmhfaHJLxfLzQjO247wyCl7oFU38u",
+      "name": "01_SCREEN_MASTERS"
+    },
+    "preview_captures": {
+      "id": "1_ebp7BEej6wmAkVzPQfZmMj0SxZCaJGa",
+      "name": "02_PREVIEW_CAPTURES"
+    },
+    "validation_receipts": {
+      "id": "1QlHOSUyd_IMVGOuLl3-2ep-y6gRbBkCY",
+      "name": "03_VALIDATION_RECEIPTS"
+    }
+  },
+  "approved_master_files": [
+    "01_HOME_FOR_YOU.png",
+    "02_EXPLORE_NEARBY_MAP.png",
+    "03_KINDNESS_CHALLENGE.png",
+    "04_CREATE_RECORD.png",
+    "05_SEARCH_RESULTS.png",
+    "06_CREATOR_PROFILE.png",
+    "07_CREATOR_STUDIO.png",
+    "08_AI_COACH.png",
+    "09_REWARDS_MARKETPLACE.png",
+    "10_CHECKOUT_CLAIM_REWARD.png"
+  ],
+  "write_policy": {
+    "screen_masters": "create-only; approved masters only",
+    "preview_captures": "create-only; exact preview/SHA evidence only",
+    "validation_receipts": "create-only; evidence-bound receipts only",
+    "no_overwrite": true,
+    "no_delete": true
+  },
+  "current_status": {
+    "drive_structure_verified": true,
+    "screen_masters_folder_empty_at_binding": true,
+    "preview_captures_folder_empty_at_binding": true,
+    "validation_receipts_folder_empty_at_binding": true,
+    "direct_container_to_drive_upload_bridge": "BLOCKED_INTERNAL_TOOL_FAILURE",
+    "browser_capture_gate": "BLOCKED_EXTERNAL_RUNTIME"
+  }
+}
