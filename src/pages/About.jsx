@@ -1,41 +1,70 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import BrandLogo from "@/components/BrandLogo";
-import { ArrowLeft } from "lucide-react";
+import { MapPin, Play, Sparkles, Users } from "lucide-react";
+import {
+  BnmLockedScreen,
+  Glass,
+  Pill,
+} from "@/components/bnm/LockedShell";
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white">
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <Link to={createPageUrl("Home")} className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </Link>
-        <BrandLogo className="h-10 w-auto mb-8" />
-        <h1 className="text-4xl font-bold mb-6">About Be Near Me</h1>
-        <div className="space-y-4 text-gray-300 text-lg leading-relaxed">
-          <p>
-            Be Near Me is a short-form video platform built for creators who want to share,
-            grow, and earn. Our full-screen vertical feed lets viewers snap-scroll through an
-            endless stream of clips the way they already love — while creators get real tools
-            to record, edit, and publish in seconds.
+    <BnmLockedScreen>
+      <div className="px-3 pt-3">
+        <Glass className="p-4">
+          <Pill active>About</Pill>
+          <h1 className="mt-3 text-[26px] font-black tracking-[-0.04em]">
+            About Be Near Me
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-[#9aacca]">
+            A mobile-first social video and local discovery experience built around people, places, creators, and positive community activity near you.
           </p>
-          <p>
-            We built Be Near Me for two kinds of people: viewers looking for a fresh, fast, and
-            fun way to discover video, and creators who want a fairer place to build an audience
-            and get paid for their work. What makes us different is the Creator Studio — a full
-            dashboard with channel analytics, audience retention graphs, and an AI Video Studio
-            that can generate a polished clip from a single prompt.
-          </p>
-          <p>
-            We also let creators mint their own crypto tokens and manage wallets right inside the
-            app, so monetization is built in from day one. Be Near Me is built by a small,
-            independent team that believes creators deserve a platform that works for them — not
-            the other way around.
-          </p>
+        </Glass>
+
+        <div className="mt-3 grid gap-2">
+          <Info
+            icon={Play}
+            title="Create & Watch"
+            body="Record, upload, discover, and watch short-form creator video in a fast mobile feed."
+          />
+          <Info
+            icon={MapPin}
+            title="Discover Nearby"
+            body="Explore verified local opportunities and community activity without fabricating location data."
+          />
+          <Info
+            icon={Users}
+            title="Creators & Community"
+            body="Follow creators, interact with real posts, and participate in community challenges."
+          />
+          <Info
+            icon={Sparkles}
+            title="Helpful AI"
+            body="Use the AI Coach for ideas and guidance around local, positive actions when those features are available."
+          />
+        </div>
+
+        <div className="pb-4 pt-4 text-center">
+          <Link to="/home" className="text-sm font-black text-[#57c6ff]">
+            Return to Be Near Me
+          </Link>
         </div>
       </div>
-    </div>
+    </BnmLockedScreen>
+  );
+}
+
+function Info({ icon: Icon, title, body }) {
+  return (
+    <Glass className="p-4">
+      <div className="flex gap-3">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] bg-[#10213e]">
+          <Icon className="h-5 w-5 text-[#a38bff]" />
+        </span>
+        <div>
+          <h2 className="text-sm font-black text-white">{title}</h2>
+          <p className="mt-1 text-[12px] leading-5 text-[#91a2c2]">{body}</p>
+        </div>
+      </div>
+    </Glass>
   );
 }
