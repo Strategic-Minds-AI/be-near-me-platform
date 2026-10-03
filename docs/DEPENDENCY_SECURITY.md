@@ -28,3 +28,10 @@ Any markdown/unified rendering path must not enable unsafe raw HTML without sani
 - remove unused dependencies rather than carrying them
 - do not auto-merge dependency updates
 - never lower the HIGH/CRITICAL gate to make CI green
+
+## Lockfile repair receipt
+
+- Non-breaking lockfile repair SHA: `2eeae8546ce3f6c2a6e56bf0f77d2fb97a7e1c97`.
+- Repair mechanism: `npm audit fix --package-lock-only --omit=dev` on the PR branch only.
+- Breaking/forced audit fixes remain prohibited.
+- This receipt update intentionally retriggers the independent full container-hardening workflow on the repaired dependency graph.
