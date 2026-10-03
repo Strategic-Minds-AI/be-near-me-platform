@@ -39,3 +39,10 @@ Protected work cannot be executed by the worker. A protected packet is moved to 
 - Railway is the intended long-running Super-Agent host.
 - Railway staging is the first runtime target.
 - The web container proves portability; it is not an implicit DNS or hosting migration.
+
+
+## X1 durable mode
+
+Railway staging is intentionally stateless. Production-grade persistence is provided by the existing X1 AI Hub Staging Supabase control plane. When `X1_SUPABASE_URL`, `X1_TENANT_ID`, and the protected `X1_SUPABASE_SERVICE_ROLE_KEY` are configured, the worker switches from the local file queue to the atomic X1 queue/lease/execution/receipt RPCs.
+
+See `docs/X1_DURABLE_CONTROL_PLANE.md`.

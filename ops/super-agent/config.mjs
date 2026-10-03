@@ -22,7 +22,16 @@ const integer = (value, fallback, min, max) => {
 const urlList = (value = "") =>
   String(value).split(",").map((item) => item.trim()).filter(Boolean).slice(0, 25);
 
+const x1Environment = (value) => {
+  const candidate = String(value || "preview").toLowerCase();
+  return ["development","preview","production"].includes(candidate) ? candidate : "preview";
+};
+
 export function runtimeConfig(env = process.env) {
+  const x1Url = String(env.X1_SUPABASE_URL || "").replace(/\/$/, "");
+  const x1Key = String(env.X1_SUPABASE_SERVICE_ROLE_KEY || "");
+  const x1TenantId = String(env.X1_TENANT_ID || "");
+
   return Object.freeze({
     projectId: env.AGENT_PROJECT_ID || "BNM-EA-V1",
     sourceSha: env.AGENT_SOURCE_SHA || "unknown",
@@ -35,5 +44,14 @@ export function runtimeConfig(env = process.env) {
     watchUrls: urlList(env.AGENT_WATCH_URLS),
     receiptUrl: env.CONTROL_PLANE_RECEIPT_URL || "",
     receiptToken: env.CONTROL_PLANE_TOKEN || "",
+    x1: Object.freeze({
+      enabled: Boolean(x1Url && x1Key && x1TenantId),
+      supabaseUrl: x1Url,
+      serviceRoleKey: x1Key,
+      tenantId: x1TenantId,
+      agentId: env.X1_AGENT_ID || "bnm-super-agent",
+      environment: x1Environment(env.X1_ENVIRONMENT),
+      leaseTtlSeconds: integer(env.X1_LEASE_TTL_SECONDS, 300, 30, 600),
+    }),
   });
 }

@@ -8,7 +8,7 @@ on:
       - "docker/**"
       - "ops/super-agent/**"
       - "scripts/validate-container.mjs"
-      - "scripts/validate-super-agent-runtime.mjs"
+      - "scripts/validate-super-agent-runtime.mjs"\n      - "scripts/validate-x1-store.mjs"
       - "src/**"
       - "package*.json"
       - ".github/workflows/container-hardening.yml"
@@ -44,6 +44,9 @@ jobs:
 
       - name: Build-chain critical audit
         run: npm audit --audit-level=critical
+
+      - name: Validate X1 durable-store adapter
+        run: node scripts/validate-x1-store.mjs
 
       - name: Build hardened images
         run: |
