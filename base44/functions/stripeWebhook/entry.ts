@@ -112,7 +112,12 @@ export default async function(req: Request) {
         return Response.json({ received: true, ignored: "unrelated checkout" });
       }
       const paymentIntentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id;
-      if (!paymentIntentId) return Response.json({ error: "Missing payment intent" }, { status: 400 });
+      if (!paymentIntentId) {
+        if (session.mode === "subscription") {
+          return Response.json({ received: true, awaiting: "invoice.payment_succeeded" });
+        }
+        return Response.json({ error: "Missing payment intent" }, { status: 400 });
+      }
 
       const paymentIntent = await stripeGet("payment_intents/" + encodeURIComponent(paymentIntentId) + "?expand[]=latest_charge.balance_transaction", secret);
       const balance = paymentIntent.latest_charge?.balance_transaction || {};
@@ -144,6 +149,57 @@ export default async function(req: Request) {
       });
       await rewriteAllocation(base44, receipt, net);
       return Response.json({ received: true, receipt_id: receipt.id, beneficiary_pool: BNM_BENEFICIARY_POOL, beneficiary_pool_cents: net });
+    }
+
+    if (event.type === "invoice.payment_succeeded") {
+      const invoice = event.data.object;
+      const subscriptionId =
+        typeof invoice.subscription === "string" ? invoice.subscription :
+        invoice.subscription?.id ||
+        invoice.parent?.subscription_details?.subscription ||
+        "";
+      const subscription = subscriptionId ? await stripeGet("subscriptions/" + encodeURIComponent(subscriptionId), secret) : null;
+      if (subscription && subscription.metadata?.beneficiary_policy !== BNM_REVENUE_POLICY_ID) {
+        return Response.json({ received: true, ignored: "unrelated subscription" });
+      }
+
+      const paymentIntentId =
+        typeof invoice.payment_intent === "string" ? invoice.payment_intent :
+        invoice.payment_intent?.id || "";
+      if (!paymentIntentId) {
+        return Response.json({ received: true, pending_reconciliation: true, reason: "invoice missing payment intent" });
+      }
+
+      const paymentIntent = await stripeGet("payment_intents/" + encodeURIComponent(paymentIntentId) + "?expand[]=latest_charge.balance_transaction", secret);
+      const balance = paymentIntent.latest_charge?.balance_transaction || {};
+      const gross = Number(invoice.amount_paid ?? paymentIntent.amount_received ?? 0);
+      const fee = Number(balance.fee || 0);
+      const tax = Number(invoice.tax || 0) || (Array.isArray(invoice.total_taxes) ? invoice.total_taxes.reduce((sum: number, item: any) => sum + Number(item?.amount || 0), 0) : 0);
+      const net = computePlatformNetReceipt({ grossAmountCents: gross, processorFeeCents: fee, taxAmountCents: tax });
+
+      const receipt = await base44.asServiceRole.entities.PaymentReceipt.create({
+        processor: "stripe",
+        processor_event_id: event.id,
+        processor_payment_id: paymentIntentId,
+        processor_customer_id: typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id,
+        processor_checkout_session_id: "",
+        product_key: subscription?.metadata?.product_key || "",
+        user_email: subscription?.metadata?.user_email || invoice.customer_email || "",
+        currency: invoice.currency || paymentIntent.currency || "usd",
+        gross_amount_cents: gross,
+        processor_fee_cents: fee,
+        refund_amount_cents: 0,
+        chargeback_amount_cents: 0,
+        tax_amount_cents: tax,
+        restricted_pass_through_cents: 0,
+        platform_net_receipt_cents: net,
+        status: "paid",
+        occurred_at: new Date((event.created || Math.floor(Date.now()/1000)) * 1000).toISOString(),
+        raw_event_type: event.type,
+        reconciled: false,
+      });
+      await rewriteAllocation(base44, receipt, net);
+      return Response.json({ received: true, receipt_id: receipt.id, recurring: true, beneficiary_pool: BNM_BENEFICIARY_POOL, beneficiary_pool_cents: net });
     }
 
     if (event.type === "charge.refunded") {
