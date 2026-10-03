@@ -25,7 +25,7 @@ export function runtimeConfig(env = process.env) {
     sourceSha: env.AGENT_SOURCE_SHA || "unknown",
     dataDir: env.AGENT_DATA_DIR || "/data",
     workspace: env.AGENT_WORKSPACE || "/workspace",
-    httpPort: integer(env.AGENT_HTTP_PORT, 8787, 1024, 65535),
+    httpPort: integer(env.PORT || env.AGENT_HTTP_PORT, 8787, 1024, 65535),
     pollMs: integer(env.AGENT_POLL_MS, 300000, 10000, 3600000),
     leaseMs: integer(env.AGENT_LEASE_MS, 420000, 30000, 3600000),
     concurrency: integer(env.AGENT_CONCURRENCY, 1, 1, 4),
