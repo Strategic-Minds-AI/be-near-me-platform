@@ -23,7 +23,7 @@ const tabs = [
   { label: "Live", to: "/Live", match: ["/Live", "/live"] },
 ];
 
-export function BnmTopChrome({ rewards = false, locationLabel = "Near You" }) {
+export function BnmTopChrome({ rewards = false, locationLabel = "Near You", activeSection = null }) {
   const { pathname } = useLocation();
   const allTabs = rewards ? [...tabs, { label: "Rewards", to: "/rewards", match: ["/rewards", "/reward-checkout"] }] : tabs;
   return (
@@ -44,7 +44,7 @@ export function BnmTopChrome({ rewards = false, locationLabel = "Near You" }) {
       </div>
       <nav className={cx("mx-auto mt-3 grid max-w-[430px] items-end gap-1", rewards ? "grid-cols-6" : "grid-cols-5")} aria-label="Be Near Me sections">
         {allTabs.map((tab) => {
-          const active = tab.match.some((p) => pathname === p || pathname.startsWith(p + "/"));
+          const active = activeSection ? tab.label === activeSection : tab.match.some((p) => pathname === p || pathname.startsWith(p + "/"));
           return (
             <Link key={tab.label} to={tab.to} className={cx("relative pb-3 text-center text-[12px] font-semibold transition", active ? "text-white" : "text-[#8797c6]")}>
               {tab.label}
@@ -93,11 +93,11 @@ export function BnmBottomChrome() {
   );
 }
 
-export function BnmLockedScreen({ children, rewards = false, locationLabel = "Near You", className = "" }) {
+export function BnmLockedScreen({ children, rewards = false, locationLabel = "Near You", activeSection = null, className = "" }) {
   return (
     <div className={cx("min-h-[100dvh] bg-[#020b19] text-white", className)}>
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(31,93,255,.16),transparent_35%),radial-gradient(circle_at_90%_10%,rgba(188,54,255,.12),transparent_35%)]" />
-      <BnmTopChrome rewards={rewards} locationLabel={locationLabel} />
+      <BnmTopChrome rewards={rewards} locationLabel={locationLabel} activeSection={activeSection} />
       <main className="relative z-10 mx-auto max-w-[430px] pb-[92px]">{children}</main>
       <BnmBottomChrome />
     </div>
