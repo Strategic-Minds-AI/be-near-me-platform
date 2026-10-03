@@ -9,7 +9,7 @@
     "id": {"type":"string","minLength":1,"maxLength":120},
     "project_id": {"const":"BNM-EA-V1"},
     "action_class": {"enum":["READ","DRAFT","BRANCH_WRITE","PREVIEW_WRITE","PROTECTED"]},
-    "task_type": {"enum":["http_check","file_check","npm_build","targeted_lint","runtime_snapshot"]},
+    "task_type": {"enum":["http_check","file_check","runtime_snapshot"]},
     "idempotency_key": {"type":"string","minLength":1,"maxLength":180},
     "params": {"type":"object"},
     "max_attempts": {"type":"integer","minimum":1,"maximum":5,"default":2},

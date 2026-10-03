@@ -1,14 +1,20 @@
 # BNM Super-Agent Runtime
 
-This is a durable worker, not a chatbot loop.
+This is a durable supervisor, not a chatbot loop and not a privileged build host.
 
 ## Contract
 
 `TRIGGER -> HEARTBEAT -> LEASE -> TYPED WORK PACKET -> SAFE EXECUTION -> RECEIPT -> NEXT ELIGIBLE ACTION`
 
-The runtime automatically executes only READ, DRAFT, BRANCH_WRITE, and PREVIEW_WRITE packets from an allowlisted task registry. PROTECTED packets are moved to `queue/blocked` and emit a receipt.
+The persistent worker automatically executes only allowlisted observation/runtime tasks. It carries no app `node_modules`, has no Docker socket, and cannot run arbitrary shell commands.
 
-There is no arbitrary shell task. Production release, default-branch merge, payments, secrets, DNS, permission escalation, destructive data operations, and customer communications are intentionally absent from the executor.
+Application build/lint/test/release work belongs in ephemeral CI/build workers. PROTECTED work remains operator-gated.
+
+## Allowlisted persistent tasks
+
+- `http_check`
+- `file_check`
+- `runtime_snapshot`
 
 ## Durable directories
 
@@ -23,9 +29,13 @@ There is no arbitrary shell task. Production release, default-branch merge, paym
 
 ## Health
 
-- `GET /healthz`
-- `GET /readyz`
-- `GET /status`
+- `GET /healthz` — process health
+- `GET /readyz` — fresh, non-degraded heartbeat
+- `GET /status` — redacted runtime state
+
+## Production watch
+
+Set `AGENT_WATCH_URLS` to a comma-separated set of HTTPS endpoints. Each reconcile cycle validates them and marks the heartbeat degraded on failure.
 
 ## Optional control-plane bridge
 

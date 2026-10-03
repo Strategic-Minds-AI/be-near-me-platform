@@ -1,28 +1,7 @@
-import { spawn } from "node:child_process";
 import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 
-const SAFE_TASKS = new Set(["http_check","file_check","npm_build","targeted_lint","runtime_snapshot"]);
-
-function run(command, args, { cwd, timeoutMs }) {
-  return new Promise((resolve) => {
-    const child = spawn(command, args, {
-      cwd,
-      env: { ...process.env, CI: "1", PUPPETEER_SKIP_DOWNLOAD: "true" },
-      stdio: ["ignore","pipe","pipe"],
-    });
-    let stdout = "";
-    let stderr = "";
-    const limit = 256000;
-    child.stdout.on("data", (d) => { if (stdout.length < limit) stdout += d; });
-    child.stderr.on("data", (d) => { if (stderr.length < limit) stderr += d; });
-    const timer = setTimeout(() => child.kill("SIGKILL"), timeoutMs);
-    child.on("close", (code, signal) => {
-      clearTimeout(timer);
-      resolve({ ok: code === 0, code, signal, stdout: stdout.slice(-limit), stderr: stderr.slice(-limit) });
-    });
-  });
-}
+const SAFE_TASKS = new Set(["http_check","file_check","runtime_snapshot"]);
 
 function insideWorkspace(workspace, candidate) {
   const resolved = path.resolve(workspace, candidate);
@@ -57,20 +36,6 @@ export async function executeTask(packet, config) {
       catch { results.push({ path: item, exists: false }); }
     }
     return { ok: results.every((r) => r.exists), results };
-  }
-
-  if (packet.task_type === "npm_build") {
-    return run("npm", ["run","build"], { cwd: config.workspace, timeoutMs: Math.min(packet.timeout_ms || 240000, 600000) });
-  }
-
-  if (packet.task_type === "targeted_lint") {
-    const targets = Array.isArray(packet.params?.paths) ? packet.params.paths : [];
-    if (!targets.length || targets.length > 80) throw new Error("targeted_lint requires 1-80 paths");
-    const safe = targets.map((item) => {
-      const resolved = insideWorkspace(config.workspace, item);
-      return path.relative(config.workspace, resolved);
-    });
-    return run("npx", ["eslint", ...safe], { cwd: config.workspace, timeoutMs: Math.min(packet.timeout_ms || 180000, 600000) });
   }
 
   const pkg = JSON.parse(await readFile(path.join(config.workspace, "package.json"), "utf8"));

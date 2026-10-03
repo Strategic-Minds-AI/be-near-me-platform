@@ -21,14 +21,13 @@ function validatePacket(packet) {
 }
 
 async function blocked(packet, reason) {
-  const receipt = await emitReceipt(config, {
+  return emitReceipt(config, {
     receipt_id: "blocked-" + packet.id,
     idempotency_key: packet.idempotency_key,
     packet_id: packet.id,
     status: "BLOCKED",
     reason,
   });
-  return receipt;
 }
 
 async function processPacket(file) {
@@ -109,6 +108,20 @@ async function heartbeat(extra = {}) {
   await atomicJson(path.join(config.dataDir, "state", "heartbeat.json"), lastHeartbeat);
 }
 
+async function monitor() {
+  if (!config.watchUrls.length) return { ok: true, configured: false, results: [] };
+  try {
+    const result = await executeTask({
+      task_type: "http_check",
+      params: { urls: config.watchUrls },
+      timeout_ms: 30000,
+    }, config);
+    return { configured: true, ...result };
+  } catch (error) {
+    return { ok: false, configured: true, results: [], error: String(error.message || error) };
+  }
+}
+
 async function cycle() {
   const lease = await acquireLease(config.dataDir, config.leaseMs);
   if (!lease.ok) {
@@ -132,7 +145,15 @@ async function cycle() {
       else cycleReceipt.fail += 1;
     }
 
-    lastCycle = { ...cycleReceipt, duration_ms: Date.now() - started, completed_at: new Date().toISOString() };
+    const watch = await monitor();
+    if (!watch.ok) cycleReceipt.fail += 1;
+
+    lastCycle = {
+      ...cycleReceipt,
+      watch,
+      duration_ms: Date.now() - started,
+      completed_at: new Date().toISOString(),
+    };
     await emitReceipt(config, {
       receipt_id: "heartbeat-" + Date.now(),
       status: cycleReceipt.fail ? "FAIL" : "PASS",
@@ -153,12 +174,20 @@ const server = http.createServer((req, res) => {
   }
   if (req.url === "/readyz") {
     const fresh = lastHeartbeat && (Date.now() - new Date(lastHeartbeat.timestamp).getTime() < config.pollMs * 2 + 60000);
-    res.writeHead(fresh ? 200 : 503, { "content-type": "application/json" });
-    return res.end(JSON.stringify({ ready: Boolean(fresh), heartbeat: lastHeartbeat }));
+    const ready = Boolean(fresh && lastHeartbeat?.state !== "degraded");
+    res.writeHead(ready ? 200 : 503, { "content-type": "application/json" });
+    return res.end(JSON.stringify({ ready, heartbeat: lastHeartbeat }));
   }
   if (req.url === "/status") {
     res.writeHead(200, { "content-type": "application/json" });
-    return res.end(JSON.stringify({ config: { ...config, receiptToken: config.receiptToken ? "[configured]" : "" }, lastHeartbeat, lastCycle }));
+    return res.end(JSON.stringify({
+      config: {
+        ...config,
+        receiptToken: config.receiptToken ? "[configured]" : "",
+      },
+      lastHeartbeat,
+      lastCycle,
+    }));
   }
   res.writeHead(404); res.end();
 });

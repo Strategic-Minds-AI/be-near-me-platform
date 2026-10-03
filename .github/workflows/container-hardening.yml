@@ -34,6 +34,8 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
 
       - name: Build application
+        env:
+          VITE_BASE44_APP_ID: 6abd9e05a56938f03c2c557b
         run: npm run build
 
       - name: Production dependency audit
@@ -51,22 +53,22 @@ jobs:
             .map(([name,v]) => ({name, severity:v.severity, direct:Boolean(v.isDirect), via:Array.isArray(v.via) ? v.via.map(x => typeof x === 'string' ? x : x.title).slice(0,4) : []}))
             .sort((a,b) => ['critical','high','moderate','low'].indexOf(a.severity) - ['critical','high','moderate','low'].indexOf(b.severity));
           console.log(JSON.stringify({metadata:audit.metadata?.vulnerabilities, findings:summary}, null, 2));
-          const critical = summary.filter(v => v.severity === 'critical');
-          if (critical.length) {
-            console.error('Critical production dependency vulnerabilities remain:', critical.map(v=>v.name).join(', '));
+          const blocking = summary.filter(v => v.severity === 'critical' || v.severity === 'high');
+          if (blocking.length) {
+            console.error('High/critical production dependency vulnerabilities remain:', blocking.map(v=>v.name + ':' + v.severity).join(', '));
             process.exit(1);
           }
           NODE
-          echo "npm audit raw exit: $audit_exit (critical gate passed)"
+          echo "npm audit raw exit: $audit_exit (high/critical gate passed)"
 
       - name: Build hardened images
         run: |
-          docker build -t bnm-web:ci .
+          docker build --build-arg VITE_BASE44_APP_ID=6abd9e05a56938f03c2c557b -t bnm-web:ci .
           docker build -f Dockerfile.agent -t bnm-super-agent:ci .
 
       - name: Compose smoke test
         run: |
-          AGENT_SOURCE_SHA="$GITHUB_SHA" AGENT_POLL_MS=10000 AGENT_LEASE_MS=30000 docker compose up -d --build web super-agent
+          AGENT_SOURCE_SHA="$GITHUB_SHA" AGENT_POLL_MS=10000 AGENT_LEASE_MS=30000 AGENT_WATCH_URLS="http://web:8080/home,http://web:8080/manifest.json" docker compose up -d --build web super-agent
           for i in {1..30}; do
             if curl -fsS http://127.0.0.1:8080/healthz >/dev/null; then break; fi
             sleep 2
@@ -78,10 +80,12 @@ jobs:
       - name: Super-Agent persistence contract
         run: bash scripts/test-super-agent-persistence.sh
 
-      - name: Assert no privileged runtime
+      - name: Assert minimal non-privileged runtime
         run: |
           test "$(docker inspect -f '{{.HostConfig.Privileged}}' bnm-ea-v1-web-1)" = "false"
           test "$(docker inspect -f '{{.HostConfig.Privileged}}' bnm-ea-v1-super-agent-1)" = "false"
+          docker compose exec -T super-agent sh -lc 'test ! -d /workspace/node_modules'
+          docker compose exec -T super-agent sh -lc 'test ! -e /var/run/docker.sock'
 
       - name: Cleanup
         if: always()

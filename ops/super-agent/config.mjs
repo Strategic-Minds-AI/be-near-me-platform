@@ -19,6 +19,9 @@ const integer = (value, fallback, min, max) => {
   return Math.max(min, Math.min(max, parsed));
 };
 
+const urlList = (value = "") =>
+  String(value).split(",").map((item) => item.trim()).filter(Boolean).slice(0, 25);
+
 export function runtimeConfig(env = process.env) {
   return Object.freeze({
     projectId: env.AGENT_PROJECT_ID || "BNM-EA-V1",
@@ -29,6 +32,7 @@ export function runtimeConfig(env = process.env) {
     pollMs: integer(env.AGENT_POLL_MS, 300000, 10000, 3600000),
     leaseMs: integer(env.AGENT_LEASE_MS, 420000, 30000, 3600000),
     concurrency: integer(env.AGENT_CONCURRENCY, 1, 1, 4),
+    watchUrls: urlList(env.AGENT_WATCH_URLS),
     receiptUrl: env.CONTROL_PLANE_RECEIPT_URL || "",
     receiptToken: env.CONTROL_PLANE_TOKEN || "",
   });
