@@ -1,0 +1,55 @@
+name: repair-lockfile
+
+on:
+  push:
+    branches:
+      - apex/bnm-container-superagent-v1
+    paths:
+      - ".github/workflows/repair-lockfile.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: apex/bnm-container-superagent-v1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Regenerate lockfile from declared dependency policy
+        run: npm install --package-lock-only --ignore-scripts
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+
+      - name: Apply non-breaking audit fixes to lockfile
+        run: npm audit fix --package-lock-only --ignore-scripts || true
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+
+      - name: Re-resolve lockfile after audit fixes
+        run: npm install --package-lock-only --ignore-scripts
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+
+      - name: Record production audit summary
+        run: npm audit --omit=dev --json > audit-after.json || true
+
+      - name: Commit repaired lockfile
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json already current"
+            exit 0
+          fi
+          git config user.name "bnm-hardening-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "BNM hardening: resolve dependency lockfile"
+          git push origin HEAD:apex/bnm-container-superagent-v1

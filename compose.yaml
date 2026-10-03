@@ -1,0 +1,83 @@
+name: bnm-ea-v1
+
+services:
+  web:
+    image: bnm-web:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_BASE44_APP_ID: ${VITE_BASE44_APP_ID:-6abd9e05a56938f03c2c557b}
+    restart: unless-stopped
+    ports:
+      - "${BNM_WEB_PORT:-8080}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+      - /var/cache/nginx:size=32m,uid=101,gid=101,mode=0755
+      - /var/run:size=4m,uid=101,gid=101,mode=0755
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL","wget -q -O- http://127.0.0.1:8080/healthz >/dev/null || exit 1"]
+      interval: 20s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  super-agent:
+    image: bnm-super-agent:local
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    restart: unless-stopped
+    environment:
+      AGENT_PROJECT_ID: BNM-EA-V1
+      AGENT_SOURCE_SHA: ${AGENT_SOURCE_SHA:-unknown}
+      AGENT_POLL_MS: ${AGENT_POLL_MS:-300000}
+      AGENT_LEASE_MS: ${AGENT_LEASE_MS:-420000}
+      AGENT_CONCURRENCY: ${AGENT_CONCURRENCY:-1}
+      AGENT_HTTP_PORT: "8787"
+      AGENT_WATCH_URLS: ${AGENT_WATCH_URLS:-}
+      CONTROL_PLANE_RECEIPT_URL: ${CONTROL_PLANE_RECEIPT_URL:-}
+      CONTROL_PLANE_TOKEN: ${CONTROL_PLANE_TOKEN:-}
+    volumes:
+      - agent_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    expose:
+      - "8787"
+    healthcheck:
+      test: ["CMD","node","ops/super-agent/healthcheck.mjs"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  validator:
+    image: bnm-super-agent:local
+    profiles: ["validation"]
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      VALIDATION_BASE_URL: http://web:8080
+    command: ["node","scripts/validate-container.mjs","http://web:8080"]
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"
+
+volumes:
+  agent_data:

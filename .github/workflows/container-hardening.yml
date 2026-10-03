@@ -1,0 +1,101 @@
+name: container-hardening
+
+on:
+  pull_request:
+    paths:
+      - "Dockerfile*"
+      - "compose.yaml"
+      - "docker/**"
+      - "ops/super-agent/**"
+      - "scripts/validate-container.mjs"
+      - "scripts/validate-super-agent-runtime.mjs"
+      - "scripts/validate-x1-store.mjs"
+      - "src/**"
+      - "package*.json"
+      - ".github/workflows/container-hardening.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: container-hardening-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies from immutable lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Build application
+        run: npm run build
+
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Build-chain critical audit
+        run: npm audit --audit-level=critical
+
+      - name: Validate X1 durable-store adapter
+        run: node scripts/validate-x1-store.mjs
+
+      - name: Build hardened images
+        run: |
+          docker build -t bnm-web:ci .
+          docker build -f Dockerfile.agent -t bnm-super-agent:ci .
+
+      - name: Compose smoke test
+        run: |
+          AGENT_SOURCE_SHA="$GITHUB_SHA" AGENT_POLL_MS=10000 docker compose up -d --build web super-agent
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8080/healthz >/dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/validate-container.mjs http://127.0.0.1:8080
+          docker compose ps
+          docker compose logs --no-color super-agent | tail -100
+
+      - name: Assert fail-closed and persistent Super-Agent behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          AGENT_ID=$(docker compose ps -q super-agent)
+          test -n "$AGENT_ID"
+          docker exec "$AGENT_ID" node -e 'fetch("http://127.0.0.1:8787/healthz").then(async r=>{if(!r.ok)process.exit(1);const b=await r.json();if(!b.ok)process.exit(1)})'
+          docker exec "$AGENT_ID" node scripts/validate-super-agent-runtime.mjs seed-and-verify
+          docker compose restart super-agent
+          for i in {1..30}; do
+            if docker exec "$(docker compose ps -q super-agent)" node -e 'fetch("http://127.0.0.1:8787/healthz").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))'; then break; fi
+            sleep 1
+          done
+          AGENT_ID=$(docker compose ps -q super-agent)
+          docker exec "$AGENT_ID" node scripts/validate-super-agent-runtime.mjs verify-persisted
+          docker exec "$AGENT_ID" node -e 'fetch("http://127.0.0.1:8787/status").then(async r=>{if(!r.ok)process.exit(1);const b=await r.json();if(!b.lastHeartbeat)process.exit(1)})'
+
+      - name: Assert no privileged runtime
+        run: |
+          WEB_ID=$(docker compose ps -q web)
+          AGENT_ID=$(docker compose ps -q super-agent)
+          test "$(docker inspect -f '{{.HostConfig.Privileged}}' "$WEB_ID")" = "false"
+          test "$(docker inspect -f '{{.HostConfig.Privileged}}' "$AGENT_ID")" = "false"
+          test "$(docker inspect -f '{{.HostConfig.ReadonlyRootfs}}' "$WEB_ID")" = "true"
+          test "$(docker inspect -f '{{.HostConfig.ReadonlyRootfs}}' "$AGENT_ID")" = "true"
+          docker inspect -f '{{json .HostConfig.CapDrop}}' "$WEB_ID" | grep -q '"ALL"'
+          docker inspect -f '{{json .HostConfig.CapDrop}}' "$AGENT_ID" | grep -q '"ALL"'
+          docker inspect -f '{{json .HostConfig.SecurityOpt}}' "$WEB_ID" | grep -q 'no-new-privileges'
+          docker inspect -f '{{json .HostConfig.SecurityOpt}}' "$AGENT_ID" | grep -q 'no-new-privileges'
+          test -z "$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/var/run/docker.sock"}}docker-socket{{end}}{{end}}' "$AGENT_ID")"
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
