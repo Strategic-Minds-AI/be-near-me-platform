@@ -75,6 +75,11 @@ const AuthenticatedApp = () => {
       <Route path="/Dares" element={<Navigate to="/challenge" replace />} />
       <Route path="/Truths" element={<Navigate to="/challenge" replace />} />
       <Route path="/Wallet" element={<Navigate to="/rewards" replace />} />
+      <Route path="/onboarding" element={
+        <LayoutWrapper currentPageName="Onboarding">
+          <Onboarding />
+        </LayoutWrapper>
+      } />
       <Route path="/" element={<Splash />} />
       <Route path="/home" element={<BnmLockedHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
