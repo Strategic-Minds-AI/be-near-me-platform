@@ -43,6 +43,17 @@ import BnmTracker from '@/pages/BnmTracker';
 import FactoryBuilder from '@/pages/FactoryBuilder';
 import FactoryDashboard from '@/pages/FactoryDashboard';
 import VisualGallery from '@/pages/VisualGallery';
+import BnmLockedHome from '@/pages/BnmLockedHome';
+import BnmLockedNearby from '@/pages/BnmLockedNearby';
+import BnmLockedChallenge from '@/pages/BnmLockedChallenge';
+import BnmLockedSearch from '@/pages/BnmLockedSearch';
+import BnmLockedProfile from '@/pages/BnmLockedProfile';
+import BnmLockedCreatorStudio from '@/pages/BnmLockedCreatorStudio';
+import BnmLockedAiCoach from '@/pages/BnmLockedAiCoach';
+import BnmLockedRewards from '@/pages/BnmLockedRewards';
+import BnmLockedCheckout from '@/pages/BnmLockedCheckout';
+import BnmLockedCreate from '@/pages/BnmLockedCreate';
+import BnmLegacy from '@/pages/BnmLegacy';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -160,14 +171,23 @@ const AuthenticatedApp = () => {
         </LayoutWrapper>
       } />
       <Route path="/" element={<Splash />} />
-      <Route path="/home" element={<BnmHome />} />
+      <Route path="/home" element={<BnmLockedHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
-      <Route path="/create" element={<BnmCreate />} />
+      <Route path="/create" element={<BnmLockedCreate />} />
       <Route path="/tracker" element={<BnmTracker />} />
-      <Route path="/camera" element={<Camera />} />
+      <Route path="/camera" element={<BnmLockedCreate />} />
       <Route path="/effects" element={<BnmEffects />} />
-      <Route path="/nearby" element={<BnmNearby />} />
-      <Route path="/profile" element={<BnmProfile />} />
+      <Route path="/nearby" element={<BnmLockedNearby />} />
+      <Route path="/challenge" element={<BnmLockedChallenge />} />
+      <Route path="/challenge/:challengeId" element={<BnmLockedChallenge />} />
+      <Route path="/search" element={<BnmLockedSearch />} />
+      <Route path="/profile" element={<BnmLockedProfile />} />
+      <Route path="/creator-studio" element={<BnmLockedCreatorStudio />} />
+      <Route path="/ai-coach" element={<BnmLockedAiCoach />} />
+      <Route path="/rewards" element={<BnmLockedRewards />} />
+      <Route path="/reward-checkout" element={<BnmLockedCheckout />} />
+      <Route path="/reward-checkout/:rewardId" element={<BnmLockedCheckout />} />
+      <Route path="/legacy" element={<BnmLegacy />} />
       <Route path="/inbox" element={<BnmInbox />} />
       <Route path="/messages" element={<BnmMessages />} />
       <Route path="/menu" element={<BnmMenu />} />
