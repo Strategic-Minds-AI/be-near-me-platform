@@ -29,7 +29,7 @@ function pickMime() {
   return "video/webm";
 }
 
-export default function Camera() {
+export default function Camera({ embedded = false }) {
   const navigate = useNavigate();
   const [facing, setFacing] = useState("user");
   const [filter, setFilter] = useState("none");
@@ -259,7 +259,7 @@ export default function Camera() {
   const ringPct = Math.min(elapsed / MAX_SECONDS, 1);
 
   return (
-    <div className="fixed inset-0 bg-black z-[60] flex items-center justify-center overflow-hidden">
+    <div className={embedded ? "relative h-[430px] w-full bg-black flex items-center justify-center overflow-hidden" : "fixed inset-0 bg-black z-[60] flex items-center justify-center overflow-hidden"}>
       {/* hidden source video */}
       <video ref={videoRef} playsInline muted className="hidden" />
 
