@@ -56,8 +56,8 @@ export default function BnmLockedSearch() {
 
   return (
     <BnmLockedScreen activeSection="Nearby">
-      <div className="px-3 pt-3">
-        <label className="flex h-13 items-center gap-3 rounded-full border border-[#6875d1] bg-[#101f42] px-4">
+      <div className="px-3 pt-2">
+        <label className="flex h-10 items-center gap-2.5 rounded-full border border-[#6875d1] bg-[#101f42] px-3.5">
           <Search className="h-5 w-5" />
           <input
             value={q}
@@ -68,7 +68,7 @@ export default function BnmLockedSearch() {
           {q ? <button onClick={() => setQ("")} className="grid h-7 w-7 place-items-center rounded-full bg-[#33496f] text-xs">×</button> : null}
         </label>
 
-        <div className="mt-2.5 flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
+        <div className="mt-2 flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
           {["All","Creators","Opportunities","Events","Posts"].map((item) => (
             <button
               key={item}
@@ -86,86 +86,86 @@ export default function BnmLockedSearch() {
         </div>
 
         {showCreators ? (
-          <section className="mt-5">
+          <section className="mt-3">
             <SectionTitle title="Creators" action={creators.length > 3 ? "See All" : null} />
             {creators.length ? (
               <div className="space-y-2">
                 {creators.slice(0, 3).map((creator) => (
-                  <Glass key={creator.id} className="flex items-center gap-3 p-3">
-                    <Avatar src={creator.avatar} label={creator.name} size={54} />
+                  <Glass key={creator.id} className="flex items-center gap-2.5 p-2">
+                    <Avatar src={creator.avatar} label={creator.name} size={46} />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[13px] font-black">{creator.name}</div>
-                      <div className="mt-0.5 text-[9px] text-[#8fa2c2]">{creator.posts} public post{creator.posts === 1 ? "" : "s"} • {formatCount(creator.views)} views</div>
-                      <div className="mt-1.5"><Pill>Community Creator</Pill></div>
+                      <div className="truncate text-[11px] font-black">{creator.name}</div>
+                      <div className="mt-0.5 text-[8px] text-[#8fa2c2]">{creator.posts} public post{creator.posts === 1 ? "" : "s"} • {formatCount(creator.views)} views</div>
+                      <div className="mt-1"><Pill>Community Creator</Pill></div>
                     </div>
                     <Link to={"/profile?channel=" + encodeURIComponent(creator.id)}>
-                      <GradientButton className="px-4 py-2 text-[10px]">View</GradientButton>
+                      <GradientButton className="px-3 py-1.5 text-[9px]">View</GradientButton>
                     </Link>
                   </Glass>
                 ))}
               </div>
             ) : (
               <div className="space-y-2">
-                {[1,2].map((i) => (
-                  <Glass key={i} className="flex items-center gap-3 p-3">
-                    <div className="grid h-[54px] w-[54px] shrink-0 place-items-center rounded-full border border-[#3d5780] bg-[#101c36]">
+                {[1,2,3].map((i) => (
+                  <Glass key={i} className="flex items-center gap-2.5 p-2">
+                    <div className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full border border-[#3d5780] bg-[#101c36]">
                       <Users className="h-5 w-5 text-[#846cce]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="h-3 w-[72%] rounded-full bg-[#1b2d49]" />
-                      <div className="mt-2 h-2.5 w-[54%] rounded-full bg-[#14243e]" />
-                      <div className="mt-2 h-5 w-24 rounded-full border border-[#314b74] bg-[#0d1b34]" />
+                      <div className="h-2.5 w-[72%] rounded-full bg-[#1b2d49]" />
+                      <div className="mt-1.5 h-2 w-[54%] rounded-full bg-[#14243e]" />
+                      <div className="mt-1.5 h-4 w-20 rounded-full border border-[#314b74] bg-[#0d1b34]" />
                     </div>
-                    <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-4 py-2 text-[9px] font-black text-[#7588aa]">Follow</button>
+                    <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-3 py-1.5 text-[8px] font-black text-[#7588aa]">Follow</button>
                   </Glass>
                 ))}
-                <p className="px-2 pt-1 text-center text-[8px] leading-4 text-[#7588aa]">Verified creator records replace these structural slots. Seed and scraped donor channels remain excluded.</p>
+                <p className="sr-only">Verified creator records replace structural slots; seed and scraped donor channels remain excluded.</p>
               </div>
             )}
           </section>
         ) : null}
 
         {showOpportunities ? (
-          <section className="mt-5">
+          <section className="mt-3">
             <SectionTitle title="Local Opportunities" />
             <div className="space-y-2">
               {[1,2].map((i) => (
-                <Glass key={i} className="flex items-center gap-3 p-3">
-                  <div className="grid h-14 w-16 shrink-0 place-items-center rounded-[13px] border border-[#213b61] bg-[linear-gradient(135deg,#102745,#151934_55%,#26172d)]"><MapPin className="h-5 w-5 text-[#5ed6ff]" /></div>
+                <Glass key={i} className="flex items-center gap-2.5 p-2">
+                  <div className="grid h-12 w-14 shrink-0 place-items-center rounded-[12px] border border-[#213b61] bg-[linear-gradient(135deg,#102745,#151934_55%,#26172d)]"><MapPin className="h-5 w-5 text-[#5ed6ff]" /></div>
                   <div className="min-w-0 flex-1">
-                    <div className="h-3 w-[84%] rounded-full bg-[#1b2d49]" />
-                    <div className="mt-2 h-2.5 w-[62%] rounded-full bg-[#14243e]" />
-                    <div className="mt-2 flex gap-1.5"><span className="h-5 w-16 rounded-full border border-[#314b74] bg-[#0d1b34]" /><span className="h-5 w-12 rounded-full border border-[#314b74] bg-[#0d1b34]" /></div>
+                    <div className="h-2.5 w-[84%] rounded-full bg-[#1b2d49]" />
+                    <div className="mt-1.5 h-2 w-[62%] rounded-full bg-[#14243e]" />
+                    <div className="mt-1.5 flex gap-1"><span className="h-4 w-14 rounded-full border border-[#314b74] bg-[#0d1b34]" /><span className="h-4 w-11 rounded-full border border-[#314b74] bg-[#0d1b34]" /></div>
                   </div>
-                  <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-3 py-2 text-[9px] font-black text-[#7588aa]">Join</button>
+                  <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-2.5 py-1.5 text-[8px] font-black text-[#7588aa]">Join</button>
                 </Glass>
               ))}
-              <p className="px-2 text-center text-[8px] leading-4 text-[#7588aa]">No Opportunity entity is connected yet; these rows preserve the approved result geometry only.</p>
+              <p className="sr-only">No Opportunity entity is connected; rows preserve approved result geometry only.</p>
             </div>
           </section>
         ) : null}
 
         {showEvents ? (
-          <section className="mt-5">
+          <section className="mt-3">
             <SectionTitle title="Community Events" />
             <div className="space-y-2">
               {[1,2].map((i) => (
-                <Glass key={i} className="flex items-center gap-3 p-3">
-                  <div className="grid h-14 w-16 shrink-0 place-items-center rounded-[13px] border border-[#312f67] bg-[linear-gradient(135deg,#171b42,#26183e_55%,#35172f)]"><CalendarDays className="h-5 w-5 text-[#b97bff]" /></div>
+                <Glass key={i} className="flex items-center gap-2.5 p-2">
+                  <div className="grid h-12 w-14 shrink-0 place-items-center rounded-[12px] border border-[#312f67] bg-[linear-gradient(135deg,#171b42,#26183e_55%,#35172f)]"><CalendarDays className="h-5 w-5 text-[#b97bff]" /></div>
                   <div className="min-w-0 flex-1">
-                    <div className="h-3 w-[78%] rounded-full bg-[#1b2d49]" />
-                    <div className="mt-2 h-2.5 w-[48%] rounded-full bg-[#14243e]" />
+                    <div className="h-2.5 w-[78%] rounded-full bg-[#1b2d49]" />
+                    <div className="mt-1.5 h-2 w-[48%] rounded-full bg-[#14243e]" />
                   </div>
-                  <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-3 py-2 text-[9px] font-black text-[#7588aa]">Interested</button>
+                  <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-2.5 py-1.5 text-[8px] font-black text-[#7588aa]">Interested</button>
                 </Glass>
               ))}
-              <p className="px-2 text-center text-[8px] leading-4 text-[#7588aa]">Verified community-event records replace these structural slots when a real source exists.</p>
+              <p className="sr-only">Verified community-event records replace structural slots when a real source exists.</p>
             </div>
           </section>
         ) : null}
 
         {showPosts ? (
-          <section className="mt-5 pb-4">
+          <section className="mt-3 pb-3">
             <SectionTitle title={query ? "Matching Posts" : "Posts"} />
             {isLoading ? (
               <div className="space-y-2">{[1,2,3].map((i)=><div key={i} className="h-[92px] animate-pulse rounded-[16px] bg-[#0b1930]" />)}</div>
