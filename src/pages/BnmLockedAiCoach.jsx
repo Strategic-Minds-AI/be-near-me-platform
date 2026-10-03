@@ -34,7 +34,7 @@ export default function BnmLockedAiCoach() {
   };
 
   return (
-    <BnmLockedScreen>
+    <BnmLockedScreen activeSection="For You">
       <div className="px-3 pt-3">
         <Glass className="overflow-hidden p-4">
           <div className="flex items-center justify-between">
