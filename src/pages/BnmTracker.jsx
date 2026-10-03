@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { BarChart3, Eye, Film, Heart, Play } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   BnmLockedScreen,
   EmptyState,
@@ -14,7 +14,7 @@ import {
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -35,7 +35,7 @@ export default function BnmTracker() {
     queryKey: ["bnm-tracker-videos", user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Video.filter(
+        await bnmData.entities.Video.filter(
           { created_by: user.email },
           { sort: "-published_at", limit: 50 }
         )
