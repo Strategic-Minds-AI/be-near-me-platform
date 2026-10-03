@@ -5,7 +5,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import { pagesConfig } from './pages.config'
+import Layout from './Layout.jsx'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -50,10 +50,6 @@ import BnmLockedRewards from '@/pages/BnmLockedRewards';
 import BnmLockedCheckout from '@/pages/BnmLockedCheckout';
 import BnmLockedCreate from '@/pages/BnmLockedCreate';
 import BnmLegacy from '@/pages/BnmLegacy';
-
-const { Pages, Layout, mainPage } = pagesConfig;
-const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -194,17 +190,6 @@ const AuthenticatedApp = () => {
           <VisualGallery />
         </LayoutWrapper>
       } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
-          }
-        />
-      ))}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
