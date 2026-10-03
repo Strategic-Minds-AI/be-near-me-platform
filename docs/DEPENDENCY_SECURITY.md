@@ -35,3 +35,5 @@ Any markdown/unified rendering path must not enable unsafe raw HTML without sani
 - Repair mechanism: `npm audit fix --package-lock-only --omit=dev` on the PR branch only.
 - Breaking/forced audit fixes remain prohibited.
 - This receipt update intentionally retriggers the independent full container-hardening workflow on the repaired dependency graph.
+
+- Full-graph non-breaking lockfile repair SHA: `dbef6c2f8636f0608630c9619bd2feef14f78677`; this extends compatible fixes to build/dev transitives without using `--force`.
