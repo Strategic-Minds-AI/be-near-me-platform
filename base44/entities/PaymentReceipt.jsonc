@@ -1,0 +1,32 @@
+{
+  "name": "PaymentReceipt",
+  "type": "object",
+  "properties": {
+    "processor": {"type": "string", "enum": ["stripe"], "default": "stripe"},
+    "processor_event_id": {"type": "string"},
+    "processor_payment_id": {"type": "string"},
+    "processor_customer_id": {"type": "string"},
+    "processor_checkout_session_id": {"type": "string"},
+    "product_key": {"type": "string"},
+    "user_email": {"type": "string"},
+    "currency": {"type": "string", "default": "usd"},
+    "gross_amount_cents": {"type": "number", "default": 0},
+    "processor_fee_cents": {"type": "number", "default": 0},
+    "refund_amount_cents": {"type": "number", "default": 0},
+    "chargeback_amount_cents": {"type": "number", "default": 0},
+    "tax_amount_cents": {"type": "number", "default": 0},
+    "restricted_pass_through_cents": {"type": "number", "default": 0},
+    "platform_net_receipt_cents": {"type": "number", "default": 0},
+    "status": {"type": "string", "enum": ["pending", "paid", "refunded", "disputed", "failed"], "default": "pending"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "raw_event_type": {"type": "string"},
+    "reconciled": {"type": "boolean", "default": false}
+  },
+  "required": ["processor_event_id", "currency", "status"],
+  "rls": {
+    "create": {"user_condition": {"role": "admin"}},
+    "read": {"user_condition": {"role": "admin"}},
+    "update": {"user_condition": {"role": "admin"}},
+    "delete": {"user_condition": {"role": "admin"}}
+  }
+}
