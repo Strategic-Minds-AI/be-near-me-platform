@@ -43,7 +43,7 @@ export default function BnmDiscover() {
   const submitSearch = (event) => {
     event.preventDefault();
     const normalized = query.trim();
-    if (normalized) navigate("/Search?q=" + encodeURIComponent(normalized));
+    if (normalized) navigate("/search?q=" + encodeURIComponent(normalized));
   };
 
   return (
