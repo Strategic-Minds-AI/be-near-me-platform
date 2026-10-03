@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
 
 // BNM-01-SPLASH — Launch / entry screen.
@@ -48,7 +48,7 @@ export default function Splash() {
         </button>
 
         <button
-          onClick={() => base44.auth.redirectToLogin(window.location.href)}
+          onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
           className="mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-transform active:scale-95"
         >
           Log In
