@@ -105,7 +105,22 @@ export default function BnmLockedSearch() {
                 ))}
               </div>
             ) : (
-              <EmptyState icon={Users} title="No verified creators match" body="Seed and scraped donor channels are intentionally excluded from Be Near Me search." />
+              <div className="space-y-2">
+                {[1,2].map((i) => (
+                  <Glass key={i} className="flex items-center gap-3 p-3">
+                    <div className="grid h-[54px] w-[54px] shrink-0 place-items-center rounded-full border border-[#3d5780] bg-[#101c36]">
+                      <Users className="h-5 w-5 text-[#846cce]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="h-3 w-[72%] rounded-full bg-[#1b2d49]" />
+                      <div className="mt-2 h-2.5 w-[54%] rounded-full bg-[#14243e]" />
+                      <div className="mt-2 h-5 w-24 rounded-full border border-[#314b74] bg-[#0d1b34]" />
+                    </div>
+                    <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-4 py-2 text-[9px] font-black text-[#7588aa]">Follow</button>
+                  </Glass>
+                ))}
+                <p className="px-2 pt-1 text-center text-[8px] leading-4 text-[#7588aa]">Verified creator records replace these structural slots. Seed and scraped donor channels remain excluded.</p>
+              </div>
             )}
           </section>
         ) : null}
@@ -113,26 +128,39 @@ export default function BnmLockedSearch() {
         {showOpportunities ? (
           <section className="mt-5">
             <SectionTitle title="Local Opportunities" />
-            <Glass className="flex items-center gap-3 p-4">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#102746]"><MapPin className="h-5 w-5 text-[#5ed6ff]" /></div>
-              <div className="min-w-0">
-                <div className="text-[12px] font-black">No verified opportunity source connected yet</div>
-                <p className="mt-1 text-[9px] leading-4 text-[#8fa2c3]">The approved screen includes local opportunities, but this app has no Opportunity entity yet. Nothing is fabricated.</p>
-              </div>
-            </Glass>
+            <div className="space-y-2">
+              {[1,2].map((i) => (
+                <Glass key={i} className="flex items-center gap-3 p-3">
+                  <div className="grid h-14 w-16 shrink-0 place-items-center rounded-[13px] border border-[#213b61] bg-[linear-gradient(135deg,#102745,#151934_55%,#26172d)]"><MapPin className="h-5 w-5 text-[#5ed6ff]" /></div>
+                  <div className="min-w-0 flex-1">
+                    <div className="h-3 w-[84%] rounded-full bg-[#1b2d49]" />
+                    <div className="mt-2 h-2.5 w-[62%] rounded-full bg-[#14243e]" />
+                    <div className="mt-2 flex gap-1.5"><span className="h-5 w-16 rounded-full border border-[#314b74] bg-[#0d1b34]" /><span className="h-5 w-12 rounded-full border border-[#314b74] bg-[#0d1b34]" /></div>
+                  </div>
+                  <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-3 py-2 text-[9px] font-black text-[#7588aa]">Join</button>
+                </Glass>
+              ))}
+              <p className="px-2 text-center text-[8px] leading-4 text-[#7588aa]">No Opportunity entity is connected yet; these rows preserve the approved result geometry only.</p>
+            </div>
           </section>
         ) : null}
 
         {showEvents ? (
           <section className="mt-5">
             <SectionTitle title="Community Events" />
-            <Glass className="flex items-center gap-3 p-4">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-[#1e204b]"><CalendarDays className="h-5 w-5 text-[#b97bff]" /></div>
-              <div className="min-w-0">
-                <div className="text-[12px] font-black">No verified event source connected yet</div>
-                <p className="mt-1 text-[9px] leading-4 text-[#8fa2c3]">Event rows activate only when real community-event data exists.</p>
-              </div>
-            </Glass>
+            <div className="space-y-2">
+              {[1,2].map((i) => (
+                <Glass key={i} className="flex items-center gap-3 p-3">
+                  <div className="grid h-14 w-16 shrink-0 place-items-center rounded-[13px] border border-[#312f67] bg-[linear-gradient(135deg,#171b42,#26183e_55%,#35172f)]"><CalendarDays className="h-5 w-5 text-[#b97bff]" /></div>
+                  <div className="min-w-0 flex-1">
+                    <div className="h-3 w-[78%] rounded-full bg-[#1b2d49]" />
+                    <div className="mt-2 h-2.5 w-[48%] rounded-full bg-[#14243e]" />
+                  </div>
+                  <button disabled className="rounded-full border border-[#3d5882] bg-[#101f3a] px-3 py-2 text-[9px] font-black text-[#7588aa]">Interested</button>
+                </Glass>
+              ))}
+              <p className="px-2 text-center text-[8px] leading-4 text-[#7588aa]">Verified community-event records replace these structural slots when a real source exists.</p>
+            </div>
           </section>
         ) : null}
 
