@@ -12,6 +12,8 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
 import Benchmark from '@/pages/Benchmark';
+import Watch from '@/pages/Watch';
+import Upload from '@/pages/Upload';
 import Wallet from '@/pages/Wallet';
 import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
 import AIVideoStudio from '@/pages/AIVideoStudio';
@@ -48,7 +50,8 @@ import BnmLockedAiCoach from '@/pages/BnmLockedAiCoach';
 import BnmLockedRewards from '@/pages/BnmLockedRewards';
 import BnmLockedCheckout from '@/pages/BnmLockedCheckout';
 import BnmLockedCreate from '@/pages/BnmLockedCreate';
-import BnmLegacy from '@/pages/BnmLegacy';
+import BnmLockedLive from '@/pages/BnmLockedLive';
+import BnmLockedLiveWatch from '@/pages/BnmLockedLiveWatch';
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -164,6 +167,10 @@ const AuthenticatedApp = () => {
       <Route path="/home" element={<BnmLockedHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
       <Route path="/create" element={<BnmLockedCreate />} />
+      <Route path="/upload" element={<Upload />} />
+      <Route path="/watch" element={<Watch />} />
+      <Route path="/live" element={<BnmLockedLive />} />
+      <Route path="/live-watch" element={<BnmLockedLiveWatch />} />
       <Route path="/tracker" element={<BnmTracker />} />
       <Route path="/camera" element={<BnmLockedCreate />} />
       <Route path="/effects" element={<BnmEffects />} />
@@ -177,7 +184,6 @@ const AuthenticatedApp = () => {
       <Route path="/rewards" element={<BnmLockedRewards />} />
       <Route path="/reward-checkout" element={<BnmLockedCheckout />} />
       <Route path="/reward-checkout/:rewardId" element={<BnmLockedCheckout />} />
-      <Route path="/legacy" element={<BnmLegacy />} />
       <Route path="/inbox" element={<BnmInbox />} />
       <Route path="/messages" element={<BnmMessages />} />
       <Route path="/menu" element={<BnmMenu />} />
