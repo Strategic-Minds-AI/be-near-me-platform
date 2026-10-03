@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Aperture, SlidersHorizontal } from "lucide-react";
-import { BnmHeader, BnmPage } from "@/components/bnm/BnmChrome";
+import {
+  BnmLockedScreen,
+  Glass,
+  Pill,
+} from "@/components/bnm/LockedShell";
 
 const filters = ["Original", "Clean", "Cinematic", "Vivid", "B&W"];
 
@@ -8,48 +12,64 @@ export default function BnmEffects() {
   const [selected, setSelected] = useState("Original");
 
   return (
-    <BnmPage nav={false}>
-      <BnmHeader title="Effects & Filters" back />
-      <main className="mx-auto flex min-h-[calc(100dvh-64px)] max-w-md flex-col px-4 pb-8 pt-4">
-        <section className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[30px] border border-white/10 bg-[#090d15]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(213,0,255,.10),transparent_42%)]" />
-          <div className="relative flex flex-col items-center text-center">
-            <div className="flex h-28 w-28 items-center justify-center rounded-full border border-white/10 bg-white/[0.035]">
-              <Aperture className="h-12 w-12 text-[#6e7a92]" strokeWidth={1.5} />
-            </div>
-            <h2 className="mt-6 text-xl font-extrabold text-white">Preview unavailable</h2>
-            <p className="mt-2 max-w-xs text-sm leading-6 text-[#8d98ad]">
-              Effects preview activates when camera media is available.
-            </p>
-          </div>
-        </section>
+    <BnmLockedScreen activeSection="Creators">
+      <div className="px-3 pt-3">
+        <Glass className="p-4">
+          <Pill active>Effects</Pill>
+          <h1 className="mt-3 text-[24px] font-black tracking-[-0.04em]">
+            Effects & Filters
+          </h1>
+          <p className="mt-1 text-sm text-[#8fa0c4]">
+            Effects become available when camera media is active.
+          </p>
+        </Glass>
 
-        <div className="mt-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#7f899f]">
-          <SlidersHorizontal className="h-4 w-4" />
-          Filters
-        </div>
-        <div className="no-scrollbar mt-3 flex gap-3 overflow-x-auto pb-2">
-          {filters.map((filter) => {
-            const active = selected === filter;
-            return (
+        <Glass className="mt-3 overflow-hidden p-3">
+          <section className="relative grid min-h-[430px] place-items-center overflow-hidden rounded-[20px] bg-[radial-gradient(circle_at_50%_35%,rgba(139,82,255,.16),transparent_42%),#071226]">
+            <div className="text-center">
+              <div className="mx-auto grid h-24 w-24 place-items-center rounded-full border border-[#35517c] bg-[#0a1832]">
+                <Aperture className="h-10 w-10 text-[#8d79d9]" />
+              </div>
+              <h2 className="mt-5 text-lg font-black text-white">
+                Preview unavailable
+              </h2>
+              <p className="mt-2 max-w-xs text-sm leading-6 text-[#8fa0c4]">
+                Open the camera to preview filters on live media.
+              </p>
+            </div>
+          </section>
+
+          <div className="mt-4 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#8799bd]">
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+          </div>
+
+          <div className="mt-3 flex gap-2 overflow-x-auto [scrollbar-width:none]">
+            {filters.map((filter) => (
               <button
                 key={filter}
                 type="button"
                 onClick={() => setSelected(filter)}
-                className={
-                  "w-[92px] shrink-0 rounded-[18px] border p-2 transition " +
-                  (active ? "border-fuchsia-400/70 bg-fuchsia-500/10" : "border-white/10 bg-white/[0.035]")
-                }
+                className="shrink-0"
               >
-                <span className="flex aspect-square items-center justify-center rounded-[14px] bg-[#121827] text-[#6c7890]">
-                  <Aperture className="h-7 w-7" strokeWidth={1.5} />
-                </span>
-                <span className={"mt-2 block text-xs font-bold " + (active ? "text-white" : "text-[#8d98ad]")}>{filter}</span>
+                <Glass
+                  className={
+                    "w-[92px] p-2 " +
+                    (selected === filter ? "border-[#8e66ff]" : "")
+                  }
+                >
+                  <span className="grid aspect-square place-items-center rounded-[12px] bg-[#10213e]">
+                    <Aperture className="h-6 w-6 text-[#8d79d9]" />
+                  </span>
+                  <span className="mt-2 block text-[10px] font-black text-white">
+                    {filter}
+                  </span>
+                </Glass>
               </button>
-            );
-          })}
-        </div>
-      </main>
-    </BnmPage>
+            ))}
+          </div>
+        </Glass>
+      </div>
+    </BnmLockedScreen>
   );
 }
