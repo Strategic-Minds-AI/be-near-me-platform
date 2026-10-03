@@ -46,10 +46,23 @@
   },
   "current_status": {
     "drive_structure_verified": true,
-    "screen_masters_folder_empty_at_binding": true,
-    "preview_captures_folder_empty_at_binding": true,
-    "validation_receipts_folder_empty_at_binding": true,
-    "direct_container_to_drive_upload_bridge": "BLOCKED_INTERNAL_TOOL_FAILURE",
-    "browser_capture_gate": "BLOCKED_EXTERNAL_RUNTIME"
+    "approved_master_source": "conversation/library approved PNG masters",
+    "browser_capture_gate": "PASS_CDP_HEADLESS_CHROME",
+    "canonical_viewport": "390x844",
+    "horizontal_overflow_failures": 0,
+    "final_visual_pass": "PASS_10",
+    "final_structural_parity_score": 95.5,
+    "required_threshold": 94,
+    "critical_visual_failures": 0,
+    "final_evidence_sha": "cd8377ad00fb26a66f99fe902a66f4c21d571283",
+    "final_evidence_deployment": "dpl_8z4iUmhuXX2HJoYMkrFN5uxjenUp",
+    "final_evidence_preview": "https://be-near-me-platform-qt7iq9hun-strategic-minds-advisory.vercel.app",
+    "final_screenshot_path": "public/visual-validation/BNM-EA-V1/2026-10-03/pass10/",
+    "drive_receipt_document_id": "121QVHEEev-HLEpJTazooMf7lFOlhbKColT66EU0tD-U",
+    "drive_receipt_document_url": "https://docs.google.com/document/d/121QVHEEev-HLEpJTazooMf7lFOlhbKColT66EU0tD-U/edit?usp=drivesdk",
+    "drive_receipt_contains_master_candidate_comparisons": true,
+    "supplemental_pass5_commit": "1b8c7fdb3e4bb336230abb91725dcb84c902c49b",
+    "production_release": "NOT_EXECUTED",
+    "operator_release_approval_required": true
   }
 }
