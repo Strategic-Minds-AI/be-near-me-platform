@@ -10,6 +10,7 @@ COPY --chown=node:node package.json ./package.json
 COPY --chown=node:node ops/super-agent ./ops/super-agent
 COPY --chown=node:node scripts/validate-container.mjs ./scripts/validate-container.mjs
 COPY --chown=node:node scripts/validate-super-agent-runtime.mjs ./scripts/validate-super-agent-runtime.mjs
+COPY --chown=node:node scripts/run-production-super-agent-canary.mjs ./scripts/run-production-super-agent-canary.mjs
 RUN mkdir -p /data/queue/pending /data/queue/working /data/queue/done /data/queue/blocked /data/queue/dead-letter /data/receipts /data/state \
  && chown -R node:node /data /workspace
 USER node
