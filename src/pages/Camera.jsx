@@ -29,7 +29,7 @@ function pickMime() {
   return "video/webm";
 }
 
-export default function Camera({ embedded = false }) {
+export default function Camera({ embedded = false, caption = "", contentTags = [] }) {
   const navigate = useNavigate();
   const [facing, setFacing] = useState("user");
   const [filter, setFilter] = useState("none");
@@ -190,11 +190,11 @@ export default function Camera({ embedded = false }) {
       }
       const newVideo = await base44.entities.Video.create({
         title: `Clip ${new Date().toLocaleString()}`,
-        description: "",
+        description: String(caption || "").trim(),
         url: vRes.file_url,
         thumbnail_url: thumbUrl,
         category: "entertainment",
-        tags: ["camera", "bnearme"],
+        tags: ["camera", "bnearme", ...contentTags.map((tag) => String(tag).toLowerCase()).filter(Boolean)].slice(0, 8),
         visibility: "public",
         monetized: false,
         processing_status: "done",
