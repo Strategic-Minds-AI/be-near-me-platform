@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Heart, Leaf, MapPin, Mic, PawPrint, Send, Sparkles, Users } from "lucide-react";
-import { BnmLockedScreen, EmptyState, Glass, GradientButton, Pill, asItems } from "@/components/bnm/LockedShell";
+import { BnmLockedScreen, EmptyState, Glass, Pill, asItems } from "@/components/bnm/LockedShell";
 
 function extractText(result) {
   return result?.data?.content || result?.data?.text || result?.content || result?.text || result?.data?.response || "I’m here to help you find a positive next step.";
