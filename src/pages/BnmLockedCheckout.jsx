@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   Check, CheckCircle2, ChevronLeft, Gift, Leaf, LockKeyhole, MapPin, ShieldCheck, Truck
 } from "lucide-react";
@@ -15,11 +15,11 @@ export default function BnmLockedCheckout() {
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
-  const { data:user } = useQuery({queryKey:["currentUser"],queryFn:()=>base44.auth.me()});
+  const { data:user } = useQuery({queryKey:["currentUser"],queryFn:()=>bnmData.auth.me()});
   const { data:channels=[] } = useQuery({
     queryKey:["bnm-checkout-channel-v2",user?.email],
     enabled:!!user?.email,
-    queryFn:async()=>asItems(await base44.entities.Channel.filter({created_by:user.email},"-created_date",1)),
+    queryFn:async()=>asItems(await bnmData.entities.Channel.filter({created_by:user.email},"-created_date",1)),
   });
 
   const channel=channels[0] || null;
@@ -33,7 +33,7 @@ export default function BnmLockedCheckout() {
     setMessage("");
     try{
       const key="reward:"+reward.id+":"+user.email+":"+Date.now();
-      const result=await base44.functions.invoke("redeemReward",{reward_id:reward.id,delivery_method:delivery,idempotency_key:key});
+      const result=await bnmData.functions.invoke("redeemReward",{reward_id:reward.id,delivery_method:delivery,idempotency_key:key});
       const data=result?.data || result;
       if(data?.success===false) throw new Error(data.error||"Redemption failed");
       setStatus("success");
