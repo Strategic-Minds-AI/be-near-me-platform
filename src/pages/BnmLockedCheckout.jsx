@@ -116,7 +116,6 @@ export default function BnmLockedCheckout() {
           </div>
         </Glass>
 
-        {!available ? <div className="mt-2 flex items-center gap-2 rounded-[12px] border border-amber-400/30 bg-amber-400/10 p-2 text-[8px] leading-3 text-amber-100"><LockKeyhole className="h-4 w-4 shrink-0"/>This reward is visible for design parity but cannot be claimed until inventory/partner fulfillment is verified.</div> : null}
         {!enough && channel ? <div className="mt-1.5 rounded-[12px] border border-[#394f78] bg-[#0a1830] p-2 text-[8px] text-[#9fb0cf]">You need {formatCount(Math.max(0,reward.points-points))} more points for this reward.</div> : null}
 
         {message ? <div className={"mt-3 rounded-[14px] border p-3 text-[9px] "+(status==="success"?"border-emerald-400/30 bg-emerald-400/10 text-emerald-100":"border-red-400/30 bg-red-400/10 text-red-100")}>{status==="success"?<CheckCircle2 className="mr-2 inline h-4 w-4"/>:null}{message}</div> : null}
@@ -124,10 +123,12 @@ export default function BnmLockedCheckout() {
         <GradientButton
           onClick={claim}
           disabled={!channel||!enough||!available||status==="loading"||status==="success"}
-          className="mt-2 w-full py-2.5 text-[12px]"
+          className="mt-1.5 w-full py-2 text-[12px]"
         >
           {status==="loading"?"Recording claim…":status==="success"?"Claim Recorded":available?"Claim Reward":"Reward Coming Soon"}
         </GradientButton>
+
+        {!available ? <p className="mt-1.5 text-center text-[7px] leading-3 text-amber-100/75">Fulfillment remains locked until inventory or a verified partner is available.</p> : null}
 
         <div className="mt-2 grid grid-cols-3 gap-2 pb-2 text-center text-[7px] leading-3 text-[#8497b8]">
           <div><ShieldCheck className="mx-auto mb-1 h-4.5 w-4.5 text-[#4de7c0]"/>Secure & Private</div>
