@@ -11,7 +11,6 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
-import Upload from '@/pages/Upload';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import Onboarding from '@/pages/Onboarding';
@@ -32,6 +31,7 @@ import BnmLockedAiCoach from '@/pages/BnmLockedAiCoach';
 import BnmLockedRewards from '@/pages/BnmLockedRewards';
 import BnmLockedCheckout from '@/pages/BnmLockedCheckout';
 import BnmLockedCreate from '@/pages/BnmLockedCreate';
+import BnmLockedUpload from '@/pages/BnmLockedUpload';
 import BnmLockedWatch from '@/pages/BnmLockedWatch';
 import BnmLockedLive from '@/pages/BnmLockedLive';
 import BnmLockedLiveWatch from '@/pages/BnmLockedLiveWatch';
@@ -84,7 +84,7 @@ const AuthenticatedApp = () => {
       <Route path="/home" element={<BnmLockedHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
       <Route path="/create" element={<BnmLockedCreate />} />
-      <Route path="/upload" element={<Upload />} />
+      <Route path="/upload" element={<BnmLockedUpload />} />
       <Route path="/watch" element={<BnmLockedWatch />} />
       <Route path="/live" element={<BnmLockedLive />} />
       <Route path="/live-watch" element={<BnmLockedLiveWatch />} />
