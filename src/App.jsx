@@ -6,30 +6,16 @@ import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Layout from './Layout.jsx'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
-import Benchmark from '@/pages/Benchmark';
 import Watch from '@/pages/Watch';
 import Upload from '@/pages/Upload';
-import Wallet from '@/pages/Wallet';
-import AnalyticsTraffic from '@/pages/AnalyticsTraffic';
-import AIVideoStudio from '@/pages/AIVideoStudio';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
-import AIBuddy from '@/pages/AIBuddy';
 import Onboarding from '@/pages/Onboarding';
-import Dares from '@/pages/Dares';
-import Truths from '@/pages/Truths';
-import VideoScraper from '@/pages/VideoScraper';
-import ViralVideoCreator from '@/pages/ViralVideoCreator';
-import SyncDashboard from '@/pages/SyncDashboard';
-import DomainOps from '@/pages/DomainOps';
-import VideoLibrary from '@/pages/VideoLibrary';
-import PictureToVideo from '@/pages/PictureToVideo';
-import MediaKit from '@/pages/MediaKit';
 import Splash from '@/pages/Splash';
 import BnmDiscover from '@/pages/BnmDiscover';
 import BnmEffects from '@/pages/BnmEffects';
@@ -37,9 +23,6 @@ import BnmInbox from '@/pages/BnmInbox';
 import BnmMessages from '@/pages/BnmMessages';
 import BnmMenu from '@/pages/BnmMenu';
 import BnmTracker from '@/pages/BnmTracker';
-import FactoryBuilder from '@/pages/FactoryBuilder';
-import FactoryDashboard from '@/pages/FactoryDashboard';
-import VisualGallery from '@/pages/VisualGallery';
 import BnmLockedHome from '@/pages/BnmLockedHome';
 import BnmLockedNearby from '@/pages/BnmLockedNearby';
 import BnmLockedChallenge from '@/pages/BnmLockedChallenge';
@@ -88,81 +71,10 @@ const AuthenticatedApp = () => {
       <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/About" element={<About />} />
       <Route path="/Contact" element={<Contact />} />
-      <Route path="/AIBuddy" element={
-        <LayoutWrapper currentPageName="AIBuddy">
-          <AIBuddy />
-        </LayoutWrapper>
-      } />
-      <Route path="/Onboarding" element={
-        <LayoutWrapper currentPageName="Onboarding">
-          <Onboarding />
-        </LayoutWrapper>
-      } />
-      <Route path="/Dares" element={
-        <LayoutWrapper currentPageName="Dares">
-          <Dares />
-        </LayoutWrapper>
-      } />
-      <Route path="/Truths" element={
-        <LayoutWrapper currentPageName="Truths">
-          <Truths />
-        </LayoutWrapper>
-      } />
-      <Route path="/VideoScraper" element={
-        <LayoutWrapper currentPageName="VideoScraper">
-          <VideoScraper />
-        </LayoutWrapper>
-      } />
-      <Route path="/ViralVideoCreator" element={
-        <LayoutWrapper currentPageName="ViralVideoCreator">
-          <ViralVideoCreator />
-        </LayoutWrapper>
-      } />
-      <Route path="/SyncDashboard" element={
-        <LayoutWrapper currentPageName="SyncDashboard">
-          <SyncDashboard />
-        </LayoutWrapper>
-      } />
-      <Route path="/DomainOps" element={
-        <LayoutWrapper currentPageName="DomainOps">
-          <DomainOps />
-        </LayoutWrapper>
-      } />
-      <Route path="/VideoLibrary" element={
-        <LayoutWrapper currentPageName="VideoLibrary">
-          <VideoLibrary />
-        </LayoutWrapper>
-      } />
-      <Route path="/PictureToVideo" element={
-        <LayoutWrapper currentPageName="PictureToVideo">
-          <PictureToVideo />
-        </LayoutWrapper>
-      } />
-      <Route path="/MediaKit" element={
-        <LayoutWrapper currentPageName="MediaKit">
-          <MediaKit />
-        </LayoutWrapper>
-      } />
-      <Route path="/Benchmark" element={
-        <LayoutWrapper currentPageName="Benchmark">
-          <Benchmark />
-        </LayoutWrapper>
-      } />
-      <Route path="/Wallet" element={
-        <LayoutWrapper currentPageName="Wallet">
-          <Wallet />
-        </LayoutWrapper>
-      } />
-      <Route path="/AnalyticsTraffic" element={
-        <LayoutWrapper currentPageName="AnalyticsTraffic">
-          <AnalyticsTraffic />
-        </LayoutWrapper>
-      } />
-      <Route path="/AIVideoStudio" element={
-        <LayoutWrapper currentPageName="AIVideoStudio">
-          <AIVideoStudio />
-        </LayoutWrapper>
-      } />
+      <Route path="/AIBuddy" element={<Navigate to="/ai-coach" replace />} />
+      <Route path="/Dares" element={<Navigate to="/challenge" replace />} />
+      <Route path="/Truths" element={<Navigate to="/challenge" replace />} />
+      <Route path="/Wallet" element={<Navigate to="/rewards" replace />} />
       <Route path="/" element={<Splash />} />
       <Route path="/home" element={<BnmLockedHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
@@ -187,13 +99,6 @@ const AuthenticatedApp = () => {
       <Route path="/inbox" element={<BnmInbox />} />
       <Route path="/messages" element={<BnmMessages />} />
       <Route path="/menu" element={<BnmMenu />} />
-      <Route path="/builder" element={<FactoryBuilder />} />
-      <Route path="/factory" element={<FactoryDashboard />} />
-      <Route path="/gallery" element={
-        <LayoutWrapper currentPageName="VisualGallery">
-          <VisualGallery />
-        </LayoutWrapper>
-      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
