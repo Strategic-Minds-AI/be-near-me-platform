@@ -5,7 +5,6 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import Layout from './Layout.jsx'
 import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -13,7 +12,6 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OAuthConsent from '@/pages/OAuthConsent';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
-import Onboarding from '@/pages/Onboarding';
 import Splash from '@/pages/Splash';
 import BnmDiscover from '@/pages/BnmDiscover';
 import BnmEffects from '@/pages/BnmEffects';
@@ -37,10 +35,7 @@ import BnmLockedUpload from '@/pages/BnmLockedUpload';
 import BnmLockedWatch from '@/pages/BnmLockedWatch';
 import BnmLockedLive from '@/pages/BnmLockedLive';
 import BnmLockedLiveWatch from '@/pages/BnmLockedLiveWatch';
-
-const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>{children}</Layout>
-  : <>{children}</>;
+import BnmLockedOnboarding from '@/pages/BnmLockedOnboarding';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
@@ -77,11 +72,7 @@ const AuthenticatedApp = () => {
       <Route path="/Dares" element={<Navigate to="/challenge" replace />} />
       <Route path="/Truths" element={<Navigate to="/challenge" replace />} />
       <Route path="/Wallet" element={<Navigate to="/rewards" replace />} />
-      <Route path="/onboarding" element={
-        <LayoutWrapper currentPageName="Onboarding">
-          <Onboarding />
-        </LayoutWrapper>
-      } />
+      <Route path="/onboarding" element={<BnmLockedOnboarding />} />
       <Route path="/" element={<Splash />} />
       <Route path="/home" element={<BnmLockedHome />} />
       <Route path="/discover" element={<BnmDiscover />} />
