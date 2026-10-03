@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { CalendarDays, MapPin, Play, Search, Users } from "lucide-react";
 import {
   Avatar, BnmLockedScreen, EmptyState, Glass, GradientButton, Pill, SectionTitle, asItems, formatCount
@@ -18,7 +18,7 @@ export default function BnmLockedSearch() {
 
   const { data: rawVideos = [], isLoading } = useQuery({
     queryKey: ["bnm-search-public-videos-v2"],
-    queryFn: async () => asItems(await base44.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
+    queryFn: async () => asItems(await bnmData.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
   });
 
   const videos = useMemo(() => rawVideos.filter(isProductionContent), [rawVideos]);
