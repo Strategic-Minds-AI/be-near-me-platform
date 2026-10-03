@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { Radio, Users } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import LivePlayer from "@/components/live/LivePlayer";
 import LiveChat from "@/components/live/LiveChat";
 import {
@@ -18,7 +18,7 @@ import {
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -38,7 +38,7 @@ export default function BnmLockedLiveWatch() {
   const { data: streams = [], isLoading } = useQuery({
     queryKey: ["bnmLiveStream", streamId],
     queryFn: async () =>
-      asItems(await base44.entities.LiveStream.filter({ id: streamId }, { limit: 1 })),
+      asItems(await bnmData.entities.LiveStream.filter({ id: streamId }, { limit: 1 })),
     enabled: Boolean(streamId),
     refetchInterval: 10000,
   });
@@ -49,7 +49,7 @@ export default function BnmLockedLiveWatch() {
     queryKey: ["bnmLiveChannel", currentStream?.channel_id],
     queryFn: async () =>
       asItems(
-        await base44.entities.Channel.filter(
+        await bnmData.entities.Channel.filter(
           { id: currentStream.channel_id },
           { limit: 1 }
         )
@@ -63,7 +63,7 @@ export default function BnmLockedLiveWatch() {
     queryKey: ["bnmLiveSubscription", currentChannel?.id, user?.email],
     queryFn: async () =>
       asItems(
-        await base44.entities.Subscription.filter(
+        await bnmData.entities.Subscription.filter(
           { channel_id: currentChannel.id, created_by: user.email },
           { limit: 1 }
         )
@@ -78,13 +78,13 @@ export default function BnmLockedLiveWatch() {
   useEffect(() => {
     if (!currentStream?.id) return;
     const current = Number(currentStream.viewers_current || 0);
-    base44.entities.LiveStream.update(currentStream.id, {
+    bnmData.entities.LiveStream.update(currentStream.id, {
       viewers_current: current + 1,
       total_views: Number(currentStream.total_views || 0) + 1,
     }).catch(() => {});
 
     return () => {
-      base44.entities.LiveStream.update(currentStream.id, {
+      bnmData.entities.LiveStream.update(currentStream.id, {
         viewers_current: Math.max(0, current),
       }).catch(() => {});
     };
@@ -94,10 +94,10 @@ export default function BnmLockedLiveWatch() {
     mutationFn: async () => {
       if (!user?.email || !currentChannel?.id) return;
       if (subscriptions[0]) {
-        await base44.entities.Subscription.delete(subscriptions[0].id);
+        await bnmData.entities.Subscription.delete(subscriptions[0].id);
         return;
       }
-      await base44.entities.Subscription.create({
+      await bnmData.entities.Subscription.create({
         channel_id: currentChannel.id,
         channel_name: currentChannel.name,
         channel_avatar: currentChannel.avatar_url,
