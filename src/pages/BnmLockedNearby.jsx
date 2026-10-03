@@ -111,11 +111,25 @@ export default function BnmLockedNearby() {
             ))}
           </div>
         ) : (
-          <EmptyState
-            icon={Users}
-            title="No verified nearby activity yet"
-            body="The map stays honest: Be Near Me will show real public community activity here when it exists. No fake pins, distances, attendance, or events."
-          />
+          <div className="space-y-2">
+            {[1,2,3,4].map((i) => (
+              <Glass key={i} className="flex items-center gap-2.5 p-2">
+                <div className="grid h-[76px] w-[96px] shrink-0 place-items-center rounded-[12px] border border-[#20395f] bg-[linear-gradient(135deg,#102745,#141932_55%,#28172f)]">
+                  {i === 1 ? <Leaf className="h-6 w-6 text-[#5acfa9]" /> : i === 2 ? <Users className="h-6 w-6 text-[#8d74df]" /> : i === 3 ? <Heart className="h-6 w-6 text-[#e4589f]" /> : <PawPrint className="h-6 w-6 text-[#5da8df]" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="h-3 w-[78%] rounded-full bg-[#1a2c49]" />
+                  <div className="mt-2 h-2.5 w-[58%] rounded-full bg-[#14243e]" />
+                  <div className="mt-2 flex gap-1.5">
+                    <span className="h-5 w-16 rounded-full border border-[#314b74] bg-[#0d1b34]" />
+                    <span className="h-5 w-12 rounded-full border border-[#314b74] bg-[#0d1b34]" />
+                  </div>
+                </div>
+                <button disabled className="rounded-full border border-[#3f5982] bg-[#101f3a] px-3 py-2 text-[8px] font-black text-[#788bac]">Join</button>
+              </Glass>
+            ))}
+            <p className="px-2 pt-1 text-center text-[8px] leading-4 text-[#7588aa]">Verified nearby activity will replace these structural placeholders. No fake events, distances, attendance, or businesses.</p>
+          </div>
         )}
       </section>
     </BnmLockedScreen>
