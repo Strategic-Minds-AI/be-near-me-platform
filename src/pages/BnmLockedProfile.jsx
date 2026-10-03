@@ -67,7 +67,7 @@ export default function BnmLockedProfile() {
                 <Users className="h-8 w-8 text-[#8068cf]" />
               </div>
             </div>
-            <Link to="/CreateChannel"><GradientButton className="mb-1 px-6 py-2.5">Create Channel</GradientButton></Link>
+            <Link to="/create-channel"><GradientButton className="mb-1 px-6 py-2.5">Create Channel</GradientButton></Link>
           </div>
 
           <h1 className="mt-3 text-[27px] font-black leading-none tracking-[-.04em]">Your creator profile</h1>
@@ -121,7 +121,7 @@ export default function BnmLockedProfile() {
               <GradientButton className="px-6 py-2.5">+ Follow</GradientButton>
             </div>
           ) : (
-            <Link to="/Settings"><GradientButton className="mb-1 px-6 py-2.5">Edit Profile</GradientButton></Link>
+            <Link to="/settings"><GradientButton className="mb-1 px-6 py-2.5">Edit Profile</GradientButton></Link>
           )}
         </div>
 
