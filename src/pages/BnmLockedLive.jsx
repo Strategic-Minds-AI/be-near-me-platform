@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Radio, Users } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   Avatar,
   BnmLockedScreen,
@@ -17,7 +17,7 @@ export default function BnmLockedLive() {
     queryKey: ["bnmLiveStreams"],
     queryFn: async () =>
       asItems(
-        await base44.entities.LiveStream.filter(
+        await bnmData.entities.LiveStream.filter(
           { status: "live", visibility: "public" },
           { sort: "-viewers_current", limit: 50 }
         )
