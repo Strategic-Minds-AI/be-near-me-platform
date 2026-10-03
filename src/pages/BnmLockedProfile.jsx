@@ -55,9 +55,48 @@ export default function BnmLockedProfile() {
   if (!channelId && !isLoading) {
     return (
       <BnmLockedScreen activeSection="Creators">
-        <div className="pt-6">
-          <EmptyState icon={Users} title="Create your creator profile" body="Your profile will appear here after you create a channel." />
-          <div className="px-4 pt-3"><Link to="/CreateChannel"><GradientButton className="w-full">Create Channel</GradientButton></Link></div>
+        <div className="relative h-[184px] overflow-hidden bg-[radial-gradient(circle_at_70%_20%,rgba(166,72,255,.25),transparent_30%),linear-gradient(135deg,#153d67,#172447_55%,#3f183f)]">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#020b19] via-transparent to-transparent" />
+          <div className="absolute bottom-3 right-3 rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-[9px] font-black text-[#9fb0cf] backdrop-blur">NEW CREATOR</div>
+        </div>
+
+        <div className="-mt-12 px-3">
+          <div className="relative z-10 flex items-end justify-between gap-3">
+            <div className="grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-[#30c8ff] via-[#9650ff] to-[#ff3aa9] p-[2px] shadow-[0_0_22px_rgba(140,75,255,.28)]">
+              <div className="grid h-full w-full place-items-center rounded-full bg-[#0a1730]">
+                <Users className="h-8 w-8 text-[#8068cf]" />
+              </div>
+            </div>
+            <Link to="/CreateChannel"><GradientButton className="mb-1 px-6 py-2.5">Create Channel</GradientButton></Link>
+          </div>
+
+          <h1 className="mt-3 text-[27px] font-black leading-none tracking-[-.04em]">Your creator profile</h1>
+          <div className="mt-1 text-[10px] text-[#9cadce]">Set up your channel to publish and track real impact.</div>
+
+          <div className="mt-4 grid grid-cols-4 divide-x divide-[#2a3d61] text-center">
+            <div><b className="block text-[18px]">0</b><span className="text-[9px] text-[#8fa0c2]">Posts</span></div>
+            <div><b className="block text-[18px]">0</b><span className="text-[9px] text-[#8fa0c2]">Followers</span></div>
+            <div><b className="block text-[18px]">0</b><span className="text-[9px] text-[#8fa0c2]">Views</span></div>
+            <div><b className="block text-[18px]">—</b><span className="text-[9px] text-[#8fa0c2]">Impact</span></div>
+          </div>
+
+          <div className="mt-3 flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
+            <Pill><Leaf className="h-3 w-3" /> Community Creator</Pill>
+            <Pill>Profile setup required</Pill>
+          </div>
+
+          <div className="mt-4 grid grid-cols-4 border-b border-[#233858] pb-2 text-center text-[10px] font-black text-[#96a7c7]">
+            <span className="text-white">▦ Posts</span><span>▷ Reels</span><span>♧ Impact</span><span>♙ Tagged</span>
+          </div>
+
+          <div className="mt-1 grid grid-cols-3 gap-1 pb-4">
+            {[1,2,3,4,5,6,7,8,9].map((i) => (
+              <div key={i} className="relative aspect-[.82] overflow-hidden rounded-[7px] border border-[#1d3457] bg-[linear-gradient(135deg,#0b1930,#10172c_55%,#23132b)]">
+                <div className="absolute inset-x-3 top-3 h-2 rounded-full bg-[#162741]" />
+                <div className="absolute inset-x-5 bottom-4 h-2 rounded-full bg-[#13213a]" />
+              </div>
+            ))}
+          </div>
         </div>
       </BnmLockedScreen>
     );
