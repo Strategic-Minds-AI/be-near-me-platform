@@ -1,8 +1,10 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.52";
 
 const PRODUCT_CONFIG: Record<string, { priceEnv: string; mode: "payment" | "subscription" }> = {
-  premium_monthly: { priceEnv: "BNM_STRIPE_PRICE_PREMIUM_MONTHLY", mode: "subscription" },
-  premium_annual: { priceEnv: "BNM_STRIPE_PRICE_PREMIUM_ANNUAL", mode: "subscription" },
+  viewer_monthly: { priceEnv: "BNM_STRIPE_PRICE_VIEWER_MONTHLY", mode: "subscription" },
+  viewer_annual: { priceEnv: "BNM_STRIPE_PRICE_VIEWER_ANNUAL", mode: "subscription" },
+  creator_monthly: { priceEnv: "BNM_STRIPE_PRICE_CREATOR_MONTHLY", mode: "subscription" },
+  creator_annual: { priceEnv: "BNM_STRIPE_PRICE_CREATOR_ANNUAL", mode: "subscription" },
   supporter: { priceEnv: "BNM_STRIPE_PRICE_SUPPORTER", mode: "payment" },
 };
 
