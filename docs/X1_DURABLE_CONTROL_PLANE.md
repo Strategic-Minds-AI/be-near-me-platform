@@ -61,3 +61,8 @@ In X1 mode:
 - local `/data` remains only a diagnostic cache.
 
 In local mode, the previously validated file-backed queue remains available for CI and development.
+
+
+## CI contract
+
+Every change to the durable adapter must pass the X1 adapter unit contract plus the full container build, dependency audits, Compose smoke test, restart-persistence test, fail-closed protected-action test, and non-privileged runtime assertions.
