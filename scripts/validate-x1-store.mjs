@@ -68,7 +68,7 @@ const fetchImpl = async (url, options = {}) => {
   if (String(url).includes("/rest/v1/x1_audit_receipts")) {
     return new Response("", { status: 201 });
   }
-  return new Response("", { status: 204 });
+  return new Response(null, { status: 204 });
 };
 
 const store = new X1Store(config, { fetchImpl });
