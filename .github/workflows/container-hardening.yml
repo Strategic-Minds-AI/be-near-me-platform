@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm audit fix --package-lock-only --omit=dev || true
+          npm audit fix --package-lock-only || true
           if git diff --quiet -- package-lock.json; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
@@ -75,8 +75,11 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Critical dependency audit
-        run: npm audit --omit=dev --audit-level=critical
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Build-chain critical audit
+        run: npm audit --audit-level=critical
 
       - name: Build hardened images
         run: |
@@ -85,7 +88,7 @@ jobs:
 
       - name: Compose smoke test
         run: |
-          AGENT_SOURCE_SHA="$GITHUB_SHA" docker compose up -d --build web super-agent
+          AGENT_SOURCE_SHA="$GITHUB_SHA" AGENT_POLL_MS=10000 docker compose up -d --build web super-agent
           for i in {1..30}; do
             if curl -fsS http://127.0.0.1:8080/healthz >/dev/null; then break; fi
             sleep 2
@@ -94,12 +97,21 @@ jobs:
           docker compose ps
           docker compose logs --no-color super-agent | tail -100
 
-      - name: Assert fail-closed Super-Agent behavior
+      - name: Assert fail-closed and persistent Super-Agent behavior
         shell: bash
         run: |
+          set -euo pipefail
           AGENT_ID=$(docker compose ps -q super-agent)
           test -n "$AGENT_ID"
           docker exec "$AGENT_ID" node -e 'fetch("http://127.0.0.1:8787/healthz").then(async r=>{if(!r.ok)process.exit(1);const b=await r.json();if(!b.ok)process.exit(1)})'
+          docker exec "$AGENT_ID" node scripts/validate-super-agent-runtime.mjs seed-and-verify
+          docker compose restart super-agent
+          for i in {1..30}; do
+            if docker exec "$(docker compose ps -q super-agent)" node -e 'fetch("http://127.0.0.1:8787/healthz").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))'; then break; fi
+            sleep 1
+          done
+          AGENT_ID=$(docker compose ps -q super-agent)
+          docker exec "$AGENT_ID" node scripts/validate-super-agent-runtime.mjs verify-persisted
           docker exec "$AGENT_ID" node -e 'fetch("http://127.0.0.1:8787/status").then(async r=>{if(!r.ok)process.exit(1);const b=await r.json();if(!b.lastHeartbeat)process.exit(1)})'
 
       - name: Assert no privileged runtime
@@ -110,6 +122,11 @@ jobs:
           test "$(docker inspect -f '{{.HostConfig.Privileged}}' "$AGENT_ID")" = "false"
           test "$(docker inspect -f '{{.HostConfig.ReadonlyRootfs}}' "$WEB_ID")" = "true"
           test "$(docker inspect -f '{{.HostConfig.ReadonlyRootfs}}' "$AGENT_ID")" = "true"
+          docker inspect -f '{{json .HostConfig.CapDrop}}' "$WEB_ID" | grep -q '"ALL"'
+          docker inspect -f '{{json .HostConfig.CapDrop}}' "$AGENT_ID" | grep -q '"ALL"'
+          docker inspect -f '{{json .HostConfig.SecurityOpt}}' "$WEB_ID" | grep -q 'no-new-privileges'
+          docker inspect -f '{{json .HostConfig.SecurityOpt}}' "$AGENT_ID" | grep -q 'no-new-privileges'
+          test -z "$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/var/run/docker.sock"}}docker-socket{{end}}{{end}}' "$AGENT_ID")"
 
       - name: Cleanup
         if: always()
