@@ -1,0 +1,28 @@
+{
+  "name": "CryptoPaymentReceipt",
+  "type": "object",
+  "properties": {
+    "idempotency_key": { "type": "string" },
+    "user_email": { "type": "string" },
+    "membership_tier": { "type": "string", "enum": ["member_10", "member_20"] },
+    "network": { "type": "string", "enum": ["sepolia", "mainnet"], "default": "sepolia" },
+    "chain_id": { "type": "number" },
+    "tx_hash": { "type": "string" },
+    "from_address": { "type": "string" },
+    "to_address": { "type": "string" },
+    "asset": { "type": "string" },
+    "amount_atomic": { "type": "string" },
+    "expected_usd_cents": { "type": "number" },
+    "confirmations": { "type": "number", "default": 0 },
+    "status": { "type": "string", "enum": ["pending", "verified", "failed", "replayed", "reversed"], "default": "pending" },
+    "verified_at": { "type": "string", "format": "date-time" },
+    "verification_reason": { "type": "string" }
+  },
+  "required": ["idempotency_key", "user_email", "membership_tier", "network", "tx_hash", "status"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "$or": [{ "user_email": "{{user.email}}" }, { "user_condition": { "role": "admin" } }] },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}
