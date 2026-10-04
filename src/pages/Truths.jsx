@@ -176,11 +176,11 @@ export default function Truths() {
           )}
           {!isIncoming && truth.status === "revealed" && !truth.reward_paid && (
             <Button size="sm" onClick={() => handleProcessReward(truth)} className="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full">
-              <Coins className="w-4 h-4 mr-1" /> Pay Reward
+              <Coins className="w-4 h-4 mr-1" /> Settle Reward
             </Button>
           )}
           {isIncoming && truth.status === "revealed" && truth.reward_paid && (
-            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Reward received!</Badge>
+            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Activity settled</Badge>
           )}
         </div>
       </CardContent>
