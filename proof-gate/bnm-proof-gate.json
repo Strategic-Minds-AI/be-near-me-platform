@@ -1,0 +1,35 @@
+{
+  "gate_id": "BNM-PROOF-GATE-V1",
+  "visual_lock": "BNM-EA-V1",
+  "manifest": "visual-lock/BNM-EA-V1/VISUAL_LOCK_MANIFEST.json",
+  "app_file": "src/App.jsx",
+  "legacy_config_file": "src/pages.config.js",
+  "required_screen_count": 10,
+  "required_routes": [
+    {"route": "/home", "component": "BnmLockedHome"},
+    {"route": "/nearby", "component": "BnmLockedNearby"},
+    {"route": "/challenge", "component": "BnmLockedChallenge"},
+    {"route": "/search", "component": "BnmLockedSearch"},
+    {"route": "/profile", "component": "BnmLockedProfile"},
+    {"route": "/creator-studio", "component": "BnmLockedCreatorStudio"},
+    {"route": "/ai-coach", "component": "BnmLockedAiCoach"},
+    {"route": "/rewards", "component": "BnmLockedRewards"},
+    {"route": "/reward-checkout", "component": "BnmLockedCheckout"},
+    {"route": "/create", "component": "BnmLockedCreate"}
+  ],
+  "forbidden_legacy_imports": [
+    "./pages/Home",
+    "./pages/Watch",
+    "./pages/Channel",
+    "./pages/Explore",
+    "./pages/Trending",
+    "./pages/Subscriptions",
+    "./pages/Shorts",
+    "./pages/Premium"
+  ],
+  "parity_policy": {
+    "minimum_score": 94,
+    "critical_fails_allowed": 0
+  },
+  "rule": "NO EVIDENCE = NO PASS"
+}
