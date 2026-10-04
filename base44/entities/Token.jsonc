@@ -2,100 +2,29 @@
   "name": "Token",
   "type": "object",
   "properties": {
-    "name": {
-      "type": "string",
-      "description": "Token full name"
-    },
-    "symbol": {
-      "type": "string",
-      "description": "Ticker symbol, 2-6 uppercase letters"
-    },
-    "decimals": {
-      "type": "number",
-      "default": 18,
-      "description": "ERC-20 decimals"
-    },
-    "total_supply": {
-      "type": "string",
-      "description": "Total supply as a string to preserve precision"
-    },
-    "contract_address": {
-      "type": "string",
-      "description": "Prospective ERC-20 contract address (CREATE2/nonce-derived, pre-deployment)"
-    },
-    "network": {
-      "type": "string",
-      "enum": [
-        "mainnet",
-        "sepolia"
-      ],
-      "default": "mainnet"
-    },
-    "wallet_id": {
-      "type": "string",
-      "description": "Deploying wallet record id"
-    },
-    "deployer_address": {
-      "type": "string",
-      "description": "Deploying wallet address"
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "defined",
-        "deployed"
-      ],
-      "default": "defined"
-    },
-    "description": {
-      "type": "string",
-      "maxLength": 1000
-    }
+    "name": { "type": "string", "description": "Token full name" },
+    "symbol": { "type": "string", "description": "Ticker symbol, 2-6 uppercase letters" },
+    "decimals": { "type": "number", "default": 18, "description": "ERC-20 decimals" },
+    "total_supply": { "type": "string", "description": "Current or initial supply as a string to preserve precision" },
+    "supply_model": { "type": "string", "enum": ["fixed", "unlimited_mintable"], "default": "fixed" },
+    "mintable": { "type": "boolean", "default": false },
+    "max_supply": { "type": "string", "description": "Optional cap. Blank for unlimited_mintable." },
+    "mint_authority_mode": { "type": "string", "enum": ["none", "governed_backend"], "default": "none" },
+    "policy_id": { "type": "string" },
+    "contract_address": { "type": "string", "description": "Prospective or deployed ERC-20 contract address; status distinguishes evidence." },
+    "network": { "type": "string", "enum": ["mainnet", "sepolia"], "default": "sepolia" },
+    "wallet_id": { "type": "string", "description": "Deploying wallet record id" },
+    "deployer_address": { "type": "string", "description": "Deploying wallet address" },
+    "status": { "type": "string", "enum": ["defined", "deployment_pending", "deployed", "blocked"], "default": "defined" },
+    "deployment_tx_hash": { "type": "string" },
+    "deployment_validator_status": { "type": "string", "enum": ["UNKNOWN", "PASS", "FAIL", "BLOCKED"], "default": "UNKNOWN" },
+    "description": { "type": "string", "maxLength": 1000 }
   },
-  "required": [
-    "name",
-    "symbol",
-    "contract_address"
-  ],
+  "required": ["name", "symbol", "contract_address"],
   "rls": {
-    "create": {
-      "created_by": "{{user.email}}"
-    },
-    "read": {
-      "$or": [
-        {
-          "created_by": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "update": {
-      "$or": [
-        {
-          "created_by": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "delete": {
-      "$or": [
-        {
-          "created_by": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    }
+    "create": { "created_by": "{{user.email}}" },
+    "read": { "$or": [{ "created_by": "{{user.email}}" }, { "user_condition": { "role": "admin" } }] },
+    "update": { "$or": [{ "created_by": "{{user.email}}" }, { "user_condition": { "role": "admin" } }] },
+    "delete": { "$or": [{ "created_by": "{{user.email}}" }, { "user_condition": { "role": "admin" } }] }
   }
 }
