@@ -1,6 +1,11 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.52";
+import { paidMembershipPlanFromProductKey } from "../../shared/bnmMembershipPolicy.ts";
 
 const PRODUCT_CONFIG: Record<string, { priceEnv: string; mode: "payment" | "subscription" }> = {
+  membership_10: { priceEnv: "BNM_STRIPE_PRICE_MEMBERSHIP_10", mode: "payment" },
+  membership_20: { priceEnv: "BNM_STRIPE_PRICE_MEMBERSHIP_20", mode: "payment" },
+
+  // Preserved donor products. They are not the canonical BNM V2 membership tiers.
   viewer_monthly: { priceEnv: "BNM_STRIPE_PRICE_VIEWER_MONTHLY", mode: "subscription" },
   viewer_annual: { priceEnv: "BNM_STRIPE_PRICE_VIEWER_ANNUAL", mode: "subscription" },
   creator_monthly: { priceEnv: "BNM_STRIPE_PRICE_CREATOR_MONTHLY", mode: "subscription" },
@@ -26,6 +31,7 @@ export default async function(req: Request) {
     const product = PRODUCT_CONFIG[productKey];
     if (!product) return Response.json({ error: "Unsupported product_key" }, { status: 400 });
 
+    const membership = paidMembershipPlanFromProductKey(productKey);
     const secretKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
     const publicAppUrl = (Deno.env.get("BNM_PUBLIC_APP_URL") || "").replace(/\/$/, "");
     if (!secretKey || !publicAppUrl) {
@@ -49,19 +55,29 @@ export default async function(req: Request) {
     const priceId = Deno.env.get(product.priceEnv) || "";
     if (!priceId) return Response.json({ error: "This payment product is not configured", code: "PRICE_NOT_CONFIGURED" }, { status: 503 });
 
+    const successPath = membership ? "/membership" : "/premium";
     const form = new URLSearchParams();
     form.set("mode", product.mode);
     form.set("line_items[0][price]", priceId);
     form.set("line_items[0][quantity]", "1");
-    form.set("success_url", publicAppUrl + "/premium?payment=success&session_id={CHECKOUT_SESSION_ID}");
-    form.set("cancel_url", publicAppUrl + "/premium?payment=cancelled");
+    form.set("success_url", publicAppUrl + successPath + "?payment=success&session_id={CHECKOUT_SESSION_ID}");
+    form.set("cancel_url", publicAppUrl + successPath + "?payment=cancelled");
     form.set("customer_email", user.email);
     form.set("client_reference_id", String(user.id || user.email));
     form.set("metadata[user_email]", user.email);
     form.set("metadata[product_key]", productKey);
     form.set("metadata[beneficiary_policy]", "BNM-EA-REVENUE-001");
+
+    if (membership) {
+      form.set("metadata[membership_tier]", membership.tier);
+      form.set("metadata[infinity_coin_grant]", String(membership.infinityCoinGrant));
+      form.set("metadata[membership_price_cents]", String(membership.priceCents));
+      form.set("metadata[economic_decision]", membership.economicDecision);
+    }
+
     if (product.mode === "subscription") {
       form.set("subscription_data[metadata][user_email]", user.email);
+      form.set("subscription_data[metadata][product_key]", productKey);
       form.set("subscription_data[metadata][beneficiary_policy]", "BNM-EA-REVENUE-001");
     }
 
@@ -85,6 +101,9 @@ export default async function(req: Request) {
       checkout_url: session.url,
       checkout_session_id: session.id,
       mode: isTestKey ? "test" : "live",
+      product_key: productKey,
+      membership_tier: membership?.tier || null,
+      infinity_coin_grant: membership?.infinityCoinGrant || 0,
       beneficiary_policy: "BNM-EA-REVENUE-001",
       platform_share_bps: 0,
       beneficiary_pool_share_bps: 10000,
