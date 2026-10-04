@@ -6,6 +6,7 @@ import {
   BNM_REVENUE_POLICY_ID,
   computePlatformNetReceipt,
 } from "../../shared/bnmRevenueLaw.ts";
+import { applyPaidMembership, reverseMembershipForReceipt } from "../../shared/bnmMembershipLedger.ts";
 
 const items = (value: any) => Array.isArray(value) ? value : value?.items || [];
 const encoder = new TextEncoder();
@@ -148,7 +149,27 @@ export default async function(req: Request) {
         reconciled: false,
       });
       await rewriteAllocation(base44, receipt, net);
-      return Response.json({ received: true, receipt_id: receipt.id, beneficiary_pool: BNM_BENEFICIARY_POOL, beneficiary_pool_cents: net });
+
+      const tier = String(session.metadata?.membership_tier || "");
+      let membershipResult: any = null;
+      if (tier === "member_10" || tier === "member_20") {
+        membershipResult = await applyPaidMembership(base44, {
+          userEmail: receipt.user_email,
+          tier,
+          paymentMethod: "stripe",
+          paymentReceiptId: receipt.id,
+          sourceTransactionId: paymentIntentId,
+        });
+      }
+
+      return Response.json({
+        received: true,
+        receipt_id: receipt.id,
+        beneficiary_pool: BNM_BENEFICIARY_POOL,
+        beneficiary_pool_cents: net,
+        membership_entitlement_id: membershipResult?.entitlement?.id || null,
+        infinity_coin_grant_status: membershipResult?.entitlement?.grant_status || null,
+      });
     }
 
     if (event.type === "invoice.payment_succeeded") {
@@ -224,7 +245,8 @@ export default async function(req: Request) {
       });
       const refreshed = { ...receipt, refund_amount_cents: refund, platform_net_receipt_cents: net };
       await rewriteAllocation(base44, refreshed, net, true);
-      return Response.json({ received: true, adjusted: "refund", beneficiary_pool_cents: net });
+      const membershipReversal = await reverseMembershipForReceipt(base44, receipt.id, "refund");
+      return Response.json({ received: true, adjusted: "refund", beneficiary_pool_cents: net, membership_reversal: membershipReversal });
     }
 
     if (event.type === "charge.dispute.created") {
@@ -251,7 +273,8 @@ export default async function(req: Request) {
       });
       const refreshed = { ...receipt, chargeback_amount_cents: disputed, platform_net_receipt_cents: net };
       await rewriteAllocation(base44, refreshed, net, true);
-      return Response.json({ received: true, adjusted: "dispute", beneficiary_pool_cents: net });
+      const membershipReversal = await reverseMembershipForReceipt(base44, receipt.id, "dispute");
+      return Response.json({ received: true, adjusted: "dispute", beneficiary_pool_cents: net, membership_reversal: membershipReversal });
     }
 
     return Response.json({ received: true, ignored: event.type });
