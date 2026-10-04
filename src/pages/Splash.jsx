@@ -1,16 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { bnmData } from "@/services/bnmData";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
 
 // BNM-01-SPLASH — Launch / entry screen.
-// Full-screen, no layout wrapper, no bottom nav.
-// Visual-lock entry screen for the approved B Near Me mobile experience.
+// Google/Base44 login is intentionally not used as the product entry gate.
 export default function Splash() {
   const navigate = useNavigate();
 
   return (
     <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-bnm-bg">
-      {/* Ambient violet glow at top */}
       <div
         className="absolute top-0 inset-x-0 h-1/3 pointer-events-none"
         style={{
@@ -19,15 +16,11 @@ export default function Splash() {
         }}
       />
 
-      {/* Content layer (above glow) */}
       <div className="relative z-10 flex flex-col items-center w-full h-full">
-        {/* Top spacer — pushes logo to ~35% */}
         <div style={{ flexGrow: 3 }} />
 
-        {/* Logo pin mark */}
         <BnmLogoMark className="w-28 h-32 mb-6" />
 
-        {/* Wordmark */}
         <h1 className="text-3xl font-extrabold tracking-tight text-bnm-text mb-20">
           B NEAR ME
         </h1>
@@ -35,7 +28,6 @@ export default function Splash() {
           People · Places · Moments<br />Near You
         </p>
 
-        {/* CTA Button — horizontal pink→magenta→violet gradient */}
         <button
           onClick={() => navigate("/home")}
           className="w-[80%] h-12 rounded-full font-bold text-white text-base transition-transform active:scale-95"
@@ -48,21 +40,25 @@ export default function Splash() {
         </button>
 
         <button
-          onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
+          onClick={() => navigate("/create")}
           className="mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-transform active:scale-95"
         >
-          Log In
+          Open Create
         </button>
 
-        {/* Bottom spacer — pushes secondary text to ~88% */}
+        <button
+          onClick={() => navigate("/account")}
+          className="mt-3 text-xs font-bold text-bnm-secondary underline decoration-violet-500/50 underline-offset-4"
+        >
+          Account
+        </button>
+
         <div style={{ flexGrow: 2 }} />
 
-        {/* Secondary text */}
         <p className="text-xs text-bnm-secondary text-center leading-relaxed mb-5 px-6">
           Create · Watch · Explore · Connect
         </p>
 
-        {/* Home indicator */}
         <div className="w-32 h-2 bg-white/80 rounded-full mb-2" />
       </div>
     </div>
