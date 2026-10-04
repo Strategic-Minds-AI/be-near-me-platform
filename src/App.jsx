@@ -13,6 +13,7 @@ import OAuthConsent from '@/pages/OAuthConsent';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import Splash from '@/pages/Splash';
+import BnmAccount from '@/pages/BnmAccount';
 import BnmDiscover from '@/pages/BnmDiscover';
 import BnmEffects from '@/pages/BnmEffects';
 import BnmInbox from '@/pages/BnmInbox';
@@ -36,42 +37,63 @@ import BnmLockedWatch from '@/pages/BnmLockedWatch';
 import BnmLockedLive from '@/pages/BnmLockedLive';
 import BnmLockedLiveWatch from '@/pages/BnmLockedLiveWatch';
 import BnmLockedOnboarding from '@/pages/BnmLockedOnboarding';
+import Dares from '@/pages/Dares';
+import Truths from '@/pages/Truths';
+import PictureToVideo from '@/pages/PictureToVideo';
+import AIVideoStudio from '@/pages/AIVideoStudio';
+import ViralVideoCreator from '@/pages/ViralVideoCreator';
+import StudioLive from '@/pages/StudioLive';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
+  const {
+    isLoadingAuth,
+    isLoadingPublicSettings,
+    authError,
+    isAuthenticated,
+  } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      <div className="fixed inset-0 flex items-center justify-center bg-[#020812]">
+        <div className="w-8 h-8 border-4 border-slate-500 border-t-white rounded-full animate-spin"></div>
       </div>
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
+  // Signed-out users are allowed into the product. Google/Base44 auth is no
+  // longer an automatic application gate. Preserve the registered-user error
+  // only when an authenticated session is actually rejected.
+  if (
+    authError?.type === 'user_not_registered' &&
+    isAuthenticated
+  ) {
+    return <UserNotRegisteredError />;
   }
 
-  // Render the main app
   return (
     <Routes>
-      {/* MCP OAuth consent page — mounted outside the app layout; it handles
-          the signed-out case itself, so it must not sit behind an auth guard. */}
+      {/* MCP OAuth is a machine-integration consent route, not end-user Google auth. */}
       <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/About" element={<About />} />
       <Route path="/Contact" element={<Contact />} />
+      <Route path="/account" element={<BnmAccount />} />
+
       <Route path="/AIBuddy" element={<Navigate to="/ai-coach" replace />} />
-      <Route path="/Dares" element={<Navigate to="/challenge" replace />} />
-      <Route path="/Truths" element={<Navigate to="/challenge" replace />} />
+      <Route path="/Dares" element={<Dares />} />
+      <Route path="/dares" element={<Dares />} />
+      <Route path="/Truths" element={<Truths />} />
+      <Route path="/truths" element={<Truths />} />
       <Route path="/Wallet" element={<Navigate to="/rewards" replace />} />
+
+      <Route path="/PictureToVideo" element={<PictureToVideo />} />
+      <Route path="/picture-to-video" element={<PictureToVideo />} />
+      <Route path="/AIVideoStudio" element={<AIVideoStudio />} />
+      <Route path="/ai-video-studio" element={<AIVideoStudio />} />
+      <Route path="/ViralVideoCreator" element={<ViralVideoCreator />} />
+      <Route path="/viral-video-creator" element={<ViralVideoCreator />} />
+      <Route path="/StudioLive" element={<StudioLive />} />
+      <Route path="/studio-live" element={<StudioLive />} />
+
       <Route path="/onboarding" element={<BnmLockedOnboarding />} />
       <Route path="/" element={<Splash />} />
       <Route path="/home" element={<BnmLockedHome />} />
@@ -104,9 +126,7 @@ const AuthenticatedApp = () => {
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
