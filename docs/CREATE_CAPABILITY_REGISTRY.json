@@ -1,0 +1,340 @@
+{
+  "registry_id": "BNM-CREATE-CAPABILITY-REGISTRY-V2",
+  "source_sha": "9e1a0576ff78d527fa6dd53568537624cb4153af",
+  "source_visual_lock": "BNM-EA-V1",
+  "rule": "Every eligible non-admin user creation/activity capability is reachable from Create directly or through Creator Studio. Admin/infrastructure and no-fake-data violations are excluded.",
+  "capabilities": [
+    {
+      "id": "record_video",
+      "label": "Record Video",
+      "classes": [
+        "CREATE_CONTENT",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/create",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/Camera.jsx",
+        "src/pages/BnmLockedCreate.jsx"
+      ]
+    },
+    {
+      "id": "upload_video",
+      "label": "Upload Video",
+      "classes": [
+        "CREATE_CONTENT",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/upload",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmLockedUpload.jsx"
+      ]
+    },
+    {
+      "id": "camera_effects",
+      "label": "Effects / Filters",
+      "classes": [
+        "CREATE_CONTENT",
+        "PUBLIC"
+      ],
+      "route": "/effects",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmEffects.jsx"
+      ]
+    },
+    {
+      "id": "ai_video",
+      "label": "AI Video Studio",
+      "classes": [
+        "AI_CREATION",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/ai-video-studio",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/AIVideoStudio.jsx",
+        "base44/functions/aiVideoGen/entry.ts"
+      ]
+    },
+    {
+      "id": "picture_to_video",
+      "label": "Picture to Video",
+      "classes": [
+        "AI_CREATION",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/picture-to-video",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/PictureToVideo.jsx",
+        "base44/functions/pictureToVideo/entry.ts"
+      ]
+    },
+    {
+      "id": "viral_video",
+      "label": "Viral Video Creator",
+      "classes": [
+        "AI_CREATION",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/viral-video-creator",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/ViralVideoCreator.jsx",
+        "base44/functions/viralVideoCreator/entry.ts"
+      ]
+    },
+    {
+      "id": "kindness_dare",
+      "label": "Create Kindness Challenge",
+      "classes": [
+        "COMMUNITY_ACTIVITY",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/dares",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/Dares.jsx",
+        "base44/entities/Dare.jsonc"
+      ]
+    },
+    {
+      "id": "truth",
+      "label": "Create Truth Activity",
+      "classes": [
+        "COMMUNITY_ACTIVITY",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/truths",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/Truths.jsx",
+        "base44/entities/Truth.jsonc"
+      ]
+    },
+    {
+      "id": "live",
+      "label": "Go Live",
+      "classes": [
+        "LIVE_ACTIVITY",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/studio-live",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/StudioLive.jsx",
+        "base44/entities/LiveStream.jsonc"
+      ]
+    },
+    {
+      "id": "nearby",
+      "label": "Nearby Activity",
+      "classes": [
+        "LOCAL_ACTIVITY",
+        "PUBLIC"
+      ],
+      "route": "/nearby",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmLockedNearby.jsx"
+      ]
+    },
+    {
+      "id": "community_post",
+      "label": "Community Post / Image / Poll",
+      "classes": [
+        "COMMUNITY_ACTIVITY",
+        "CREATE_CONTENT",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/community",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/Community.jsx",
+        "src/components/community/PostComposer.jsx",
+        "base44/entities/CommunityPost.jsonc"
+      ]
+    },
+    {
+      "id": "playlist",
+      "label": "Create Playlist",
+      "classes": [
+        "CREATE_CONTENT",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/playlists",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/Playlists.jsx",
+        "base44/entities/Playlist.jsonc"
+      ]
+    },
+    {
+      "id": "ai_clip_factory",
+      "label": "AI Clip Factory",
+      "classes": [
+        "AI_CREATION",
+        "CREATOR_TOOL",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/studio-ai-clips",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/StudioAIClips.jsx",
+        "base44/functions/aiClipFactory/entry.ts"
+      ]
+    },
+    {
+      "id": "media_kit",
+      "label": "Creator Media Kit",
+      "classes": [
+        "AI_CREATION",
+        "CREATOR_TOOL",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/media-kit",
+      "status": "ACTIVE_NEEDS_SERVER_ENTITLEMENT_LIMIT",
+      "evidence": [
+        "src/pages/MediaKit.jsx",
+        "base44/functions/generateMediaKit/entry.ts"
+      ]
+    },
+    {
+      "id": "create_channel",
+      "label": "Create Channel",
+      "classes": [
+        "CREATOR_TOOL",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/create-channel",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmLockedCreateChannel.jsx"
+      ]
+    },
+    {
+      "id": "creator_studio",
+      "label": "Creator Studio",
+      "classes": [
+        "CREATOR_TOOL",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/creator-studio",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmLockedCreatorStudio.jsx"
+      ]
+    },
+    {
+      "id": "creator_content",
+      "label": "Manage Creator Content",
+      "classes": [
+        "CREATOR_TOOL",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/studio-content",
+      "status": "ACTIVE_SECOND_LEVEL",
+      "evidence": [
+        "src/pages/StudioContent.jsx"
+      ]
+    },
+    {
+      "id": "ai_coach",
+      "label": "AI Coach",
+      "classes": [
+        "CREATOR_TOOL",
+        "AI_CREATION",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/ai-coach",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmLockedAiCoach.jsx"
+      ]
+    },
+    {
+      "id": "tracker",
+      "label": "Activity Tracker",
+      "classes": [
+        "CREATOR_TOOL",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/tracker",
+      "status": "ACTIVE",
+      "evidence": [
+        "src/pages/BnmTracker.jsx"
+      ]
+    },
+    {
+      "id": "rewards",
+      "label": "Rewards",
+      "classes": [
+        "REWARD_ACTIVITY",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/rewards",
+      "status": "ACTIVE_ENTITLEMENT_GATED",
+      "evidence": [
+        "src/pages/BnmLockedRewards.jsx",
+        "base44/functions/redeemReward/entry.ts"
+      ]
+    },
+    {
+      "id": "membership",
+      "label": "Membership",
+      "classes": [
+        "REWARD_ACTIVITY",
+        "ACCOUNT_REQUIRED"
+      ],
+      "route": "/membership",
+      "status": "STAGED",
+      "evidence": [
+        "visual-lock/BNM-EA-V1/PAYMENTS_ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "legacy_analytics",
+      "label": "Legacy Studio Analytics",
+      "classes": [
+        "LEGACY_MIGRATE"
+      ],
+      "route": null,
+      "status": "EXCLUDED_NO_FAKE_DATA",
+      "evidence": [
+        "src/pages/StudioAnalytics.jsx"
+      ],
+      "reason": "Generates synthetic time-series values with Math.random()."
+    },
+    {
+      "id": "legacy_earnings",
+      "label": "Legacy Studio Earnings",
+      "classes": [
+        "LEGACY_MIGRATE"
+      ],
+      "route": null,
+      "status": "EXCLUDED_NO_FAKE_DATA",
+      "evidence": [
+        "src/pages/StudioEarnings.jsx"
+      ],
+      "reason": "Generates synthetic revenue/trend values and conflicts with BNM-EA-V1 no-fake-data contract."
+    },
+    {
+      "id": "admin_internal",
+      "label": "Admin / Domain Ops / Sync / Factory / Scraper",
+      "classes": [
+        "ADMIN_ONLY"
+      ],
+      "route": null,
+      "status": "EXCLUDED_FROM_CONSUMER_CREATE",
+      "evidence": [
+        "src/pages/Admin.jsx",
+        "src/pages/DomainOps.jsx",
+        "src/pages/SyncDashboard.jsx",
+        "src/pages/FactoryDashboard.jsx",
+        "src/pages/VideoScraper.jsx"
+      ]
+    }
+  ]
+}
