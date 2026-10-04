@@ -225,11 +225,11 @@ export default function Dares() {
           )}
           {!incoming && dare.status === "verified" && !dare.reward_paid && (
             <Button size="sm" onClick={() => handleProcessReward(dare)} className="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full">
-              <Coins className="w-4 h-4 mr-1" /> Pay Reward
+              <Coins className="w-4 h-4 mr-1" /> Settle Reward
             </Button>
           )}
           {incoming && dare.status === "verified" && dare.reward_paid && (
-            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Reward received!</Badge>
+            <Badge className="bg-green-500/20 text-green-400"><CheckCircle2 className="w-3 h-3 mr-1" /> Activity settled</Badge>
           )}
         </div>
 

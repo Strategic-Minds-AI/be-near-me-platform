@@ -1,0 +1,33 @@
+{
+  "name": "TokenLedgerEntry",
+  "type": "object",
+  "properties": {
+    "idempotency_key": { "type": "string" },
+    "user_email": { "type": "string" },
+    "membership_entitlement_id": { "type": "string" },
+    "source_type": { "type": "string", "enum": ["membership_grant", "activity_reward", "spend", "stake", "reversal"] },
+    "source_id": { "type": "string" },
+    "source_payment_receipt_id": { "type": "string" },
+    "token_name": { "type": "string", "default": "Infinity Coin" },
+    "token_symbol": { "type": "string", "default": "IC" },
+    "amount": { "type": "number", "default": 0 },
+    "direction": { "type": "string", "enum": ["credit", "debit"] },
+    "status": { "type": "string", "enum": ["pending_wallet", "pending_token", "pending_mint", "committed", "reversal_pending", "reversed", "blocked"], "default": "pending_token" },
+    "wallet_id": { "type": "string" },
+    "wallet_address": { "type": "string" },
+    "contract_address": { "type": "string" },
+    "network": { "type": "string", "enum": ["offchain", "sepolia", "mainnet"], "default": "offchain" },
+    "transaction_id": { "type": "string" },
+    "tx_hash": { "type": "string" },
+    "reason": { "type": "string" },
+    "validator_status": { "type": "string", "enum": ["UNKNOWN", "PASS", "FAIL", "BLOCKED"], "default": "UNKNOWN" },
+    "validated_at": { "type": "string", "format": "date-time" }
+  },
+  "required": ["idempotency_key", "user_email", "source_type", "amount", "direction", "status"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "$or": [{ "user_email": "{{user.email}}" }, { "user_condition": { "role": "admin" } }] },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

@@ -20,7 +20,7 @@ const tabs = [
   { label: "Nearby", to: "/nearby", match: ["/nearby", "/search"] },
   { label: "Kindness", to: "/challenge", match: ["/challenge"] },
   { label: "Creators", to: "/creator-studio", match: ["/creator-studio", "/profile"] },
-  { label: "Live", to: "/Live", match: ["/Live", "/live"] },
+  { label: "Live", to: "/live", match: ["/live", "/live-watch"] },
 ];
 
 export function BnmTopChrome({ rewards = false, locationLabel = "Near You", activeSection = null }) {

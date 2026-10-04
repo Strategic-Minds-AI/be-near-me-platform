@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   Bookmark, Heart, Leaf, MessageCircle, Music2, Play, Plus, Share2, Sparkles
 } from "lucide-react";
@@ -16,7 +16,7 @@ const isProductionContent = (video) => {
 export default function BnmLockedHome() {
   const { data: allVideos = [], isLoading } = useQuery({
     queryKey: ["bnm-lock-public-videos-v2"],
-    queryFn: async () => asItems(await base44.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
+    queryFn: async () => asItems(await bnmData.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
   });
 
   const video = allVideos.find(isProductionContent);

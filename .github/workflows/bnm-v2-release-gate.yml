@@ -1,0 +1,38 @@
+name: BNM V2 Release Gate
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run BNM V2 deterministic release gate
+        run: |
+          set +e
+          node validation/bnm-v2-release-gate.mjs
+          code=$?
+          echo "BNM_V2_GATE_EXIT=$code" >> "$GITHUB_ENV"
+          exit 0
+      - name: Upload release-gate receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: bnm-v2-release-gate-receipt
+          path: validation/receipts/latest-bnm-v2.json
+      - name: Enforce release gate
+        run: |
+          case "$BNM_V2_GATE_EXIT" in
+            0) echo "BNM V2 release gate PASS" ;;
+            1) echo "BNM V2 release gate FAIL"; exit 1 ;;
+            2) echo "BNM V2 release gate BLOCKED by external/protected dependencies"; exit 2 ;;
+            *) echo "BNM V2 release gate UNKNOWN"; exit 3 ;;
+          esac

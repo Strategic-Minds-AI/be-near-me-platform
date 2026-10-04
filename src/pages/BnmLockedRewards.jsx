@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { ChevronRight, Gift, Leaf, LockKeyhole, PackageCheck, Star } from "lucide-react";
 import { BnmLockedScreen, EmptyState, Glass, Pill, SectionTitle, asItems, formatCount } from "@/components/bnm/LockedShell";
 import { BNM_REWARDS } from "@/lib/bnm/rewardCatalog";
@@ -22,11 +22,11 @@ function RewardVisual({ reward, large = false }) {
 
 export default function BnmLockedRewards() {
   const [filter, setFilter] = useState("All");
-  const { data: user } = useQuery({ queryKey:["currentUser"], queryFn:()=>base44.auth.me() });
+  const { data: user } = useQuery({ queryKey:["currentUser"], queryFn:()=>bnmData.auth.me() });
   const { data: channels = [] } = useQuery({
     queryKey:["bnm-reward-channel-v2",user?.email],
     enabled:!!user?.email,
-    queryFn:async()=>asItems(await base44.entities.Channel.filter({ created_by:user.email }, "-created_date", 1)),
+    queryFn:async()=>asItems(await bnmData.entities.Channel.filter({ created_by:user.email }, "-created_date", 1)),
   });
 
   const channel = channels[0] || null;

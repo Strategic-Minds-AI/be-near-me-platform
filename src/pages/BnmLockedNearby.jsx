@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
   Compass, Heart, Leaf, MapPin, PawPrint, Search, SlidersHorizontal, Sparkles, Users, Utensils, ChevronRight
 } from "lucide-react";
@@ -12,7 +12,7 @@ export default function BnmLockedNearby() {
   const [locationState, setLocationState] = useState("idle");
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["bnm-lock-community-posts-v2"],
-    queryFn: async () => asItems(await base44.entities.CommunityPost.filter({ visibility: "public" }, "-created_date", 40)),
+    queryFn: async () => asItems(await bnmData.entities.CommunityPost.filter({ visibility: "public" }, "-created_date", 40)),
   });
 
   const enableLocation = () => {

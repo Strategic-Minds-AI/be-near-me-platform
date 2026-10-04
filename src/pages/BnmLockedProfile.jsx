@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { Heart, Leaf, Play, Send, ShieldCheck, Users } from "lucide-react";
 import {
   Avatar, BnmLockedScreen, EmptyState, GradientButton, Pill, asItems, formatCount
@@ -15,12 +15,12 @@ export default function BnmLockedProfile() {
   const [params] = useSearchParams();
   const requestedChannelId = params.get("channel");
 
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => base44.auth.me() });
+  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => bnmData.auth.me() });
 
   const { data: myChannels = [] } = useQuery({
     queryKey: ["bnm-profile-my-channel", user?.email],
     enabled: !!user?.email && !requestedChannelId,
-    queryFn: async () => asItems(await base44.entities.Channel.filter({ created_by: user.email }, "-created_date", 1)),
+    queryFn: async () => asItems(await bnmData.entities.Channel.filter({ created_by: user.email }, "-created_date", 1)),
   });
 
   const myChannel = myChannels[0] || null;
@@ -30,7 +30,7 @@ export default function BnmLockedProfile() {
     queryKey: ["bnm-profile-public-videos-v2", channelId],
     enabled: !!channelId,
     queryFn: async () => {
-      const rows = asItems(await base44.entities.Video.filter({ channel_id: channelId, visibility: "public" }, "-created_date", 30));
+      const rows = asItems(await bnmData.entities.Video.filter({ channel_id: channelId, visibility: "public" }, "-created_date", 30));
       return rows.filter(isProductionContent);
     },
   });
@@ -38,7 +38,7 @@ export default function BnmLockedProfile() {
   const { data: reps = [] } = useQuery({
     queryKey: ["bnm-profile-reputation-v2", channelId],
     enabled: !!channelId,
-    queryFn: async () => asItems(await base44.entities.CreatorReputation.filter({ channel_id: channelId }, "-created_date", 1)),
+    queryFn: async () => asItems(await bnmData.entities.CreatorReputation.filter({ channel_id: channelId }, "-created_date", 1)),
   });
 
   const rep = reps[0] || null;
@@ -67,7 +67,7 @@ export default function BnmLockedProfile() {
                 <Users className="h-8 w-8 text-[#8068cf]" />
               </div>
             </div>
-            <Link to="/CreateChannel"><GradientButton className="mb-1 px-6 py-2.5">Create Channel</GradientButton></Link>
+            <Link to="/create-channel"><GradientButton className="mb-1 px-6 py-2.5">Create Channel</GradientButton></Link>
           </div>
 
           <h1 className="mt-3 text-[27px] font-black leading-none tracking-[-.04em]">Your creator profile</h1>
@@ -121,7 +121,7 @@ export default function BnmLockedProfile() {
               <GradientButton className="px-6 py-2.5">+ Follow</GradientButton>
             </div>
           ) : (
-            <Link to="/Settings"><GradientButton className="mb-1 px-6 py-2.5">Edit Profile</GradientButton></Link>
+            <Link to="/settings"><GradientButton className="mb-1 px-6 py-2.5">Edit Profile</GradientButton></Link>
           )}
         </div>
 

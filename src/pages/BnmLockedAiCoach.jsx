@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import { Heart, Leaf, MapPin, Mic, PawPrint, Send, Sparkles, Users } from "lucide-react";
 import { BnmLockedScreen, Glass, Pill, asItems } from "@/components/bnm/LockedShell";
 
@@ -14,7 +14,7 @@ export default function BnmLockedAiCoach() {
   const [sending, setSending] = useState(false);
   const { data: posts = [] } = useQuery({
     queryKey:["bnm-ai-nearby-posts"],
-    queryFn: async () => asItems(await base44.entities.CommunityPost.filter({ visibility:"public" }, "-created_date", 12)),
+    queryFn: async () => asItems(await bnmData.entities.CommunityPost.filter({ visibility:"public" }, "-created_date", 12)),
   });
 
   const send = async (suggestion) => {
@@ -24,7 +24,7 @@ export default function BnmLockedAiCoach() {
     setInput("");
     setSending(true);
     try {
-      const result = await base44.functions.invoke("aiChat", { prompt: "You are the Be Near Me AI Coach. Give safe, practical, positive, non-shaming suggestions. Never invent a live event or business. User: " + content });
+      const result = await bnmData.functions.invoke("aiChat", { prompt: "You are the Be Near Me AI Coach. Give safe, practical, positive, non-shaming suggestions. Never invent a live event or business. User: " + content });
       setMessages((m)=>[...m,{role:"assistant",content:extractText(result)}]);
     } catch {
       setMessages((m)=>[...m,{role:"assistant",content:"I couldn’t reach the coach service right now. Try again in a moment, or browse verified community activity below."}]);
