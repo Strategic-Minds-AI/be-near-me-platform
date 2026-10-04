@@ -43,6 +43,13 @@ import PictureToVideo from '@/pages/PictureToVideo';
 import AIVideoStudio from '@/pages/AIVideoStudio';
 import ViralVideoCreator from '@/pages/ViralVideoCreator';
 import StudioLive from '@/pages/StudioLive';
+import Community from '@/pages/Community';
+import Playlists from '@/pages/Playlists';
+import StudioAIClips from '@/pages/StudioAIClips';
+import StudioContent from '@/pages/StudioContent';
+import MediaKit from '@/pages/MediaKit';
+import BnmMembership from '@/pages/BnmMembership';
+import BnmCryptoMembership from '@/pages/BnmCryptoMembership';
 
 const AuthenticatedApp = () => {
   const {
@@ -93,6 +100,20 @@ const AuthenticatedApp = () => {
       <Route path="/viral-video-creator" element={<ViralVideoCreator />} />
       <Route path="/StudioLive" element={<StudioLive />} />
       <Route path="/studio-live" element={<StudioLive />} />
+      <Route path="/Community" element={<Community />} />
+      <Route path="/community" element={<Community />} />
+      <Route path="/Playlists" element={<Playlists />} />
+      <Route path="/playlists" element={<Playlists />} />
+      <Route path="/StudioAIClips" element={<StudioAIClips />} />
+      <Route path="/studio-ai-clips" element={<StudioAIClips />} />
+      <Route path="/StudioContent" element={<StudioContent />} />
+      <Route path="/studio-content" element={<StudioContent />} />
+      <Route path="/MediaKit" element={<MediaKit />} />
+      <Route path="/media-kit" element={<MediaKit />} />
+      <Route path="/Premium" element={<BnmMembership />} />
+      <Route path="/premium" element={<BnmMembership />} />
+      <Route path="/membership" element={<BnmMembership />} />
+      <Route path="/crypto-membership" element={<BnmCryptoMembership />} />
 
       <Route path="/onboarding" element={<BnmLockedOnboarding />} />
       <Route path="/" element={<Splash />} />
