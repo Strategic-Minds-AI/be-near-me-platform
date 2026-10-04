@@ -1,0 +1,28 @@
+{
+  "name": "MembershipEntitlement",
+  "type": "object",
+  "properties": {
+    "user_email": { "type": "string" },
+    "tier": { "type": "string", "enum": ["free", "member_10", "member_20"] },
+    "status": { "type": "string", "enum": ["active", "pending_payment", "cancelled", "refunded", "revoked"], "default": "active" },
+    "price_cents": { "type": "number", "default": 0 },
+    "currency": { "type": "string", "default": "usd" },
+    "payment_method": { "type": "string", "enum": ["free", "stripe", "crypto_testnet", "crypto"] },
+    "payment_receipt_id": { "type": "string" },
+    "crypto_payment_receipt_id": { "type": "string" },
+    "infinity_coin_enabled": { "type": "boolean", "default": false },
+    "infinity_coin_membership_grant": { "type": "number", "default": 0 },
+    "grant_status": { "type": "string", "enum": ["none", "pending_wallet", "pending_token", "pending_mint", "committed", "reversal_pending", "reversed", "blocked"], "default": "none" },
+    "economics_version": { "type": "string" },
+    "economic_decision": { "type": "string" },
+    "activated_at": { "type": "string", "format": "date-time" },
+    "description": { "type": "string", "maxLength": 1000 }
+  },
+  "required": ["user_email", "tier", "status", "infinity_coin_enabled", "infinity_coin_membership_grant"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "$or": [{ "user_email": "{{user.email}}" }, { "user_condition": { "role": "admin" } }] },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}
