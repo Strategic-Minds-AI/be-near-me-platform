@@ -18,6 +18,66 @@ async function grantState(base44: any, userEmail: string) {
   return { status: "pending_mint", wallet, token, reason: "GOVERNED_MINT_EXECUTOR_NOT_RELEASED" };
 }
 
+export async function queueInfinityCoinActivityReward(base44: any, input: {
+  userEmail: string;
+  sourceKind: "dare" | "truth" | "other";
+  sourceId: string;
+  amount: number;
+  reason: string;
+}) {
+  const entitlements = items(await base44.asServiceRole.entities.MembershipEntitlement.filter(
+    { user_email: input.userEmail, status: "active" },
+    { sort: "-created_date", limit: 20 }
+  ));
+  const entitlement = entitlements.find((item: any) =>
+    item.infinity_coin_enabled === true &&
+    (item.tier === "member_10" || item.tier === "member_20")
+  ) || null;
+
+  if (!entitlement) {
+    return { eligible: false, amount: 0, status: "not_eligible", ledger: null };
+  }
+
+  const amount = Math.max(0, Math.trunc(Number(input.amount || 0)));
+  if (amount <= 0) {
+    return { eligible: true, amount: 0, status: "blocked", ledger: null, reason: "NON_POSITIVE_REWARD" };
+  }
+
+  const idempotencyKey = "activity-reward:" + input.sourceKind + ":" + input.sourceId + ":" + input.userEmail.toLowerCase();
+  const existing = items(await base44.asServiceRole.entities.TokenLedgerEntry.filter(
+    { idempotency_key: idempotencyKey },
+    { limit: 1 }
+  ))[0] || null;
+  if (existing) {
+    return { eligible: true, amount, status: existing.status, ledger: existing, idempotent: true };
+  }
+
+  const state = await grantState(base44, input.userEmail);
+  const ledger = await base44.asServiceRole.entities.TokenLedgerEntry.create({
+    idempotency_key: idempotencyKey,
+    user_email: input.userEmail,
+    membership_entitlement_id: entitlement.id,
+    source_type: "activity_reward",
+    source_id: input.sourceKind + ":" + input.sourceId,
+    source_payment_receipt_id: "",
+    token_name: "Infinity Coin",
+    token_symbol: "IC",
+    amount,
+    direction: "credit",
+    status: state.status,
+    wallet_id: state.wallet?.id || "",
+    wallet_address: state.wallet?.address || "",
+    contract_address: state.token?.contract_address || "",
+    network: state.wallet ? "sepolia" : "offchain",
+    transaction_id: "",
+    tx_hash: "",
+    reason: input.reason + " / " + state.reason,
+    validator_status: "BLOCKED"
+  });
+
+  return { eligible: true, amount, status: ledger.status, ledger, idempotent: false };
+}
+
 export async function applyPaidMembership(base44: any, input: {
   userEmail: string;
   tier: "member_10" | "member_20";
