@@ -34,6 +34,7 @@ import VideoLibrary from '@/pages/VideoLibrary';
 import PictureToVideo from '@/pages/PictureToVideo';
 import MediaKit from '@/pages/MediaKit';
 import Splash from '@/pages/Splash';
+import ThankYou from '@/pages/ThankYou';
 import BnmDiscover from '@/pages/BnmDiscover';
 import BnmEffects from '@/pages/BnmEffects';
 import BnmInbox from '@/pages/BnmInbox';
@@ -80,127 +81,126 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              {/* Every app route is gated — unauthenticated users land on /login,
-                  preserving the previous login-on-every-page firewall. */}
-              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-                <Route path="/Camera" element={<Camera />} />
-                <Route path="/About" element={<About />} />
-                <Route path="/Contact" element={<Contact />} />
-                <Route path="/AIBuddy" element={
-                  <LayoutWrapper currentPageName="AIBuddy">
-                    <AIBuddy />
-                  </LayoutWrapper>
-                } />
-                <Route path="/Onboarding" element={
-                  <LayoutWrapper currentPageName="Onboarding">
-                    <Onboarding />
-                  </LayoutWrapper>
-                } />
-                <Route path="/Dares" element={
-                  <LayoutWrapper currentPageName="Dares">
-                    <Dares />
-                  </LayoutWrapper>
-                } />
-                <Route path="/Truths" element={
-                  <LayoutWrapper currentPageName="Truths">
-                    <Truths />
-                  </LayoutWrapper>
-                } />
-                <Route path="/VideoScraper" element={
-                  <LayoutWrapper currentPageName="VideoScraper">
-                    <VideoScraper />
-                  </LayoutWrapper>
-                } />
-                <Route path="/ViralVideoCreator" element={
-                  <LayoutWrapper currentPageName="ViralVideoCreator">
-                    <ViralVideoCreator />
-                  </LayoutWrapper>
-                } />
-                <Route path="/SyncDashboard" element={
-                  <LayoutWrapper currentPageName="SyncDashboard">
-                    <SyncDashboard />
-                  </LayoutWrapper>
-                } />
-                <Route path="/DomainOps" element={
-                  <LayoutWrapper currentPageName="DomainOps">
-                    <DomainOps />
-                  </LayoutWrapper>
-                } />
-                <Route path="/VideoLibrary" element={
-                  <LayoutWrapper currentPageName="VideoLibrary">
-                    <VideoLibrary />
-                  </LayoutWrapper>
-                } />
-                <Route path="/PictureToVideo" element={
-                  <LayoutWrapper currentPageName="PictureToVideo">
-                    <PictureToVideo />
-                  </LayoutWrapper>
-                } />
-                <Route path="/MediaKit" element={
-                  <LayoutWrapper currentPageName="MediaKit">
-                    <MediaKit />
-                  </LayoutWrapper>
-                } />
-                <Route path="/Benchmark" element={
-                  <LayoutWrapper currentPageName="Benchmark">
-                    <Benchmark />
-                  </LayoutWrapper>
-                } />
-                <Route path="/Wallet" element={
-                  <LayoutWrapper currentPageName="Wallet">
-                    <Wallet />
-                  </LayoutWrapper>
-                } />
-                <Route path="/AnalyticsTraffic" element={
-                  <LayoutWrapper currentPageName="AnalyticsTraffic">
-                    <AnalyticsTraffic />
-                  </LayoutWrapper>
-                } />
-                <Route path="/AIVideoStudio" element={
-                  <LayoutWrapper currentPageName="AIVideoStudio">
-                    <AIVideoStudio />
-                  </LayoutWrapper>
-                } />
-                <Route path="/" element={<Splash />} />
-                <Route path="/home" element={<BnmLockedHome />} />
-                <Route path="/discover" element={<BnmDiscover />} />
-                <Route path="/create" element={<BnmLockedCreate />} />
-                <Route path="/tracker" element={<BnmTracker />} />
-                <Route path="/camera" element={<BnmLockedCreate />} />
-                <Route path="/effects" element={<BnmEffects />} />
-                <Route path="/nearby" element={<BnmLockedNearby />} />
-                <Route path="/challenge" element={<BnmLockedChallenge />} />
-                <Route path="/challenge/:challengeId" element={<BnmLockedChallenge />} />
-                <Route path="/search" element={<BnmLockedSearch />} />
-                <Route path="/profile" element={<BnmLockedProfile />} />
-                <Route path="/creator-studio" element={<BnmLockedCreatorStudio />} />
-                <Route path="/ai-coach" element={<BnmLockedAiCoach />} />
-                <Route path="/rewards" element={<BnmLockedRewards />} />
-                <Route path="/reward-checkout" element={<BnmLockedCheckout />} />
-                <Route path="/reward-checkout/:rewardId" element={<BnmLockedCheckout />} />
-                <Route path="/legacy" element={<BnmLegacy />} />
-                <Route path="/inbox" element={<BnmInbox />} />
-                <Route path="/messages" element={<BnmMessages />} />
-                <Route path="/menu" element={<BnmMenu />} />
-                <Route path="/builder" element={<FactoryBuilder />} />
-                <Route path="/factory" element={<FactoryDashboard />} />
-                <Route path="/gallery" element={
-                  <LayoutWrapper currentPageName="VisualGallery">
-                    <VisualGallery />
-                  </LayoutWrapper>
-                } />
-                {Object.entries(Pages).map(([path, Page]) => (
-                  <Route
-                    key={path}
-                    path={`/${path}`}
-                    element={
-                      <LayoutWrapper currentPageName={path}>
-                        <Page />
-                      </LayoutWrapper>
-                    }
-                  />
-                ))}
-              </Route>
+              {/* All app routes are public — no sign-in required.
+                  The Splash page (at "/") is a branded payment page; users pick a tier and enter. */}
+              <Route path="/Camera" element={<Camera />} />
+              <Route path="/About" element={<About />} />
+              <Route path="/Contact" element={<Contact />} />
+              <Route path="/AIBuddy" element={
+                <LayoutWrapper currentPageName="AIBuddy">
+                  <AIBuddy />
+                </LayoutWrapper>
+              } />
+              <Route path="/Onboarding" element={
+                <LayoutWrapper currentPageName="Onboarding">
+                  <Onboarding />
+                </LayoutWrapper>
+              } />
+              <Route path="/Dares" element={
+                <LayoutWrapper currentPageName="Dares">
+                  <Dares />
+                </LayoutWrapper>
+              } />
+              <Route path="/Truths" element={
+                <LayoutWrapper currentPageName="Truths">
+                  <Truths />
+                </LayoutWrapper>
+              } />
+              <Route path="/VideoScraper" element={
+                <LayoutWrapper currentPageName="VideoScraper">
+                  <VideoScraper />
+                </LayoutWrapper>
+              } />
+              <Route path="/ViralVideoCreator" element={
+                <LayoutWrapper currentPageName="ViralVideoCreator">
+                  <ViralVideoCreator />
+                </LayoutWrapper>
+              } />
+              <Route path="/SyncDashboard" element={
+                <LayoutWrapper currentPageName="SyncDashboard">
+                  <SyncDashboard />
+                </LayoutWrapper>
+              } />
+              <Route path="/DomainOps" element={
+                <LayoutWrapper currentPageName="DomainOps">
+                  <DomainOps />
+                </LayoutWrapper>
+              } />
+              <Route path="/VideoLibrary" element={
+                <LayoutWrapper currentPageName="VideoLibrary">
+                  <VideoLibrary />
+                </LayoutWrapper>
+              } />
+              <Route path="/PictureToVideo" element={
+                <LayoutWrapper currentPageName="PictureToVideo">
+                  <PictureToVideo />
+                </LayoutWrapper>
+              } />
+              <Route path="/MediaKit" element={
+                <LayoutWrapper currentPageName="MediaKit">
+                  <MediaKit />
+                </LayoutWrapper>
+              } />
+              <Route path="/Benchmark" element={
+                <LayoutWrapper currentPageName="Benchmark">
+                  <Benchmark />
+                </LayoutWrapper>
+              } />
+              <Route path="/Wallet" element={
+                <LayoutWrapper currentPageName="Wallet">
+                  <Wallet />
+                </LayoutWrapper>
+              } />
+              <Route path="/AnalyticsTraffic" element={
+                <LayoutWrapper currentPageName="AnalyticsTraffic">
+                  <AnalyticsTraffic />
+                </LayoutWrapper>
+              } />
+              <Route path="/AIVideoStudio" element={
+                <LayoutWrapper currentPageName="AIVideoStudio">
+                  <AIVideoStudio />
+                </LayoutWrapper>
+              } />
+              <Route path="/" element={<Splash />} />
+              <Route path="/ThankYou" element={<ThankYou />} />
+              <Route path="/home" element={<BnmLockedHome />} />
+              <Route path="/discover" element={<BnmDiscover />} />
+              <Route path="/create" element={<BnmLockedCreate />} />
+              <Route path="/tracker" element={<BnmTracker />} />
+              <Route path="/camera" element={<BnmLockedCreate />} />
+              <Route path="/effects" element={<BnmEffects />} />
+              <Route path="/nearby" element={<BnmLockedNearby />} />
+              <Route path="/challenge" element={<BnmLockedChallenge />} />
+              <Route path="/challenge/:challengeId" element={<BnmLockedChallenge />} />
+              <Route path="/search" element={<BnmLockedSearch />} />
+              <Route path="/profile" element={<BnmLockedProfile />} />
+              <Route path="/creator-studio" element={<BnmLockedCreatorStudio />} />
+              <Route path="/ai-coach" element={<BnmLockedAiCoach />} />
+              <Route path="/rewards" element={<BnmLockedRewards />} />
+              <Route path="/reward-checkout" element={<BnmLockedCheckout />} />
+              <Route path="/reward-checkout/:rewardId" element={<BnmLockedCheckout />} />
+              <Route path="/legacy" element={<BnmLegacy />} />
+              <Route path="/inbox" element={<BnmInbox />} />
+              <Route path="/messages" element={<BnmMessages />} />
+              <Route path="/menu" element={<BnmMenu />} />
+              <Route path="/builder" element={<FactoryBuilder />} />
+              <Route path="/factory" element={<FactoryDashboard />} />
+              <Route path="/gallery" element={
+                <LayoutWrapper currentPageName="VisualGallery">
+                  <VisualGallery />
+                </LayoutWrapper>
+              } />
+              {Object.entries(Pages).map(([path, Page]) => (
+                <Route
+                  key={path}
+                  path={`/${path}`}
+                  element={
+                    <LayoutWrapper currentPageName={path}>
+                      <Page />
+                    </LayoutWrapper>
+                  }
+                />
+              ))}
 
               <Route path="*" element={<PageNotFound />} />
             </Routes>

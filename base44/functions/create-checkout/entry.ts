@@ -82,14 +82,19 @@ Deno.serve(async (req: Request) => {
     if (!Number.isInteger(quantity) || quantity < 1) {
       return new Response(JSON.stringify({ error: "Invalid quantity" }), { status: 400 });
     }
-    // Example — replace with your real trusted product source:
-    //   const product = (await base44.asServiceRole.entities.Product.filter({ id: productId }))[0];
-    //   if (!product) return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
-    //   const productName = product.name; const price = String(product.price); const currency = product.currency ?? "USD";
-    const productName = "Purchase"; // TODO: from your trusted product source
-    const price = "0.00";           // TODO: authoritative per-unit price (major units), resolved server-side
+    // Product catalog — server-side authoritative pricing. Never trust a client-sent price.
+    const PRODUCTS: Record<string, { name: string; price: string }> = {
+      "plus": { name: "Be Near Me Plus", price: "10.00" },
+      "pro":  { name: "Be Near Me Pro",  price: "20.00" },
+    };
+    const product = PRODUCTS[productId];
+    if (!product) {
+      return new Response(JSON.stringify({ error: "Unknown product" }), { status: 400 });
+    }
+    const productName = product.name;
+    const price = product.price;
     const currency = "USD";
-    // For a SUBSCRIPTION set this to Wix's subscriptionInfo; leave null for a one-time payment.
+    // One-time payments (no subscription).
     const subscriptionInfo = null;
     // Where Wix returns the buyer. Both MUST be real, PUBLICLY reachable routes in this app: the
     // returning buyer is often anonymous, so a missing or login-gated route strands a paid customer.
