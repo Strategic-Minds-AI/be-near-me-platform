@@ -19,18 +19,22 @@ import { chatCompletion, generateVideo } from "../../shared/vercelAiGateway.ts";
 export default async function (req: Request) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    let user = null;
+    try { user = await base44.auth.me(); } catch { /* public app — user may be anonymous */ }
 
     const body = await req.json().catch(() => ({})) || {};
-    const { template_id, user_idea, user_images, duration } = body;
+    const { template_id, user_idea, user_images, duration, template_data } = body;
     if (!template_id) return Response.json({ error: 'template_id required' }, { status: 400 });
 
     const videoDuration = [4, 6, 8].includes(duration) ? duration : 6;
 
-    // 1. Load the selected template
-    const template = await base44.entities.ViralTemplate.get(template_id);
+    // 1. Use the template data sent from the frontend (the local viral template registry)
+    const template = template_data;
     if (!template) return Response.json({ error: 'Template not found' }, { status: 404 });
+    // Map local registry field names to the names the rest of this function expects
+    template.style_name = template.style_name || template.name;
+    template.slug = template.slug || template.id;
+    template.thumbnail_style = template.thumbnail_style || template.thumbnail_text_pattern;
 
     const idea = user_idea?.trim() || '(use the style\'s natural subject — pick something universally appealing and positive)';
     const images: string[] = (user_images || []).filter((img: string) => typeof img === 'string' && img.startsWith('data:'));
@@ -119,8 +123,10 @@ Return JSON with:
     // 4. Resolve creator's channel for attribution
     let channel = null;
     try {
-      const chRes = await base44.entities.Channel.filter({ created_by: user.email }, { limit: 1 });
-      channel = (chRes?.items || chRes || [])[0];
+      if (user?.email) {
+        const chRes = await base44.entities.Channel.filter({ created_by: user.email }, { limit: 1 });
+        channel = (chRes?.items || chRes || [])[0];
+      }
     } catch {
       // ignore
     }

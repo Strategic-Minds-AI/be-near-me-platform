@@ -57,6 +57,7 @@ export default function TemplateGallery100() {
     try {
       const res = await base44.functions.invoke("generateFromTemplate", {
         template_id: template.id,
+        template_data: template,
         user_idea: "",
         user_images: [],
         duration: template.avg_duration || 6,
@@ -90,6 +91,7 @@ export default function TemplateGallery100() {
     try {
       const res = await base44.functions.invoke("generateFromTemplate", {
         template_id: activeTemplate.id,
+        template_data: activeTemplate,
         user_idea: idea.trim(),
         user_images: [],
         duration,
