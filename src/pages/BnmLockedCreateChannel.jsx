@@ -69,7 +69,7 @@ export default function BnmLockedCreateChannel() {
       if (avatarFile) avatarUrl = await uploadFileProxy(avatarFile);
       if (bannerFile) bannerUrl = await uploadFileProxy(bannerFile);
 
-      return bnmData.entities.Channel.create({
+      const channel = await bnmData.entities.Channel.create({
         name,
         handle,
         description: form.description.trim(),
@@ -82,6 +82,13 @@ export default function BnmLockedCreateChannel() {
         credits: 0,
         verified: false,
       });
+
+      // If this account paid before creating a channel, claim its verified
+      // purchase entitlement now. Channel creation remains successful even if
+      // the entitlement service is temporarily unavailable; the claim is safe
+      // and idempotent to retry.
+      await bnmData.functions.invoke("claim-purchase-entitlement", {}).catch(() => null);
+      return channel;
     },
     onSuccess: () => navigate("/profile"),
     onError: (mutationError) =>
