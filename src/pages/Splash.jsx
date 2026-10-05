@@ -151,32 +151,30 @@ export default function Splash() {
                   </div>
                 )}
 
-                <div className="flex items-start gap-3">
+                <div className="flex flex-col items-center text-center">
                   {/* Icon */}
                   <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                    className="flex h-12 w-12 items-center justify-center rounded-xl"
                     style={{ background: tier.gradient }}
                   >
-                    <Icon className="h-5 w-5 text-white" />
+                    <Icon className="h-6 w-6 text-white" />
                   </div>
 
-                  {/* Name + price */}
-                  <div className="flex-1">
-                    <div className="flex items-baseline gap-2">
-                      <h3 className="text-base font-extrabold text-white">{tier.name}</h3>
-                      <span className="text-xs font-medium text-bnm-secondary">{tier.tagline}</span>
-                    </div>
-                    <div className="mt-0.5 flex items-baseline gap-1">
-                      <span className="text-2xl font-black text-white">{tier.price}</span>
-                      <span className="text-[10px] text-bnm-secondary">/ {tier.period}</span>
-                    </div>
+                  {/* Name */}
+                  <h3 className="mt-3 text-base font-extrabold text-white">{tier.name}</h3>
+                  <span className="text-xs font-medium text-bnm-secondary">{tier.tagline}</span>
+
+                  {/* Price */}
+                  <div className="mt-1 flex items-baseline gap-1">
+                    <span className="text-2xl font-black text-white">{tier.price}</span>
+                    <span className="text-[10px] text-bnm-secondary">/ {tier.period}</span>
                   </div>
                 </div>
 
                 {/* Features */}
-                <ul className="mt-3 space-y-1.5">
+                <ul className="mt-3 space-y-1.5 text-center">
                   {tier.features.map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-[11px] text-white/80">
+                    <li key={i} className="flex items-center justify-center gap-2 text-[11px] text-white/80">
                       <BnmCheckIcon size={14} className="shrink-0" />
                       <span>{f}</span>
                     </li>
