@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
-import { Check, Loader2, Sparkles, Zap, Crown } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Sparkles, Zap, Crown } from "lucide-react";
 
 const TIERS = [
   {
@@ -85,6 +85,13 @@ export default function Splash() {
       />
 
       <div className="relative z-10 flex w-full flex-col items-center px-4 py-10">
+        {/* Back to feed */}
+        <div className="absolute top-[max(env(safe-area-inset-top),16px)] left-4 z-20">
+          <Link to="/home" className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/80 backdrop-blur hover:bg-white/10">
+            <ArrowLeft className="h-4 w-4" /> Back to feed
+          </Link>
+        </div>
+
         {/* Logo */}
         <BnmLogoMark className="w-20 h-24 mb-4" />
 

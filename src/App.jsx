@@ -161,7 +161,8 @@ function App() {
                   <AIVideoStudio />
                 </LayoutWrapper>
               } />
-              <Route path="/" element={<Splash />} />
+              <Route path="/" element={<BnmLockedHome />} />
+              <Route path="/upgrade" element={<Splash />} />
               <Route path="/ThankYou" element={<ThankYou />} />
               <Route path="/home" element={<BnmLockedHome />} />
               <Route path="/discover" element={<BnmDiscover />} />
