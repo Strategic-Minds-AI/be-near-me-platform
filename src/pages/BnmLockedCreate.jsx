@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Hash, MapPin, Sparkles } from "lucide-react";
 import Camera from "@/pages/Camera";
 import { BnmLockedScreen, Glass, Pill } from "@/components/bnm/LockedShell";
+import TemplateGallery100 from "@/components/bnm/TemplateGallery100";
 
 const TAGS = ["Kindness","Community","Environment","Animals","People"];
 
@@ -54,6 +55,9 @@ export default function BnmLockedCreate() {
         <p className="px-2 pb-3 pt-2 text-center text-[8px] leading-4 text-[#7185aa]">
           Record, review, and post with the camera controls above. Location is never added unless the creator explicitly chooses it in a future verified location flow.
         </p>
+
+        {/* 100 Viral Templates Gallery */}
+        <TemplateGallery100 />
       </div>
     </BnmLockedScreen>
   );
