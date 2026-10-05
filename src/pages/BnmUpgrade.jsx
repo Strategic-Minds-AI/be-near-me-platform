@@ -55,8 +55,19 @@ export default function BnmUpgrade() {
       navigate("/home");
       return;
     }
+
     setLoadingId(tier.id);
     try {
+      // Paid tiers are account entitlements. Require an authenticated BNM
+      // identity before checkout so successful payments can be granted
+      // deterministically to the buyer's creator profile.
+      try {
+        await bnmData.auth.me();
+      } catch {
+        navigate("/login?returnTo=" + encodeURIComponent("/upgrade"));
+        return;
+      }
+
       const res = await bnmData.functions.invoke("create-checkout", { productId: tier.id });
       const redirectUrl = res.data?.redirectUrl;
       if (!redirectUrl) {
@@ -65,6 +76,7 @@ export default function BnmUpgrade() {
       window.location.href = redirectUrl;
     } catch (e) {
       setError(e.message || "Payment failed to start. Please try again.");
+    } finally {
       setLoadingId(null);
     }
   };
