@@ -1,4 +1,4 @@
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 
 // Client-side helper: convert a File object to base64 for the uploadFile backend function.
 
@@ -18,7 +18,7 @@ export function fileToBase64(file) {
  */
 export async function uploadFileProxy(file) {
   const base64 = await fileToBase64(file);
-  const res = await base44.functions.invoke("uploadFile", {
+  const res = await bnmData.functions.invoke("uploadFile", {
     file: base64,
     filename: file.name,
     content_type: file.type,
