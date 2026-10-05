@@ -3,6 +3,7 @@ import { Hash, MapPin, Sparkles } from "lucide-react";
 import Camera from "@/pages/Camera";
 import { BnmLockedScreen, Glass, Pill } from "@/components/bnm/LockedShell";
 import TemplateGallery100 from "@/components/bnm/TemplateGallery100";
+import AiCaptionInput from "@/components/bnm/AiCaptionInput";
 
 const TAGS = ["Kindness","Community","Environment","Animals","People"];
 
@@ -38,12 +39,12 @@ export default function BnmLockedCreate() {
         <div className="mt-2 flex items-start gap-2 rounded-[17px] border border-[#394f78] bg-[#0a1830] p-3">
           <div className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#32c8ff] via-[#8755ff] to-[#ff3cac]"><Hash className="h-3.5 w-3.5"/></div>
           <div className="min-w-0 flex-1">
-            <textarea
+            <AiCaptionInput
               value={caption}
-              onChange={(e)=>setCaption(e.target.value.slice(0,220))}
+              onChange={setCaption}
               placeholder="Add a kind caption…"
-              rows={2}
-              className="w-full resize-none bg-transparent text-[11px] leading-4 text-white outline-none placeholder:text-[#7e91b5]"
+              maxLength={220}
+              tags={tags}
             />
             <div className="mt-1 flex items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-1.5 text-[8px] text-[#8fa2c3]"><MapPin className="h-3 w-3"/><span>No location attached</span></div>
@@ -57,7 +58,9 @@ export default function BnmLockedCreate() {
         </p>
 
         {/* 100 Viral Templates Gallery */}
-        <TemplateGallery100 />
+        <div id="bnm-templates">
+          <TemplateGallery100 />
+        </div>
       </div>
     </BnmLockedScreen>
   );

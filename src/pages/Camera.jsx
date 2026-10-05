@@ -45,6 +45,8 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
   const [beauty, setBeauty] = useState(false);
   const [timerDelay, setTimerDelay] = useState(0);
   const [countdown, setCountdown] = useState(0);
+  const [mode, setMode] = useState("video"); // "video" | "photo"
+  const [photoUrl, setPhotoUrl] = useState(null);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -179,6 +181,7 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
 
   const handleRecordPress = () => {
     if (recording) return stopRecording();
+    if (mode === "photo") return capturePhoto();
     if (!ready || countdown > 0) return;
     if (!timerDelay) return startRecording();
 
@@ -196,27 +199,47 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
 
   const retake = () => {
     setRecordedUrl(null);
+    setPhotoUrl(null);
     videoBlobRef.current = null;
     thumbBlobRef.current = null;
+  };
+
+  const capturePhoto = () => {
+    if (!canvasRef.current || !ready) return;
+    canvasRef.current.toBlob((blob) => {
+      if (!blob) return;
+      thumbBlobRef.current = blob;
+      setPhotoUrl(URL.createObjectURL(blob));
+      setRecordedUrl(null);
+    }, "image/jpeg", 0.92);
   };
 
   const postMutation = useMutation({
     mutationFn: async () => {
       setPosting(true);
-      const blob = videoBlobRef.current;
-      const file = new File([blob], `clip-${Date.now()}.webm`, { type: "video/webm" });
-      const vRes = { file_url: await uploadFileProxy(file) };
-      let thumbUrl = "";
-      if (thumbBlobRef.current) {
-        thumbUrl = await uploadFileProxy(new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }));
+      let videoUrl, thumbUrl = "";
+      const isPhoto = !videoBlobRef.current && photoUrl;
+      if (isPhoto) {
+        const photoFile = new File([thumbBlobRef.current], `photo-${Date.now()}.jpg`, { type: "image/jpeg" });
+        const uploaded = await uploadFileProxy(photoFile);
+        videoUrl = uploaded;
+        thumbUrl = uploaded;
+      } else {
+        const blob = videoBlobRef.current;
+        const file = new File([blob], `clip-${Date.now()}.webm`, { type: "video/webm" });
+        const vRes = { file_url: await uploadFileProxy(file) };
+        videoUrl = vRes.file_url;
+        if (thumbBlobRef.current) {
+          thumbUrl = await uploadFileProxy(new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }));
+        }
       }
       const newVideo = await base44.entities.Video.create({
-        title: `Clip ${new Date().toLocaleString()}`,
+        title: isPhoto ? `Photo ${new Date().toLocaleString()}` : `Clip ${new Date().toLocaleString()}`,
         description: String(caption || "").trim(),
-        url: vRes.file_url,
+        url: videoUrl,
         thumbnail_url: thumbUrl,
         category: "entertainment",
-        tags: ["camera", "bnearme", ...contentTags.map((tag) => String(tag).toLowerCase()).filter(Boolean)].slice(0, 8),
+        tags: [isPhoto ? "photo" : "camera", "bnearme", ...contentTags.map((tag) => String(tag).toLowerCase()).filter(Boolean)].slice(0, 8),
         visibility: "public",
         monetized: false,
         processing_status: "done",
@@ -373,9 +396,13 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
       {recordedUrl && (
         <video src={recordedUrl} autoPlay loop playsInline className="absolute inset-0 z-10 w-full h-full object-cover" style={{ maxHeight: "100vh", maxWidth: "calc(100vh * 9/16)", margin: "auto" }} />
       )}
+      {/* photo preview overlay */}
+      {photoUrl && !recordedUrl && (
+        <img src={photoUrl} alt="Captured" className="absolute inset-0 z-10 w-full h-full object-cover" style={{ maxHeight: "100vh", maxWidth: "calc(100vh * 9/16)", margin: "auto" }} />
+      )}
 
       {/* bottom controls */}
-      {!recordedUrl && (
+      {!recordedUrl && !photoUrl && (
         <div className="absolute bottom-0 inset-x-0 z-20 pb-6 pt-3 bg-gradient-to-t from-black/70 to-transparent">
           {showFilters && (
             <div className="flex gap-2 overflow-x-auto px-4 pb-3 no-scrollbar">
@@ -394,9 +421,9 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
           )}
 
           <div className="mb-2 flex items-center justify-center gap-4 text-[10px] font-bold">
-            <button className="text-white">Video</button>
-            <button disabled className="text-white/40">Photo</button>
-            <button disabled className="text-white/40">Templates</button>
+            <button onClick={() => setMode("video")} className={mode === "video" ? "text-[#ff43b5]" : "text-white/60"}>Video</button>
+            <button onClick={() => setMode("photo")} className={mode === "photo" ? "text-[#ff43b5]" : "text-white/60"}>Photo</button>
+            <button onClick={() => document.getElementById("bnm-templates")?.scrollIntoView({ behavior: "smooth" })} className="text-white/60">Templates</button>
           </div>
 
           <div className="flex items-center justify-around px-6">
@@ -438,7 +465,7 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
       )}
 
       {/* post review controls */}
-      {recordedUrl && (
+      {(recordedUrl || photoUrl) && (
         <div className="absolute bottom-0 inset-x-0 z-20 p-6 flex items-center justify-center gap-4 bg-gradient-to-t from-black/80 to-transparent">
           <button onClick={retake} disabled={posting} className="px-6 py-3 rounded-full bg-white/10 text-white font-semibold backdrop-blur">
             Retake

@@ -114,7 +114,6 @@ export default function BnmLockedHome() {
             <div className="relative flex h-full flex-col px-3 pb-4 pt-3">
               <div className="flex items-center justify-between gap-2">
                 <Pill active><Leaf className="h-3.5 w-3.5" /> Kindness Feed</Pill>
-                <Pill>Live data only</Pill>
               </div>
 
               <div className="mt-auto grid grid-cols-[1fr_52px] gap-2">
