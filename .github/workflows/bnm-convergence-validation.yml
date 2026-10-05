@@ -1,0 +1,85 @@
+name: bnm-convergence-validation
+
+on:
+  push:
+    branches:
+      - apex/bnm-full-convergence-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Wait for Vercel branch preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://be-near-me-platform-git-apex-bn-ced4d1-strategic-minds-advisory.vercel.app"
+          for attempt in {1..18}; do
+            if curl --silent --show-error --fail --location --max-time 20 "$base/" >/dev/null; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Preview alias never became reachable" >&2
+          exit 1
+
+      - name: Smoke test public routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://be-near-me-platform-git-apex-bn-ced4d1-strategic-minds-advisory.vercel.app"
+          routes=(
+            /
+            /home
+            /discover
+            /create
+            /upload
+            /nearby
+            /challenge
+            /search
+            /profile
+            /creator-studio
+            /ai-coach
+            /rewards
+            /inbox
+            /messages
+            /menu
+            /live
+            /login
+            /register
+            /forgot-password
+            /upgrade
+            /ThankYou
+          )
+          for route in "${routes[@]}"; do
+            code="$(curl --silent --output /dev/null --write-out '%{http_code}' --location --max-time 20 "$base$route")"
+            echo "$route -> $code"
+            test "$code" = "200"
+          done
