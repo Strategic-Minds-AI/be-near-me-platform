@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Sparkles, Loader2, Check } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { BnmSparkleIcon, BnmSpinnerIcon, BnmCheckIcon } from "@/components/bnm/BnmIcons";
 
 export default function AiCaptionInput({ value, onChange, placeholder, maxLength = 220, tags = [] }) {
   const [suggestion, setSuggestion] = useState(null);
@@ -56,7 +56,7 @@ export default function AiCaptionInput({ value, onChange, placeholder, maxLength
       {/* AI suggestion */}
       {loading && (
         <div className="flex items-center gap-1.5 pt-1 text-[9px] text-[#8755ff]">
-          <Loader2 className="h-3 w-3 animate-spin" />
+          <BnmSpinnerIcon size={12} />
           <span>AI assist thinking…</span>
         </div>
       )}
@@ -65,9 +65,9 @@ export default function AiCaptionInput({ value, onChange, placeholder, maxLength
           onClick={acceptSuggestion}
           className="mt-1.5 flex w-full items-start gap-1.5 rounded-lg border border-[#8755ff]/40 bg-[#8755ff]/10 p-2 text-left transition hover:bg-[#8755ff]/20"
         >
-          <Sparkles className="mt-0.5 h-3 w-3 shrink-0 text-[#a78bfa]" />
+          <BnmSparkleIcon size={12} />
           <span className="flex-1 text-[10px] leading-3.5 text-[#d9ccff]">{suggestion}</span>
-          <Check className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400" />
+          <BnmCheckIcon size={12} />
         </button>
       )}
     </div>

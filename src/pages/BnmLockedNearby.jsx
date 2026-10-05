@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import {
-  Compass, Heart, Leaf, MapPin, PawPrint, Search, SlidersHorizontal, Sparkles, Users, Utensils, ChevronRight
-} from "lucide-react";
+  BnmCompassIcon, BnmHeartIcon, BnmLeafSmallIcon, BnmMapPinIcon, BnmPawIcon,
+  BnmSearchIcon, BnmSlidersHIcon, BnmSparkleIcon, BnmUsersIcon, BnmUtensilsIcon, BnmChevronRightIcon
+} from "@/components/bnm/BnmIcons";
 import {
   BnmLockedScreen, EmptyState, Glass, Pill, SectionTitle, asItems, formatCount
 } from "@/components/bnm/LockedShell";
@@ -31,20 +32,20 @@ export default function BnmLockedNearby() {
         <div className="px-3 pt-2">
           <div className="flex items-center gap-2">
             <label className="flex h-10 flex-1 items-center gap-2.5 rounded-full border border-[#536fbb] bg-[#101f43] px-3.5">
-              <Search className="h-4.5 w-4.5 text-[#a6b8dc]" />
+              <BnmSearchIcon size={18} />
               <span className="truncate text-[11px] font-semibold text-[#9eb0d2]">Search by cause, location, or activity…</span>
             </label>
             <button className="grid h-10 w-10 place-items-center rounded-full border border-[#405d8c] bg-[#0d1c38]" aria-label="Filters">
-              <SlidersHorizontal className="h-4.5 w-4.5" />
+              <BnmSlidersHIcon size={18} />
             </button>
           </div>
 
           <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1.5 [scrollbar-width:none]">
             <Pill active>All</Pill>
-            <Pill><Leaf className="h-3 w-3" /> Environment</Pill>
-            <Pill><Users className="h-3 w-3" /> People</Pill>
-            <Pill><PawPrint className="h-3 w-3" /> Animals</Pill>
-            <Pill><Utensils className="h-3 w-3" /> Food</Pill>
+            <Pill><BnmLeafSmallIcon size={12} /> Environment</Pill>
+            <Pill><BnmUsersIcon size={12} /> People</Pill>
+            <Pill><BnmPawIcon size={12} /> Animals</Pill>
+            <Pill><BnmUtensilsIcon size={12} /> Food</Pill>
           </div>
         </div>
 
@@ -64,14 +65,14 @@ export default function BnmLockedNearby() {
               disabled={locationState === "loading"}
               className="absolute left-1/2 top-[52%] -translate-x-1/2 rounded-full border border-[#7867d9] bg-[#111f47]/95 px-4 py-2 text-[10px] font-black shadow-[0_0_30px_rgba(88,77,255,.2)]"
             >
-              <MapPin className="mr-1 inline h-4 w-4 text-[#c48dff]" />
+              <span className="mr-1 inline-flex align-middle"><BnmMapPinIcon size={16} /></span>
               {locationState === "loading" ? "Requesting…" : locationState === "denied" ? "Location blocked" : locationState === "unsupported" ? "Location unavailable" : "Use My Location"}
             </button>
           )}
 
           <div className="absolute right-3 top-3 grid gap-1.5">
-            <button className="grid h-9 w-9 place-items-center rounded-full border border-[#304c77] bg-[#0a1831]/95"><Compass className="h-4.5 w-4.5" /></button>
-            <button className="grid h-9 w-9 place-items-center rounded-full border border-[#304c77] bg-[#0a1831]/95"><Sparkles className="h-4.5 w-4.5" /></button>
+            <button className="grid h-9 w-9 place-items-center rounded-full border border-[#304c77] bg-[#0a1831]/95"><BnmCompassIcon size={18} /></button>
+            <button className="grid h-9 w-9 place-items-center rounded-full border border-[#304c77] bg-[#0a1831]/95"><BnmSparkleIcon size={18} /></button>
           </div>
 
           <div className="absolute bottom-2.5 left-3 rounded-full border border-[#314b75] bg-[#07162e]/90 px-2.5 py-1 text-[8px] font-bold text-[#b8c7e4]">
@@ -97,7 +98,7 @@ export default function BnmLockedNearby() {
             {posts.slice(0,5).map((post) => (
               <Glass key={post.id} className="flex gap-2 p-1.5">
                 <div className="h-[60px] w-[78px] shrink-0 overflow-hidden rounded-[11px] bg-gradient-to-br from-[#16426d] to-[#361945]">
-                  {post.image_url ? <img src={post.image_url} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><Heart className="h-7 w-7 text-[#ff4bb6]" /></div>}
+                  {post.image_url ? <img src={post.image_url} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><BnmHeartIcon size={28} filled /></div>}
                 </div>
                 <div className="min-w-0 flex-1 py-0.5">
                   <div className="text-[8px] font-black uppercase tracking-[.08em] text-[#59c6ff]">{post.type || "community"}</div>
@@ -106,7 +107,7 @@ export default function BnmLockedNearby() {
                     <span className="truncate">{post.channel_name || "Be Near Me"}</span><span>•</span><span>{formatCount(post.likes)} likes</span>
                   </div>
                 </div>
-                <ChevronRight className="mt-5 h-4 w-4 text-[#83a0c7]" />
+                <span className="mt-5"><BnmChevronRightIcon size={16} /></span>
               </Glass>
             ))}
           </div>
@@ -115,7 +116,7 @@ export default function BnmLockedNearby() {
             {[1,2,3,4].map((i) => (
               <Glass key={i} className="flex items-center gap-2 p-1.5">
                 <div className="grid h-[58px] w-[72px] shrink-0 place-items-center rounded-[11px] border border-[#20395f] bg-[linear-gradient(135deg,#102745,#141932_55%,#28172f)]">
-                  {i === 1 ? <Leaf className="h-6 w-6 text-[#5acfa9]" /> : i === 2 ? <Users className="h-6 w-6 text-[#8d74df]" /> : i === 3 ? <Heart className="h-6 w-6 text-[#e4589f]" /> : <PawPrint className="h-6 w-6 text-[#5da8df]" />}
+                  {i === 1 ? <BnmLeafSmallIcon size={24} /> : i === 2 ? <BnmUsersIcon size={24} /> : i === 3 ? <BnmHeartIcon size={24} filled /> : <BnmPawIcon size={24} />}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="h-2.5 w-[78%] rounded-full bg-[#1a2c49]" />

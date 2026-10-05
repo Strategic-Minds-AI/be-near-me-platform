@@ -1,7 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { VIRAL_TEMPLATES_100, VIRAL_CATEGORIES_100 } from "@/lib/gallery/viralTemplates100.js";
-import { Sparkles, Film, Zap, Sliders, X, Play, Loader2, CheckCircle2, AlertTriangle, Wand2 } from "lucide-react";
+import {
+  BnmSparkleIcon, BnmFilmIcon, BnmBoltIcon, BnmSlidersIcon,
+  BnmCloseIcon, BnmPlayIcon, BnmSpinnerIcon, BnmCheckCircleIcon,
+  BnmAlertIcon, BnmWandIcon
+} from "@/components/bnm/BnmIcons";
 import { base44 } from "@/api/base44Client";
 
 const DIFFICULTY_STYLES = {
@@ -104,7 +108,7 @@ export default function TemplateGallery100() {
       <div className="px-3 pt-2 pb-3">
         <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-fuchsia-600/15 via-[#0a0a14] to-cyan-500/10 p-3">
           <div className="flex items-center gap-2 text-white">
-            <Sparkles className="h-4 w-4 text-fuchsia-400" />
+            <BnmSparkleIcon size={16} />
             <h2 className="text-sm font-extrabold tracking-tight">100 Viral Templates</h2>
           </div>
           <p className="mt-1 text-[10px] leading-4 text-[#9ba6bb]">
@@ -149,7 +153,7 @@ export default function TemplateGallery100() {
       {/* Template grid */}
       <div className="px-3 pb-4">
         <div className="mb-2 flex items-center gap-1.5">
-          <Film className="h-3.5 w-3.5 text-fuchsia-400" />
+          <BnmFilmIcon size={14} />
           <h3 className="text-[10px] font-bold uppercase tracking-wider text-[#8f9ab0]">
             {filtered.length} templates
           </h3>
@@ -214,7 +218,7 @@ export default function TemplateGallery100() {
                   {/* 1-tap badge */}
                   {!busy && (
                     <div className="absolute left-1.5 bottom-7 flex items-center gap-0.5 rounded-full bg-black/50 px-1.5 py-0.5 backdrop-blur-sm">
-                      <Zap className="h-2.5 w-2.5 text-fuchsia-400" />
+                      <BnmBoltIcon size={10} />
                       <span className="text-[7px] font-bold text-white">1 TAP</span>
                     </div>
                   )}
@@ -230,7 +234,7 @@ export default function TemplateGallery100() {
                   {/* Loading overlay */}
                   {busy && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/70 backdrop-blur-sm">
-                      <Loader2 className="h-5 w-5 animate-spin text-fuchsia-400" />
+                      <BnmSpinnerIcon size={20} />
                       <span className="text-[8px] font-bold text-white">Generating...</span>
                     </div>
                   )}
@@ -239,7 +243,7 @@ export default function TemplateGallery100() {
                   {showVideo && !busy && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/90">
-                        <Play className="h-4 w-4 fill-white text-white" />
+                        <BnmPlayIcon size={16} />
                       </div>
                     </div>
                   )}
@@ -247,7 +251,7 @@ export default function TemplateGallery100() {
                   {/* Error */}
                   {showError && !busy && (
                     <div className="absolute inset-0 flex items-center justify-center bg-red-500/40">
-                      <AlertTriangle className="h-5 w-5 text-white" />
+                      <BnmAlertIcon size={20} />
                     </div>
                   )}
                 </button>
@@ -258,7 +262,7 @@ export default function TemplateGallery100() {
                   className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition hover:bg-white/20"
                   title="Customize"
                 >
-                  <Sliders className="h-3 w-3 text-white" />
+                  <BnmSlidersIcon size={12} />
                 </button>
               </div>
             );
@@ -276,10 +280,10 @@ export default function TemplateGallery100() {
               onClick={() => setQuickResult(null)}
               className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10"
             >
-              <X className="h-4 w-4" />
+              <BnmCloseIcon size={16} />
             </button>
             <div className="mb-4 flex items-center gap-2 text-emerald-300">
-              <CheckCircle2 className="h-5 w-5" />
+              <BnmCheckCircleIcon size={20} />
               <p className="font-bold">Your video is live!</p>
             </div>
             <video
@@ -296,7 +300,7 @@ export default function TemplateGallery100() {
                 to="/home"
                 className="flex-1 rounded-full bg-white/10 py-3 text-center text-sm font-bold text-white hover:bg-white/15"
               >
-                <Play className="mr-1.5 inline h-4 w-4" /> View on feed
+                <BnmPlayIcon size={16} /> View on feed
               </Link>
               <Link
                 to="/tracker"
@@ -319,10 +323,10 @@ export default function TemplateGallery100() {
               onClick={() => setQuickResult(null)}
               className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10"
             >
-              <X className="h-4 w-4" />
+              <BnmCloseIcon size={16} />
             </button>
             <div className="mb-3 flex items-center gap-2 text-red-300">
-              <AlertTriangle className="h-5 w-5" />
+              <BnmAlertIcon size={20} />
               <p className="font-bold">Generation failed</p>
             </div>
             <p className="text-sm text-red-300/80">{quickResult.data.error}</p>
@@ -346,7 +350,7 @@ export default function TemplateGallery100() {
               onClick={() => setActiveTemplate(null)}
               className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10"
             >
-              <X className="h-4 w-4" />
+              <BnmCloseIcon size={16} />
             </button>
 
             {/* Header */}
@@ -433,11 +437,11 @@ export default function TemplateGallery100() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> Generating your video...
+                  <BnmSpinnerIcon size={16} /> Generating your video...
                 </>
               ) : (
                 <>
-                  <Wand2 className="mr-2 inline h-4 w-4" /> Generate {duration}s video
+                  <BnmWandIcon size={16} /> Generate {duration}s video
                 </>
               )}
             </button>
@@ -445,7 +449,7 @@ export default function TemplateGallery100() {
             {result?.video_url && (
               <div className="mt-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4">
                 <div className="mb-3 flex items-center gap-2 text-emerald-300">
-                  <CheckCircle2 className="h-5 w-5" />
+                  <BnmCheckCircleIcon size={20} />
                   <p className="font-bold">Your video is live!</p>
                 </div>
                 <video
@@ -462,7 +466,7 @@ export default function TemplateGallery100() {
                     to="/home"
                     className="flex-1 rounded-full bg-white/10 py-3 text-center text-sm font-bold text-white hover:bg-white/15"
                   >
-                    <Play className="mr-1.5 inline h-4 w-4" /> View on feed
+                    <BnmPlayIcon size={16} /> View on feed
                   </Link>
                   <Link
                     to="/tracker"

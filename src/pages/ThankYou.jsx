@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { CheckCircle2, Loader2 } from "lucide-react";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
+import { BnmCheckCircleIcon, BnmSpinnerIcon } from "@/components/bnm/BnmIcons";
 
 export default function ThankYou() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function ThankYou() {
         <BnmLogoMark className="w-20 h-24 mb-6" />
 
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
-          <CheckCircle2 className="h-9 w-9 text-emerald-400" />
+          <BnmCheckCircleIcon size={36} />
         </div>
 
         <h1 className="mb-2 text-2xl font-black text-white">Payment successful!</h1>
@@ -46,7 +46,7 @@ export default function ThankYou() {
         </p>
 
         <div className="flex items-center gap-2 text-xs text-bnm-secondary">
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <BnmSpinnerIcon size={16} />
           <span>Entering the app in {countdown}...</span>
         </div>
 

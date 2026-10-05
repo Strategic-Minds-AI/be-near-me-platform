@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { ChevronRight, Clock3, Heart, Leaf, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { BnmChevronRightIcon, BnmClockIcon, BnmHeartIcon, BnmLeafSmallIcon, BnmShieldIcon, BnmSparkleIcon, BnmUsersIcon } from "@/components/bnm/BnmIcons";
 import { BnmLockedScreen, Glass, GradientButton, MediaBackdrop, Pill, asItems } from "@/components/bnm/LockedShell";
 
 function daysRemaining(expiresAt) {
@@ -37,7 +37,7 @@ export default function BnmLockedChallenge() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_18%,rgba(255,74,176,.2),transparent_30%),linear-gradient(180deg,rgba(1,8,19,.05),rgba(2,8,18,.1)_35%,rgba(1,6,16,.92)_100%)]" />
           <div className="relative flex min-h-[268px] flex-col p-3">
             <div className="flex items-center justify-between">
-              <Pill active><Leaf className="h-3.5 w-3.5" /> Kindness Challenge</Pill>
+              <Pill active><BnmLeafSmallIcon size={14} /> Kindness Challenge</Pill>
               <Pill>{status}</Pill>
             </div>
             <div className="mt-auto">
@@ -51,17 +51,17 @@ export default function BnmLockedChallenge() {
 
         <div className="mt-1.5 grid grid-cols-3 gap-1.5">
           <Glass className="p-2.5">
-            <Clock3 className="h-4.5 w-4.5 text-[#ab7bff]" />
+            <BnmClockIcon size={18} />
             <div className="mt-1.5 text-[16px] font-black">{days === "—" ? "—" : days + "d"}</div>
             <div className="text-[8px] leading-3 text-[#8497b9]">Time left</div>
           </Glass>
           <Glass className="p-2.5">
-            <Users className="h-4.5 w-4.5 text-[#66c8ff]" />
+            <BnmUsersIcon size={18} />
             <div className="mt-1.5 text-[16px] font-black">—</div>
             <div className="text-[8px] leading-3 text-[#8497b9]">People joined</div>
           </Glass>
           <Glass className="p-2.5">
-            <Heart className="h-4.5 w-4.5 text-[#ff4eaf]" />
+            <BnmHeartIcon size={18} filled />
             <div className="mt-1.5 text-[16px] font-black">{reward === null ? "—" : reward}</div>
             <div className="text-[8px] leading-3 text-[#8497b9]">Reward units</div>
           </Glass>
@@ -92,16 +92,16 @@ export default function BnmLockedChallenge() {
 
         <Link to="/Dares" className="mt-2 block">
           <GradientButton className="w-full py-2.5 text-[13px]">
-            <Sparkles className="mr-1 inline h-4.5 w-4.5" />
+            <span className="mr-1 inline-flex align-middle"><BnmSparkleIcon size={18} /></span>
             {selected ? "Open Challenge" : "Join / Create Challenge"}
-            <ChevronRight className="ml-2 inline h-4.5 w-4.5" />
+            <span className="ml-2 inline-flex align-middle"><BnmChevronRightIcon size={18} /></span>
           </GradientButton>
         </Link>
 
         <div className="mt-2 grid grid-cols-3 gap-2 pb-2 text-center text-[7px] leading-3 text-[#8295b8]">
-          <div><Users className="mx-auto mb-1 h-4.5 w-4.5 text-[#d15dff]" />Kinder community</div>
-          <div><ShieldCheck className="mx-auto mb-1 h-4.5 w-4.5 text-[#5fe0ff]" />Safe and respectful</div>
-          <div><Heart className="mx-auto mb-1 h-4.5 w-4.5 text-[#ff5ab9]" />Positive action</div>
+          <div className="flex flex-col items-center"><BnmUsersIcon size={18} /><span className="mb-1">Kinder community</span></div>
+          <div className="flex flex-col items-center"><BnmShieldIcon size={18} /><span className="mb-1">Safe and respectful</span></div>
+          <div className="flex flex-col items-center"><BnmHeartIcon size={18} filled /><span className="mb-1">Positive action</span></div>
         </div>
         {isLoading ? <p className="sr-only">Loading challenges</p> : null}
       </div>

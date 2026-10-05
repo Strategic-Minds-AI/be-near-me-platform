@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { ChevronRight, Gift, Leaf, LockKeyhole, PackageCheck, Star } from "lucide-react";
+import { BnmChevronRightIcon, BnmGiftIcon, BnmLeafSmallIcon, BnmLockIcon, BnmPackageIcon, BnmStarIcon } from "@/components/bnm/BnmIcons";
 import { BnmLockedScreen, EmptyState, Glass, Pill, SectionTitle, asItems, formatCount } from "@/components/bnm/LockedShell";
 import { BNM_REWARDS } from "@/lib/bnm/rewardCatalog";
 
@@ -12,7 +12,7 @@ function RewardVisual({ reward, large = false }) {
       "relative grid place-items-center overflow-hidden bg-[radial-gradient(circle_at_72%_18%,rgba(255,68,177,.3),transparent_32%),radial-gradient(circle_at_24%_82%,rgba(51,197,255,.18),transparent_34%),linear-gradient(135deg,#18355a,#17152f_55%,#471844)] " +
       (large ? "h-[128px]" : "aspect-[1.04]")
     }>
-      {reward.visual === "leaf" ? <Leaf className={large ? "h-14 w-14 text-[#67f0b0]" : "h-11 w-11 text-[#67f0b0]"} /> : <Gift className={large ? "h-14 w-14 text-[#ff60bd]" : "h-11 w-11 text-[#ff60bd]"} />}
+      {reward.visual === "leaf" ? <BnmLeafSmallIcon size={large ? 56 : 44} /> : <BnmGiftIcon size={large ? 56 : 44} />}
       <div className="absolute bottom-2 left-2 rounded-full border border-white/10 bg-black/35 px-2 py-1 text-[8px] font-black text-[#dbe7f8] backdrop-blur">
         {reward.internal ? "BE NEAR ME" : "PARTNER REQUIRED"}
       </div>
@@ -55,9 +55,9 @@ export default function BnmLockedRewards() {
               <Link to="/Wallet" className="mt-3 inline-flex rounded-full border border-[#5c6e9a] bg-[#142143] px-3 py-1.5 text-[9px] font-black">Reward History ›</Link>
             </div>
             <div className="relative overflow-hidden rounded-[18px] bg-gradient-to-br from-[#263976] via-[#351a63] to-[#0f263e]">
-              <Gift className="absolute right-4 top-4 h-14 w-14 text-[#ff49b5]" />
-              <Leaf className="absolute bottom-3 left-3 h-9 w-9 text-[#61e7b0]" />
-              <Star className="absolute bottom-4 right-5 h-5 w-5 text-[#ffd45d]" fill="currentColor" />
+              <div className="absolute right-4 top-4"><BnmGiftIcon size={56} /></div>
+              <div className="absolute bottom-3 left-3"><BnmLeafSmallIcon size={36} /></div>
+              <div className="absolute bottom-4 right-5"><BnmStarIcon size={20} filled /></div>
             </div>
           </div>
         </Glass>
@@ -108,9 +108,9 @@ export default function BnmLockedRewards() {
                 <div className="mt-3 flex items-center justify-between">
                   <span className="font-black text-[#ffc14b]">★ {formatCount(reward.points)}</span>
                   {reward.redeemable ? (
-                    <Link to={"/reward-checkout/" + reward.id} className="grid h-8 w-8 place-items-center rounded-full border border-[#6c5fbb] bg-[#151d42]"><ChevronRight className="h-4 w-4" /></Link>
-                  ) : (
-                    <span className="grid h-8 w-8 place-items-center rounded-full border border-[#485d83] bg-[#0d1930] text-[#8292af]"><LockKeyhole className="h-4 w-4" /></span>
+                    <Link to={"/reward-checkout/" + reward.id} className="grid h-8 w-8 place-items-center rounded-full border border-[#6c5fbb] bg-[#151d42]"><BnmChevronRightIcon size={16} /></Link>
+                    ) : (
+                    <span className="grid h-8 w-8 place-items-center rounded-full border border-[#485d83] bg-[#0d1930] text-[#8292af]"><BnmLockIcon size={16} /></span>
                   )}
                 </div>
               </div>
@@ -119,10 +119,10 @@ export default function BnmLockedRewards() {
         </div>
 
         {!filtered.length ? (
-          <EmptyState icon={PackageCheck} title={"No verified " + filter.toLowerCase() + " rewards yet"} body="This category stays empty until a real reward or partner is configured." />
+          <EmptyState icon={BnmPackageIcon} title={"No verified " + filter.toLowerCase() + " rewards yet"} body="This category stays empty until a real reward or partner is configured." />
         ) : null}
 
-        {!channel ? <div className="mt-3"><EmptyState icon={Star} title="Sign in to see your points" body="Your balance comes from your real channel credit ledger." /></div> : null}
+        {!channel ? <div className="mt-3"><EmptyState icon={BnmStarIcon} title="Sign in to see your points" body="Your balance comes from your real channel credit ledger." /></div> : null}
 
         <p className="mt-4 pb-4 text-center text-[9px] leading-4 text-[#7488aa]">
           The marketplace never invents stock, partner gift cards, or fulfillment. Physical and partner rewards unlock only after verified inventory/partner configuration.

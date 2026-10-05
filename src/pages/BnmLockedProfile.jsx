@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Heart, Leaf, Play, Send, ShieldCheck, Users } from "lucide-react";
+import { BnmHeartIcon, BnmLeafSmallIcon, BnmPlayIcon, BnmSendIcon, BnmShieldIcon, BnmUsersIcon } from "@/components/bnm/BnmIcons";
 import {
   Avatar, BnmLockedScreen, EmptyState, GradientButton, Pill, asItems, formatCount
 } from "@/components/bnm/LockedShell";
@@ -64,7 +64,7 @@ export default function BnmLockedProfile() {
           <div className="relative z-10 flex items-end justify-between gap-3">
             <div className="grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-[#30c8ff] via-[#9650ff] to-[#ff3aa9] p-[2px] shadow-[0_0_22px_rgba(140,75,255,.28)]">
               <div className="grid h-full w-full place-items-center rounded-full bg-[#0a1730]">
-                <Users className="h-8 w-8 text-[#8068cf]" />
+                <BnmUsersIcon size={32} />
               </div>
             </div>
             <Link to="/CreateChannel"><GradientButton className="mb-1 px-6 py-2.5">Create Channel</GradientButton></Link>
@@ -81,7 +81,7 @@ export default function BnmLockedProfile() {
           </div>
 
           <div className="mt-3 flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
-            <Pill><Leaf className="h-3 w-3" /> Community Creator</Pill>
+            <Pill><BnmLeafSmallIcon size={12} /> Community Creator</Pill>
             <Pill>Profile setup required</Pill>
           </div>
 
@@ -117,7 +117,7 @@ export default function BnmLockedProfile() {
           <Avatar src={avatar} label={name || "BN"} size={96} />
           {publicMode ? (
             <div className="mb-1 flex gap-2">
-              <button className="grid h-10 w-10 place-items-center rounded-full border border-[#46618e] bg-[#0d1b35]"><Send className="h-4.5 w-4.5" /></button>
+              <button className="grid h-10 w-10 place-items-center rounded-full border border-[#46618e] bg-[#0d1b35]"><BnmSendIcon size={18} /></button>
               <GradientButton className="px-6 py-2.5">+ Follow</GradientButton>
             </div>
           ) : (
@@ -142,9 +142,9 @@ export default function BnmLockedProfile() {
         </div>
 
         <div className="mt-3 flex gap-1.5 overflow-x-auto [scrollbar-width:none]">
-          <Pill><Leaf className="h-3 w-3" /> Community Creator</Pill>
-          {rep?.level ? <Pill><ShieldCheck className="h-3 w-3" /> {rep.level}</Pill> : null}
-          <Pill><Heart className="h-3 w-3" /> {formatCount(totalLikes)} likes</Pill>
+          <Pill><BnmLeafSmallIcon size={12} /> Community Creator</Pill>
+          {rep?.level ? <Pill><BnmShieldIcon size={12} /> {rep.level}</Pill> : null}
+          <Pill><BnmHeartIcon size={12} /> {formatCount(totalLikes)} likes</Pill>
         </div>
 
         <div className="mt-4 grid grid-cols-4 border-b border-[#233858] pb-2 text-center text-[10px] font-black text-[#96a7c7]">
@@ -157,13 +157,13 @@ export default function BnmLockedProfile() {
           <div className="mt-1 grid grid-cols-3 gap-1 pb-4">
             {videos.slice(0, 15).map((v) => (
               <div key={v.id} className="relative aspect-[.82] overflow-hidden rounded-[7px] bg-[#0d1b32]">
-                {v.thumbnail_url ? <img src={v.thumbnail_url} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><Play className="h-7 w-7 text-[#8d6cff]" /></div>}
+                {v.thumbnail_url ? <img src={v.thumbnail_url} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><BnmPlayIcon size={28} /></div>}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-2 text-[8px] font-black">▶ {formatCount(v.views)}</div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="mt-4"><EmptyState icon={Play} title="No verified public posts yet" body="This profile does not display seed or scraped donor content." /></div>
+          <div className="mt-4"><EmptyState icon={BnmPlayIcon} title="No verified public posts yet" body="This profile does not display seed or scraped donor content." /></div>
         )}
       </div>
     </BnmLockedScreen>

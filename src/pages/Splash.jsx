@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
-import { ArrowLeft, Check, Loader2, Sparkles, Zap, Crown } from "lucide-react";
+import {
+  BnmBackIcon, BnmCheckIcon, BnmSpinnerIcon,
+  BnmFreeTierIcon, BnmPlusTierIcon, BnmProTierIcon
+} from "@/components/bnm/BnmIcons";
 
 const TIERS = [
   {
@@ -11,7 +14,7 @@ const TIERS = [
     price: "$0",
     period: "forever",
     tagline: "Start exploring",
-    icon: Sparkles,
+    icon: BnmFreeTierIcon,
     gradient: "linear-gradient(135deg, #3B82F6, #6366F1)",
     features: ["Watch viral videos", "Browse the feed", "Basic AI video templates", "Community access"],
     cta: "Get Started Free",
@@ -22,7 +25,7 @@ const TIERS = [
     price: "$10",
     period: "one-time",
     tagline: "Create like a pro",
-    icon: Zap,
+    icon: BnmPlusTierIcon,
     gradient: "linear-gradient(135deg, #8B5CF6, #EC4899)",
     features: ["Everything in Free", "100 AI video templates", "HD video generation", "Priority rendering", "No watermark"],
     cta: "Get Plus",
@@ -34,7 +37,7 @@ const TIERS = [
     price: "$20",
     period: "one-time",
     tagline: "Go viral faster",
-    icon: Crown,
+    icon: BnmProTierIcon,
     gradient: "linear-gradient(135deg, #EC4899, #F59E0B)",
     features: ["Everything in Plus", "Unlimited AI generations", "4K video generation", "Advanced viral templates", "Analytics dashboard", "Early access features"],
     cta: "Get Pro",
@@ -88,7 +91,7 @@ export default function Splash() {
         {/* Back to feed */}
         <div className="absolute top-[max(env(safe-area-inset-top),16px)] left-4 z-20">
           <Link to="/home" className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/80 backdrop-blur hover:bg-white/10">
-            <ArrowLeft className="h-4 w-4" /> Back to feed
+            <BnmBackIcon size={16} /> Back to feed
           </Link>
         </div>
 
@@ -174,7 +177,7 @@ export default function Splash() {
                 <ul className="mt-3 space-y-1.5">
                   {tier.features.map((f, i) => (
                     <li key={i} className="flex items-center gap-2 text-[11px] text-white/80">
-                      <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                      <BnmCheckIcon size={14} className="shrink-0" />
                       <span>{f}</span>
                     </li>
                   ))}
@@ -192,7 +195,7 @@ export default function Splash() {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> Redirecting to checkout...
+                      <BnmSpinnerIcon size={16} /> Redirecting to checkout...
                     </>
                   ) : (
                     tier.cta

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { Heart, Leaf, MapPin, Mic, PawPrint, Send, Sparkles, Users } from "lucide-react";
+import { BnmHeartIcon, BnmLeafSmallIcon, BnmMapPinIcon, BnmMicIcon, BnmPawIcon, BnmSendIcon, BnmSparkleIcon, BnmUsersIcon } from "@/components/bnm/BnmIcons";
 import { BnmLockedScreen, Glass, Pill, asItems } from "@/components/bnm/LockedShell";
 
 function extractText(result) {
@@ -38,7 +38,7 @@ export default function BnmLockedAiCoach() {
       <div className="px-3 pt-3">
         <Glass className="overflow-hidden p-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3"><div className="grid h-14 w-14 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_25%,#ffffff,#7667ff_25%,#251e73_65%,#080f2d)] shadow-[0_0_28px_rgba(107,90,255,.55)]"><Sparkles className="h-6 w-6 text-white"/></div><div><h1 className="text-[25px] font-black">AI Coach</h1><p className="text-[11px] text-[#9aadd0]">Your positive assistant for a kinder community.</p></div></div>
+            <div className="flex items-center gap-3"><div className="grid h-14 w-14 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_25%,#ffffff,#7667ff_25%,#251e73_65%,#080f2d)] shadow-[0_0_28px_rgba(107,90,255,.55)]"><BnmSparkleIcon size={24} /></div><div><h1 className="text-[25px] font-black">AI Coach</h1><p className="text-[11px] text-[#9aadd0]">Your positive assistant for a kinder community.</p></div></div>
             <Pill><span className="h-2 w-2 rounded-full bg-emerald-400"/> Online</Pill>
           </div>
 
@@ -47,25 +47,25 @@ export default function BnmLockedAiCoach() {
             {sending ? <div className="w-fit rounded-full bg-[#151c49] px-4 py-2 text-xs text-[#b7c3de]">Coach is thinking…</div> : null}
           </div>
 
-          <div className="mt-4 flex gap-2 overflow-x-auto [scrollbar-width:none]"><Pill active><Sparkles className="h-3 w-3"/> Near Me</Pill><Pill><Leaf className="h-3 w-3"/> Environment</Pill><Pill><Users className="h-3 w-3"/> People</Pill><Pill><PawPrint className="h-3 w-3"/> Animals</Pill></div>
+          <div className="mt-4 flex gap-2 overflow-x-auto [scrollbar-width:none]"><Pill active><BnmSparkleIcon size={12} /> Near Me</Pill><Pill><BnmLeafSmallIcon size={12} /> Environment</Pill><Pill><BnmUsersIcon size={12} /> People</Pill><Pill><BnmPawIcon size={12} /> Animals</Pill></div>
         </Glass>
 
         <section className="mt-3">
-          <div className="mb-2 flex items-end justify-between"><div><h2 className="text-[22px] font-black"><MapPin className="mr-1 inline h-5 w-5 text-[#45bfff]"/>Try this near you</h2><p className="text-[10px] text-[#8fa2c2]">Only real public community activity is shown here.</p></div></div>
+          <div className="mb-2 flex items-end justify-between"><div><h2 className="text-[22px] font-black"><span className="mr-1 inline-flex align-middle"><BnmMapPinIcon size={20} /></span>Try this near you</h2><p className="text-[10px] text-[#8fa2c2]">Only real public community activity is shown here.</p></div></div>
           {posts.length ? (
             <div className="grid grid-cols-3 gap-2">
-              {posts.slice(0,3).map((p)=><Glass key={p.id} className="overflow-hidden"><div className="aspect-square bg-gradient-to-br from-[#153c67] to-[#4c194f]">{p.image_url ? <img src={p.image_url} alt="" className="h-full w-full object-cover"/> : <div className="grid h-full place-items-center"><Heart className="h-8 w-8 text-[#ff4bb4]"/></div>}</div><div className="p-2"><div className="line-clamp-3 text-[10px] font-bold leading-4">{p.content || "Community activity"}</div></div></Glass>)}
+              {posts.slice(0,3).map((p)=><Glass key={p.id} className="overflow-hidden"><div className="aspect-square bg-gradient-to-br from-[#153c67] to-[#4c194f]">{p.image_url ? <img src={p.image_url} alt="" className="h-full w-full object-cover"/> : <div className="grid h-full place-items-center"><BnmHeartIcon size={32} filled /></div>}</div><div className="p-2"><div className="line-clamp-3 text-[10px] font-bold leading-4">{p.content || "Community activity"}</div></div></Glass>)}
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {[
-                [Leaf,"Environment"],
-                [Users,"People"],
-                [PawPrint,"Animals"],
+                [BnmLeafSmallIcon,"Environment"],
+                [BnmUsersIcon,"People"],
+                [BnmPawIcon,"Animals"],
               ].map(([Icon,label])=>(
                 <Glass key={label} className="overflow-hidden">
                   <div className="grid aspect-square place-items-center bg-[linear-gradient(135deg,#112845,#171934_55%,#2d1731)]">
-                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#1a2148]"><Icon className="h-6 w-6 text-[#9d83ff]"/></div>
+                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#1a2148]"><Icon size={24} /></div>
                   </div>
                   <div className="p-2">
                     <div className="text-[9px] font-black">{label}</div>
@@ -78,7 +78,7 @@ export default function BnmLockedAiCoach() {
         </section>
 
         <div className="mt-3 flex items-center gap-2 rounded-full border border-[#8c69c8] bg-[#0b1731] p-2 pl-4">
-          <Sparkles className="h-5 w-5 text-[#b778ff]"/><input value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={(e)=>{if(e.key==="Enter") send();}} placeholder="Ask me anything…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#7f91b5]"/><Mic className="h-5 w-5 text-[#91a7ca]"/><button onClick={()=>send()} disabled={!input.trim()||sending} className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-r from-[#5e8fff] to-[#ff3bae] disabled:opacity-40"><Send className="h-5 w-5"/></button>
+          <BnmSparkleIcon size={20} /><input value={input} onChange={(e)=>setInput(e.target.value)} onKeyDown={(e)=>{if(e.key==="Enter") send();}} placeholder="Ask me anything…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#7f91b5]"/><BnmMicIcon size={20} /><button onClick={()=>send()} disabled={!input.trim()||sending} className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-r from-[#5e8fff] to-[#ff3bae] disabled:opacity-40"><BnmSendIcon size={20} /></button>
         </div>
         <div className="mt-2 flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none]">
           {["Something helpful near me","Something quick","Free opportunities","Group activities"].map((x)=><button key={x} onClick={()=>send(x)} className="whitespace-nowrap rounded-full border border-[#405982] bg-[#0b1932] px-3 py-2 text-[10px] font-bold text-[#c1cee5]">{x}</button>)}

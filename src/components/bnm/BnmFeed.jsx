@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles } from "lucide-react";
+import { BnmSparkleIcon } from "@/components/bnm/BnmIcons";
 import { base44 } from "@/api/base44Client";
 import TikTokVideoCard from "@/components/feed/TikTokVideoCard";
 
@@ -68,7 +68,7 @@ export default function BnmFeed() {
       <div className="relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#03050a] px-8 pb-24 text-center text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(213,0,255,.11),transparent_32%)]" />
         <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/[0.035]">
-          <Sparkles className="h-10 w-10 text-[#7b879e]" strokeWidth={1.6} />
+          <BnmSparkleIcon size={40} />
         </div>
         <h2 className="relative mt-6 text-2xl font-extrabold tracking-tight">Your feed starts here</h2>
         <p className="relative mt-2 max-w-xs text-sm leading-6 text-[#8e99ae]">
