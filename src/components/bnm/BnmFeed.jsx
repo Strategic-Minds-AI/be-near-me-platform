@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import TikTokVideoCard from "@/components/feed/TikTokVideoCard";
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -24,14 +24,14 @@ export default function BnmFeed() {
     queryFn: async () => {
       if (user?.email) {
         try {
-          const response = await base44.functions.invoke("recommendVideos", { limit: 30 });
+          const response = await bnmData.functions.invoke("recommendVideos", { limit: 30 });
           return response?.data?.videos || [];
         } catch {
-          const fallback = await base44.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
+          const fallback = await bnmData.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
           return fallback?.items || fallback || [];
         }
       }
-      const response = await base44.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
+      const response = await bnmData.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
       return response?.items || response || [];
     },
   });
