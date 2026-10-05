@@ -9,7 +9,7 @@ export function safeReturnTo() {
       url.searchParams.delete(p);
     }
     const path = url.pathname + url.search;
-    if (!path.startsWith("/") || path.startsWith("//") || path.includes("\")) return "/";
+    if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) return "/";
     return path;
   } catch {
     return "/";
