@@ -143,10 +143,33 @@ async function handleOrderApproved(db: any, eventData: any): Promise<Response> {
   const buyerEmail: string | null = purchase.buyerEmail ?? extractBuyerEmail(order);
 
   // ===== APP-SPECIFIC =====
-  // This app has no sign-in — the payment IS the access grant. The purchase being marked
-  // "paid" (below) is the fulfillment record. No user entity to update (no auth), so the
-  // grant is simply the paid status flip. The buyer's email (from Wix checkout) is persisted
-  // on the Base44Purchase row for support and record-keeping.
+  // BNM entitlement compatibility:
+  // - the current checkout product "plus" maps to the existing Channel "gold" tier
+  // - "pro" maps directly to Channel "pro"
+  // This avoids a production schema mutation while preserving the existing tier enum.
+  const entitlementTier = purchase.productId === "plus"
+    ? "gold"
+    : purchase.productId === "pro"
+      ? "pro"
+      : null;
+
+  if (!entitlementTier) {
+    console.error("payments-webhook: unsupported entitlement product", {
+      purchaseId: purchase.id,
+      productId: purchase.productId,
+    });
+    return new Response("Unsupported product entitlement", { status: 500 });
+  }
+
+  // Grant before marking the purchase paid. If the buyer already has a creator
+  // channel, upgrade it immediately. A buyer who has not created a channel yet
+  // can claim this paid entitlement later through claim-purchase-entitlement.
+  if (buyerEmail) {
+    const channels = await db.entities.Channel.filter({ created_by: buyerEmail });
+    for (const channel of channels ?? []) {
+      await db.entities.Channel.update(channel.id, { tier: entitlementTier });
+    }
+  }
   // ===== END APP-SPECIFIC =====
 
   // Mark paid LAST, so "paid" always implies the grant above completed. The idempotency
