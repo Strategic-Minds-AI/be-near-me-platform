@@ -27,21 +27,35 @@ export default function Splash() {
         {/* Logo pin mark */}
         <BnmLogoMark className="w-28 h-32 mb-6" />
 
-        {/* Wordmark */}
-        <h1 className="text-3xl font-extrabold tracking-tight text-bnm-text mb-20">
+        {/* Wordmark — large creative gradient */}
+        <h1
+          className="mb-5 text-5xl font-black tracking-tight"
+          style={{
+            background: "linear-gradient(90deg, #60A5FA 0%, #A78BFA 35%, #EC4899 70%, #60A5FA 100%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            filter: "drop-shadow(0 0 18px rgba(168,139,250,0.45))",
+          }}
+        >
           B NEAR ME
         </h1>
-        <p className="mb-14 text-center text-xs font-semibold uppercase tracking-[0.24em] text-bnm-secondary">
+
+        {/* Tagline — larger, creative, white */}
+        <p
+          className="mb-16 text-center text-sm font-bold uppercase tracking-[0.32em] text-white"
+          style={{ textShadow: "0 0 14px rgba(96,165,250,0.5), 0 0 28px rgba(236,72,153,0.3)" }}
+        >
           People · Places · Moments<br />Near You
         </p>
 
-        {/* CTA Button — horizontal pink→magenta→violet gradient */}
+        {/* CTA Button — electric blue→purple→pink gradient with glow hover */}
         <button
           onClick={() => navigate("/home")}
-          className="w-[80%] h-12 rounded-full font-bold text-white text-base transition-transform active:scale-95"
+          className="splash-electric-btn w-[80%] h-12 rounded-full font-bold text-white text-base transition-all duration-300 active:scale-95"
           style={{
-            background: "linear-gradient(90deg, #FF0080 0%, #CE07E3 50%, #6F20FF 100%)",
-            boxShadow: "0 0 30px rgba(206,7,227,0.35)",
+            background: "linear-gradient(90deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%)",
+            boxShadow: "0 0 30px rgba(139,92,246,0.35)",
           }}
         >
           Get Started
@@ -49,7 +63,7 @@ export default function Splash() {
 
         <button
           onClick={() => base44.auth.redirectToLogin(window.location.href)}
-          className="mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-transform active:scale-95"
+          className="splash-electric-btn mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-all duration-300 active:scale-95"
         >
           Log In
         </button>
@@ -57,8 +71,11 @@ export default function Splash() {
         {/* Bottom spacer — pushes secondary text to ~88% */}
         <div style={{ flexGrow: 2 }} />
 
-        {/* Secondary text */}
-        <p className="text-xs text-bnm-secondary text-center leading-relaxed mb-5 px-6">
+        {/* Secondary text — larger, creative, white */}
+        <p
+          className="text-center text-sm font-semibold leading-relaxed mb-5 px-6 text-white"
+          style={{ textShadow: "0 0 12px rgba(96,165,250,0.4), 0 0 24px rgba(236,72,153,0.25)" }}
+        >
           Create · Watch · Explore · Connect
         </p>
 
