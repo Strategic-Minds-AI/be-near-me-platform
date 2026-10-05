@@ -3,8 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
 import {
-  BnmBackIcon, BnmCheckIcon, BnmSpinnerIcon,
-  BnmFreeTierIcon, BnmPlusTierIcon, BnmProTierIcon
+  BnmBackIcon, BnmCheckIcon, BnmSpinnerIcon
 } from "@/components/bnm/BnmIcons";
 
 const TIERS = [
@@ -14,7 +13,6 @@ const TIERS = [
     price: "$0",
     period: "forever",
     tagline: "Start exploring",
-    icon: BnmFreeTierIcon,
     gradient: "linear-gradient(135deg, #3B82F6, #6366F1)",
     features: ["Watch viral videos", "Browse the feed", "Basic AI video templates", "Community access"],
     cta: "Get Started Free",
@@ -25,7 +23,6 @@ const TIERS = [
     price: "$10",
     period: "one-time",
     tagline: "Create like a pro",
-    icon: BnmPlusTierIcon,
     gradient: "linear-gradient(135deg, #8B5CF6, #EC4899)",
     features: ["Everything in Free", "100 AI video templates", "HD video generation", "Priority rendering", "No watermark"],
     cta: "Get Plus",
@@ -37,7 +34,6 @@ const TIERS = [
     price: "$20",
     period: "one-time",
     tagline: "Go viral faster",
-    icon: BnmProTierIcon,
     gradient: "linear-gradient(135deg, #EC4899, #F59E0B)",
     features: ["Everything in Plus", "Unlimited AI generations", "4K video generation", "Advanced viral templates", "Analytics dashboard", "Early access features"],
     cta: "Get Pro",
@@ -134,7 +130,6 @@ export default function Splash() {
         {/* Tier cards */}
         <div className="flex w-full max-w-md flex-col gap-3">
           {TIERS.map((tier) => {
-            const Icon = tier.icon;
             const isLoading = loadingId === tier.id;
             return (
               <div
@@ -153,12 +148,11 @@ export default function Splash() {
 
                 <div className="flex flex-col items-center text-center">
                   {/* Icon */}
-                  <div
-                    className="flex h-12 w-12 items-center justify-center rounded-xl"
-                    style={{ background: tier.gradient }}
-                  >
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
+                  <img
+                    src="https://media.base44.com/images/public/6abd9e05a56938f03c2c557b/e60c3a08b_generated_7c5a56b8.png"
+                    alt={`${tier.name} plan emblem`}
+                    className="h-14 w-14 rounded-xl object-cover"
+                  />
 
                   {/* Name */}
                   <h3 className="mt-3 text-base font-extrabold text-white">{tier.name}</h3>
