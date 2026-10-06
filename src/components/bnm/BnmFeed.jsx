@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BnmSparkleIcon } from "@/components/bnm/BnmIcons";
-import { base44 } from "@/api/base44Client";
+import { Sparkles } from "lucide-react";
+import { bnmData } from "@/services/bnmData";
 import TikTokVideoCard from "@/components/feed/TikTokVideoCard";
 
 async function safeCurrentUser() {
   try {
-    return await base44.auth.me();
+    return await bnmData.auth.me();
   } catch {
     return null;
   }
@@ -24,14 +24,14 @@ export default function BnmFeed() {
     queryFn: async () => {
       if (user?.email) {
         try {
-          const response = await base44.functions.invoke("recommendVideos", { limit: 30 });
+          const response = await bnmData.functions.invoke("recommendVideos", { limit: 30 });
           return response?.data?.videos || [];
         } catch {
-          const fallback = await base44.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
+          const fallback = await bnmData.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
           return fallback?.items || fallback || [];
         }
       }
-      const response = await base44.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
+      const response = await bnmData.entities.Video.filter({ visibility: "public" }, { sort: "-created_date", limit: 30 });
       return response?.items || response || [];
     },
   });
@@ -68,7 +68,7 @@ export default function BnmFeed() {
       <div className="relative flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#03050a] px-8 pb-24 text-center text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(213,0,255,.11),transparent_32%)]" />
         <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/[0.035]">
-          <BnmSparkleIcon size={40} />
+          <Sparkles className="h-10 w-10 text-[#7b879e]" strokeWidth={1.6} />
         </div>
         <h2 className="relative mt-6 text-2xl font-extrabold tracking-tight">Your feed starts here</h2>
         <p className="relative mt-2 max-w-xs text-sm leading-6 text-[#8e99ae]">

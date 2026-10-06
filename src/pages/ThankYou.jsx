@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
 import { BnmCheckCircleIcon, BnmSpinnerIcon } from "@/components/bnm/BnmIcons";
 
 export default function ThankYou() {
   const navigate = useNavigate();
-  const [params] = useSearchParams();
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {

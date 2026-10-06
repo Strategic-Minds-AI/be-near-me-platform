@@ -1,16 +1,13 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import {
-  BnmBackIcon, BnmBellIcon, BnmHomeIcon, BnmCreateIcon,
-  BnmSearchIcon, BnmProfileIcon
-} from "@/components/bnm/BnmIcons";
+import { ArrowLeft, Bell, Home, Plus, Search, User } from "lucide-react";
 import BnmLogoMark from "./BnmLogoMark";
 
 const navItems = [
-  { to: "/home", label: "Home", Icon: BnmHomeIcon },
-  { to: "/discover", label: "Discover", Icon: BnmSearchIcon },
-  { to: "/create", label: "Create", Icon: BnmCreateIcon, create: true },
-  { to: "/inbox", label: "Inbox", Icon: BnmBellIcon },
-  { to: "/profile", label: "Profile", Icon: BnmProfileIcon },
+  { to: "/home", label: "Home", Icon: Home },
+  { to: "/discover", label: "Discover", Icon: Search },
+  { to: "/create", label: "Create", Icon: Plus, create: true },
+  { to: "/inbox", label: "Inbox", Icon: Bell },
+  { to: "/profile", label: "Profile", Icon: User },
 ];
 
 export function BnmBottomNav() {
@@ -74,7 +71,7 @@ export function BnmHeader({ title, back = false, right = null, brand = false }) 
               className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/[0.08]"
               aria-label="Go back"
             >
-              <BnmBackIcon size={20} />
+              <ArrowLeft className="h-5 w-5" />
             </button>
           ) : brand ? (
             <Link to="/home" aria-label="B Near Me home">
@@ -115,7 +112,7 @@ export function BnmPage({ children, nav = true, className = "" }) {
 export function BnmSearchField({ value, onChange, placeholder = "Search" }) {
   return (
     <label className="flex h-12 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.055] px-4 text-[#9ba6bb] focus-within:border-fuchsia-500/50 focus-within:bg-white/[0.075]">
-      <BnmSearchIcon size={20} />
+      <Search className="h-5 w-5 shrink-0" />
       <input
         value={value}
         onChange={onChange}

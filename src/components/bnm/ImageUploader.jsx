@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { BnmImagePlusIcon, BnmCloseIcon, BnmSpinnerIcon } from "@/components/bnm/BnmIcons";
+import { useRef, useState } from "react";
+import { ImagePlus, X, Loader2 } from "lucide-react";
 
 // ImageUploader — lets users pick images from their device, resizes them
 // to max 1024px on a canvas, and returns base64 data URLs. No server upload
@@ -81,7 +81,7 @@ export default function ImageUploader({ images, onChange, max = 6 }) {
               onClick={() => removeImage(i)}
               className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition group-hover:opacity-100"
             >
-              <BnmCloseIcon size={12} />
+              <X className="h-3 w-3" />
             </button>
           </div>
         ))}
@@ -93,10 +93,10 @@ export default function ImageUploader({ images, onChange, max = 6 }) {
             className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/20 bg-white/[0.03] text-white/50 transition hover:border-fuchsia-500/40 hover:text-fuchsia-300 disabled:opacity-50"
           >
             {resizing ? (
-              <BnmSpinnerIcon size={20} />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <>
-                <BnmImagePlusIcon size={20} />
+                <ImagePlus className="h-5 w-5" />
                 <span className="text-[9px] font-semibold">Add</span>
               </>
             )}

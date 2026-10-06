@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
-  BnmBookmarkIcon, BnmCommentIcon, BnmLeafIcon, BnmLikeIcon,
-  BnmMusicIcon, BnmPlayIcon, BnmPlusIcon, BnmShareIcon, BnmSparkleIcon
-} from "@/components/bnm/BnmIcons";
+  Bookmark, Heart, Leaf, MessageCircle, Music2, Play, Plus, Share2, Sparkles
+} from "lucide-react";
 import {
   Avatar, BnmLockedScreen, Glass, MediaBackdrop, Pill, asItems, formatCount
 } from "@/components/bnm/LockedShell";
@@ -17,7 +16,7 @@ const isProductionContent = (video) => {
 export default function BnmLockedHome() {
   const { data: allVideos = [], isLoading } = useQuery({
     queryKey: ["bnm-lock-public-videos-v2"],
-    queryFn: async () => asItems(await base44.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
+    queryFn: async () => asItems(await bnmData.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
   });
 
   const video = allVideos.find(isProductionContent);
@@ -37,11 +36,11 @@ export default function BnmLockedHome() {
             <div className="relative flex min-h-[calc(100dvh-184px)] min-h-[590px] flex-col px-3 pb-4 pt-3">
               <div className="flex items-center justify-between gap-2">
                 <Glass className="flex items-center gap-2 rounded-full px-3 py-2">
-                  <BnmSparkleIcon size={14} />
+                  <Sparkles className="h-3.5 w-3.5 text-[#57d8ff]" />
                   <span className="text-[10px] font-black text-[#edf4ff]">NEARBY</span>
                 </Glass>
                 <Glass className="flex items-center gap-2 rounded-full px-3 py-2">
-                  <BnmPlayIcon size={14} />
+                  <Play className="h-3.5 w-3.5 text-[#ff43b5]" fill="currentColor" />
                   <span className="text-[10px] font-black">{formatCount(video.views)} views</span>
                 </Glass>
               </div>
@@ -49,7 +48,7 @@ export default function BnmLockedHome() {
               <div className="mt-auto grid grid-cols-[1fr_54px] gap-2">
                 <div className="self-end pb-1">
                   <Link to="/challenge" className="inline-flex">
-                    <Pill active><BnmLeafIcon size={14} /> Kindness Challenge</Pill>
+                    <Pill active><Leaf className="h-3.5 w-3.5" /> Kindness Challenge</Pill>
                   </Link>
 
                   <div className="mt-3 flex items-center gap-2">
@@ -78,7 +77,7 @@ export default function BnmLockedHome() {
                   </div>
 
                   <div className="mt-3 flex max-w-[300px] items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-2 backdrop-blur">
-                    <BnmMusicIcon size={14} />
+                    <Music2 className="h-3.5 w-3.5 text-[#c5a2ff]" />
                     <span className="truncate text-[10px] text-[#d9e2f3]">Original community post</span>
                   </div>
                 </div>
@@ -86,24 +85,24 @@ export default function BnmLockedHome() {
                 <div className="flex flex-col items-center justify-end gap-3 pb-1">
                   <Avatar src={video.channel_avatar} label={video.channel_name || "BN"} size={45} />
                   <div className="-mt-5 grid h-5 w-5 place-items-center rounded-full bg-[#ff3cae] ring-2 ring-[#0b1120]">
-                    <BnmPlusIcon size={12} />
+                    <Plus className="h-3 w-3" strokeWidth={3} />
                   </div>
 
                   <div className="grid h-11 w-11 place-items-center rounded-full bg-[#ff37aa] text-white shadow-[0_0_20px_rgba(255,55,170,.32)]">
-                    <BnmLikeIcon filled size={26} />
+                    <Heart className="h-6 w-6" fill="white" />
                   </div>
                   <span className="-mt-2 text-[9px] font-black">{formatCount(video.likes)}</span>
 
                   <div className="grid h-11 w-11 place-items-center rounded-full bg-black/45 backdrop-blur">
-                    <BnmCommentIcon size={26} />
+                    <MessageCircle className="h-6 w-6" />
                   </div>
                   <span className="-mt-2 text-[9px] font-black">{formatCount(video.comments_count)}</span>
 
                   <div className="grid h-11 w-11 place-items-center rounded-full bg-black/45 backdrop-blur">
-                    <BnmBookmarkIcon size={26} />
+                    <Bookmark className="h-6 w-6" />
                   </div>
                   <div className="grid h-11 w-11 place-items-center rounded-full bg-black/45 backdrop-blur">
-                    <BnmShareIcon size={26} />
+                    <Share2 className="h-6 w-6" />
                   </div>
                 </div>
               </div>
@@ -114,7 +113,8 @@ export default function BnmLockedHome() {
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,17,38,.18),transparent_28%,rgba(1,8,19,.82)_100%)]" />
             <div className="relative flex h-full flex-col px-3 pb-4 pt-3">
               <div className="flex items-center justify-between gap-2">
-                <Pill active><BnmLeafIcon size={14} /> Kindness Feed</Pill>
+                <Pill active><Leaf className="h-3.5 w-3.5" /> Kindness Feed</Pill>
+                <Pill>Live data only</Pill>
               </div>
 
               <div className="mt-auto grid grid-cols-[1fr_52px] gap-2">
@@ -137,7 +137,7 @@ export default function BnmLockedHome() {
                   </div>
 
                   <div className="mt-4 flex max-w-[245px] items-center gap-2 rounded-full border border-[#31496f] bg-[#09172c] px-3 py-2 text-[#8295b8]">
-                    <BnmMusicIcon size={14} />
+                    <Music2 className="h-3.5 w-3.5" />
                     <span className="truncate text-[9px]">Audio appears with a real post</span>
                   </div>
 
@@ -155,16 +155,16 @@ export default function BnmLockedHome() {
 
                 <div className="flex flex-col items-center justify-end gap-3 pb-1 text-[#8092b6]">
                   <div className="h-11 w-11 rounded-full border border-[#3b557f] bg-[#0b1931]" />
-                  <div className="-mt-5 grid h-5 w-5 place-items-center rounded-full bg-[#4d315c] ring-2 ring-[#061225]"><BnmPlusIcon size={12} /></div>
+                  <div className="-mt-5 grid h-5 w-5 place-items-center rounded-full bg-[#4d315c] ring-2 ring-[#061225]"><Plus className="h-3 w-3" /></div>
 
-                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><BnmLikeIcon size={22} /></div>
+                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><Heart className="h-5 w-5" /></div>
                   <span className="-mt-2 text-[9px]">—</span>
 
-                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><BnmCommentIcon size={22} /></div>
+                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><MessageCircle className="h-5 w-5" /></div>
                   <span className="-mt-2 text-[9px]">—</span>
 
-                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><BnmBookmarkIcon size={22} /></div>
-                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><BnmShareIcon size={22} /></div>
+                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><Bookmark className="h-5 w-5" /></div>
+                  <div className="grid h-11 w-11 place-items-center rounded-full border border-[#40577d] bg-[#0b1830]"><Share2 className="h-5 w-5" /></div>
                 </div>
               </div>
             </div>

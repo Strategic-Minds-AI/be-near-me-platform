@@ -1,223 +1,69 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { useNavigate } from "react-router-dom";
+import { bnmData } from "@/services/bnmData";
 import BnmLogoMark from "@/components/bnm/BnmLogoMark";
-import {
-  BnmBackIcon, BnmCheckIcon, BnmSpinnerIcon
-} from "@/components/bnm/BnmIcons";
 
-const TIERS = [
-  {
-    id: "free",
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    tagline: "Start exploring",
-    gradient: "linear-gradient(135deg, #3B82F6, #6366F1)",
-    features: ["Watch viral videos", "Browse the feed", "Basic AI video templates", "Community access"],
-    cta: "Get Started Free",
-  },
-  {
-    id: "plus",
-    name: "Plus",
-    price: "$10",
-    period: "one-time",
-    tagline: "Create like a pro",
-    gradient: "linear-gradient(135deg, #8B5CF6, #EC4899)",
-    features: ["Everything in Free", "100 AI video templates", "HD video generation", "Priority rendering", "No watermark"],
-    cta: "Get Plus",
-    popular: true,
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "$20",
-    period: "one-time",
-    tagline: "Go viral faster",
-    gradient: "linear-gradient(135deg, #EC4899, #F59E0B)",
-    features: ["Everything in Plus", "Unlimited AI generations", "4K video generation", "Advanced viral templates", "Analytics dashboard", "Early access features"],
-    cta: "Get Pro",
-  },
-];
-
+// BNM-01-SPLASH — Launch / entry screen.
+// Full-screen, no layout wrapper, no bottom nav.
+// Visual-lock entry screen for the approved B Near Me mobile experience.
 export default function Splash() {
   const navigate = useNavigate();
-  const [loadingId, setLoadingId] = useState(null);
-  const [error, setError] = useState(null);
-
-  const handleSelect = async (tier) => {
-    setError(null);
-    if (tier.id === "free") {
-      navigate("/home");
-      return;
-    }
-    setLoadingId(tier.id);
-    try {
-      const res = await base44.functions.invoke("create-checkout", { productId: tier.id });
-      const redirectUrl = res.data?.redirectUrl;
-      if (!redirectUrl) {
-        throw new Error(res.data?.error || "Could not start checkout");
-      }
-      window.location.href = redirectUrl;
-    } catch (e) {
-      setError(e.message || "Payment failed to start. Please try again.");
-      setLoadingId(null);
-    }
-  };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center overflow-y-auto bg-bnm-bg">
-      {/* Ambient gradient glow at top */}
+    <div className="fixed inset-0 flex flex-col items-center overflow-hidden bg-bnm-bg">
+      {/* Ambient violet glow at top */}
       <div
         className="absolute top-0 inset-x-0 h-1/3 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(139,92,246,0.15), transparent 70%)",
-        }}
-      />
-      <div
-        className="absolute bottom-0 inset-x-0 h-1/4 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 100% at 50% 100%, rgba(236,72,153,0.10), transparent 70%)",
+            "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(111,32,255,0.10), transparent 70%)",
         }}
       />
 
-      <div className="relative z-10 flex w-full flex-col items-center px-4 py-10">
-        {/* Back to feed */}
-        <div className="absolute top-[max(env(safe-area-inset-top),16px)] left-4 z-20">
-          <Link to="/home" className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/80 backdrop-blur hover:bg-white/10">
-            <BnmBackIcon size={16} /> Back to feed
-          </Link>
-        </div>
+      {/* Content layer (above glow) */}
+      <div className="relative z-10 flex flex-col items-center w-full h-full">
+        {/* Top spacer — pushes logo to ~35% */}
+        <div style={{ flexGrow: 3 }} />
 
-        {/* Logo */}
-        <BnmLogoMark className="w-20 h-24 mb-4" />
+        {/* Logo pin mark */}
+        <BnmLogoMark className="w-28 h-32 mb-6" />
 
         {/* Wordmark */}
-        <h1
-          className="mb-2 text-4xl font-black tracking-tight"
-          style={{
-            background: "linear-gradient(90deg, #60A5FA 0%, #A78BFA 35%, #EC4899 70%, #60A5FA 100%)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            filter: "drop-shadow(0 0 18px rgba(168,139,250,0.45))",
-          }}
-        >
+        <h1 className="text-3xl font-extrabold tracking-tight text-bnm-text mb-20">
           B NEAR ME
         </h1>
-
-        <p
-          className="mb-1 text-center text-xs font-bold uppercase tracking-[0.32em] text-white"
-          style={{ textShadow: "0 0 14px rgba(96,165,250,0.5), 0 0 28px rgba(236,72,153,0.3)" }}
-        >
-          People · Places · Moments
-        </p>
-        <p
-          className="mb-8 text-center text-xs font-bold uppercase tracking-[0.32em] text-white"
-          style={{ textShadow: "0 0 14px rgba(96,165,250,0.5), 0 0 28px rgba(236,72,153,0.3)" }}
-        >
-          Near You
+        <p className="mb-14 text-center text-xs font-semibold uppercase tracking-[0.24em] text-bnm-secondary">
+          People · Places · Moments<br />Near You
         </p>
 
-        {/* Pricing header */}
-        <h2 className="mb-1 text-lg font-extrabold text-white">Choose your plan</h2>
-        <p className="mb-6 text-center text-xs text-bnm-secondary">
-          No sign-up needed. Pick a tier and start creating.
-        </p>
-
-        {/* Tier cards */}
-        <div className="flex w-full max-w-md flex-col gap-3">
-          {TIERS.map((tier) => {
-            const isLoading = loadingId === tier.id;
-            return (
-              <div
-                key={tier.id}
-                className={`relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 splash-electric-btn ${
-                  tier.popular
-                    ? "border-fuchsia-500/50 bg-white/[0.06]"
-                    : "border-white/10 bg-white/[0.03]"
-                }`}
-              >
-                {tier.popular && (
-                  <div className="absolute right-0 top-0 rounded-bl-xl bg-gradient-to-r from-fuchsia-500 to-violet-500 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-white">
-                    Most Popular
-                  </div>
-                )}
-
-                <div className="flex flex-col items-center text-center">
-                  {/* Icon */}
-                  <img
-                    src="https://media.base44.com/images/public/6abd9e05a56938f03c2c557b/e60c3a08b_generated_7c5a56b8.png"
-                    alt={`${tier.name} plan emblem`}
-                    className="h-14 w-14 rounded-xl object-cover"
-                  />
-
-                  {/* Name */}
-                  <h3 className="mt-3 text-base font-extrabold text-white">{tier.name}</h3>
-                  <span className="text-xs font-medium text-bnm-secondary">{tier.tagline}</span>
-
-                  {/* Price */}
-                  <div className="mt-1 flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-white">{tier.price}</span>
-                    <span className="text-[10px] text-bnm-secondary">/ {tier.period}</span>
-                  </div>
-                </div>
-
-                {/* Features */}
-                <ul className="mt-3 space-y-1.5 text-center">
-                  {tier.features.map((f, i) => (
-                    <li key={i} className="flex items-center justify-center gap-2 text-[11px] text-white/80">
-                      <BnmCheckIcon size={14} className="shrink-0" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA */}
-                <button
-                  onClick={() => handleSelect(tier)}
-                  disabled={loadingId !== null}
-                  className="splash-electric-btn mt-4 w-full rounded-xl py-3 text-sm font-bold text-white transition-all duration-300 active:scale-95 disabled:opacity-50"
-                  style={{
-                    background: tier.gradient,
-                    boxShadow: `0 0 20px ${tier.id === "plus" ? "rgba(139,92,246,0.3)" : tier.id === "pro" ? "rgba(236,72,153,0.3)" : "rgba(59,130,246,0.3)"}`,
-                  }}
-                >
-                  {isLoading ? (
-                    <>
-                      <BnmSpinnerIcon size={16} /> Redirecting to checkout...
-                    </>
-                  ) : (
-                    tier.cta
-                  )}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="mt-4 w-full max-w-md rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-center text-xs text-red-300">
-            {error}
-          </div>
-        )}
-
-        {/* Footer */}
-        <p
-          className="mt-8 text-center text-xs font-semibold text-white"
-          style={{ textShadow: "0 0 12px rgba(96,165,250,0.4), 0 0 24px rgba(236,72,153,0.25)" }}
+        {/* CTA Button — horizontal pink→magenta→violet gradient */}
+        <button
+          onClick={() => navigate("/home")}
+          className="w-[80%] h-12 rounded-full font-bold text-white text-base transition-transform active:scale-95"
+          style={{
+            background: "linear-gradient(90deg, #FF0080 0%, #CE07E3 50%, #6F20FF 100%)",
+            boxShadow: "0 0 30px rgba(206,7,227,0.35)",
+          }}
         >
+          Get Started
+        </button>
+
+        <button
+          onClick={() => bnmData.auth.redirectToLogin(window.location.href)}
+          className="mt-4 h-12 w-[80%] rounded-full border border-violet-500/60 bg-[#0c1020]/85 text-base font-bold text-white transition-transform active:scale-95"
+        >
+          Log In
+        </button>
+
+        {/* Bottom spacer — pushes secondary text to ~88% */}
+        <div style={{ flexGrow: 2 }} />
+
+        {/* Secondary text */}
+        <p className="text-xs text-bnm-secondary text-center leading-relaxed mb-5 px-6">
           Create · Watch · Explore · Connect
-        </p>
-        <p className="mt-2 text-center text-[10px] text-bnm-secondary">
-          Secure checkout powered by Base44 Payments
         </p>
 
         {/* Home indicator */}
-        <div className="mt-6 h-1.5 w-28 rounded-full bg-white/30" />
+        <div className="w-32 h-2 bg-white/80 rounded-full mb-2" />
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { bnmData } from "@/services/bnmData";
 import {
-  BnmCheckIcon, BnmCheckCircleIcon, BnmChevronLeftIcon, BnmGiftIcon, BnmLeafSmallIcon, BnmLockIcon, BnmMapPinIcon, BnmShieldIcon, BnmTruckIcon
-} from "@/components/bnm/BnmIcons";
+  Check, CheckCircle2, ChevronLeft, Gift, Leaf, LockKeyhole, MapPin, ShieldCheck, Truck
+} from "lucide-react";
 import { BnmLockedScreen, Glass, GradientButton, Pill, asItems, formatCount } from "@/components/bnm/LockedShell";
 import { getReward } from "@/lib/bnm/rewardCatalog";
 
@@ -15,11 +15,11 @@ export default function BnmLockedCheckout() {
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
-  const { data:user } = useQuery({queryKey:["currentUser"],queryFn:()=>base44.auth.me()});
+  const { data:user } = useQuery({queryKey:["currentUser"],queryFn:()=>bnmData.auth.me()});
   const { data:channels=[] } = useQuery({
     queryKey:["bnm-checkout-channel-v2",user?.email],
     enabled:!!user?.email,
-    queryFn:async()=>asItems(await base44.entities.Channel.filter({created_by:user.email},"-created_date",1)),
+    queryFn:async()=>asItems(await bnmData.entities.Channel.filter({created_by:user.email},"-created_date",1)),
   });
 
   const channel=channels[0] || null;
@@ -33,7 +33,7 @@ export default function BnmLockedCheckout() {
     setMessage("");
     try{
       const key="reward:"+reward.id+":"+user.email+":"+Date.now();
-      const result=await base44.functions.invoke("redeemReward",{reward_id:reward.id,delivery_method:delivery,idempotency_key:key});
+      const result=await bnmData.functions.invoke("redeemReward",{reward_id:reward.id,delivery_method:delivery,idempotency_key:key});
       const data=result?.data || result;
       if(data?.success===false) throw new Error(data.error||"Redemption failed");
       setStatus("success");
@@ -48,13 +48,13 @@ export default function BnmLockedCheckout() {
     <BnmLockedScreen activeSection="For You">
       <div className="px-3 pt-2">
         <div className="flex items-center gap-2.5">
-          <Link to="/rewards" className="grid h-8 w-8 place-items-center rounded-full border border-[#30496f] bg-[#0b1830]"><BnmChevronLeftIcon size={16} /></Link>
+          <Link to="/rewards" className="grid h-8 w-8 place-items-center rounded-full border border-[#30496f] bg-[#0b1830]"><ChevronLeft className="h-4 w-4"/></Link>
           <div className="min-w-0 flex-1">
             <h1 className="text-[21px] font-black leading-none">Checkout</h1>
             <p className="mt-0.5 text-[9px] text-[#9eadd0]">Claim Your Reward</p>
           </div>
           <div className="flex items-center gap-1 text-[8px] font-black text-[#8596b5]">
-            <span className="grid h-5 w-5 place-items-center rounded-full bg-[#2f7cff] text-white"><BnmCheckIcon size={12} /></span><span>Select</span>
+            <span className="grid h-5 w-5 place-items-center rounded-full bg-[#2f7cff] text-white"><Check className="h-3 w-3"/></span><span>Select</span>
             <span className="h-px w-3 bg-[#445b81]"/>
             <span className="grid h-5 w-5 place-items-center rounded-full bg-[#8057ff] text-white">2</span><span>Details</span>
             <span className="h-px w-3 bg-[#445b81]"/>
@@ -65,7 +65,7 @@ export default function BnmLockedCheckout() {
         <Glass className="mt-1.5 p-2">
           <div className="flex gap-3">
             <div className="relative grid h-[92px] w-[100px] shrink-0 place-items-center overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_70%_20%,rgba(255,68,177,.3),transparent_32%),linear-gradient(135deg,#23456c,#3a1748)]">
-              {reward.visual === "leaf" ? <BnmLeafSmallIcon size={40} /> : <BnmGiftIcon size={40} />}
+              {reward.visual === "leaf" ? <Leaf className="h-10 w-10 text-[#63e7ad]"/> : <Gift className="h-10 w-10 text-[#ff55b8]"/>}
               <span className="absolute bottom-1.5 left-1.5 rounded-full bg-black/40 px-1.5 py-0.5 text-[6px] font-black">BE NEAR ME</span>
             </div>
             <div className="min-w-0 flex-1 py-0.5">
@@ -81,12 +81,12 @@ export default function BnmLockedCheckout() {
         <h2 className="mt-2 text-[15px] font-black">Delivery Option</h2>
         <div className="mt-1.5 grid grid-cols-2 gap-2">
           <button onClick={()=>setDelivery("ship")} className={"rounded-[15px] border p-2 text-left "+(delivery==="ship"?"border-[#e746db] bg-[#1b244d] ring-1 ring-[#8e65ff]":"border-[#334a73] bg-[#0a1830]")}>
-            <BnmTruckIcon size={20} />
+            <Truck className="h-5 w-5"/>
             <b className="mt-1.5 block text-[10px]">Ship to Me</b>
             <span className="text-[7px] leading-3 text-[#91a2c2]">Requires verified fulfillment and shipping address</span>
           </button>
           <button onClick={()=>setDelivery("pickup")} className={"rounded-[15px] border p-2 text-left "+(delivery==="pickup"?"border-[#e746db] bg-[#1b244d] ring-1 ring-[#8e65ff]":"border-[#334a73] bg-[#0a1830]")}>
-            <BnmMapPinIcon size={20} />
+            <MapPin className="h-5 w-5"/>
             <b className="mt-1.5 block text-[10px]">Pick Up Nearby</b>
             <span className="text-[7px] leading-3 text-[#91a2c2]">Only when a verified pickup partner exists</span>
           </button>
@@ -118,7 +118,7 @@ export default function BnmLockedCheckout() {
 
         {!enough && channel ? <div className="mt-1.5 rounded-[12px] border border-[#394f78] bg-[#0a1830] p-2 text-[8px] text-[#9fb0cf]">You need {formatCount(Math.max(0,reward.points-points))} more points for this reward.</div> : null}
 
-        {message ? <div className={"mt-3 rounded-[14px] border p-3 text-[9px] "+(status==="success"?"border-emerald-400/30 bg-emerald-400/10 text-emerald-100":"border-red-400/30 bg-red-400/10 text-red-100")}>{status==="success"?<span className="mr-2 inline-flex align-middle"><BnmCheckCircleIcon size={16} /></span>:null}{message}</div> : null}
+        {message ? <div className={"mt-3 rounded-[14px] border p-3 text-[9px] "+(status==="success"?"border-emerald-400/30 bg-emerald-400/10 text-emerald-100":"border-red-400/30 bg-red-400/10 text-red-100")}>{status==="success"?<CheckCircle2 className="mr-2 inline h-4 w-4"/>:null}{message}</div> : null}
 
         <GradientButton
           onClick={claim}
@@ -131,9 +131,9 @@ export default function BnmLockedCheckout() {
         {!available ? <p className="mt-1.5 text-center text-[7px] leading-3 text-amber-100/75">Fulfillment remains locked until inventory or a verified partner is available.</p> : null}
 
         <div className="mt-2 grid grid-cols-3 gap-2 pb-2 text-center text-[7px] leading-3 text-[#8497b8]">
-          <div className="flex flex-col items-center"><BnmShieldIcon size={18} /><span className="mb-1">Secure & Private</span></div>
-          <div className="flex flex-col items-center"><BnmLeafSmallIcon size={18} /><span className="mb-1">Purpose Driven</span></div>
-          <div className="flex flex-col items-center"><BnmLockIcon size={18} /><span className="mb-1">Verified Fulfillment</span></div>
+          <div><ShieldCheck className="mx-auto mb-1 h-4.5 w-4.5 text-[#4de7c0]"/>Secure & Private</div>
+          <div><Leaf className="mx-auto mb-1 h-4.5 w-4.5 text-[#61e7a4]"/>Purpose Driven</div>
+          <div><LockKeyhole className="mx-auto mb-1 h-4.5 w-4.5 text-[#58d9c6]"/>Verified Fulfillment</div>
         </div>
       </div>
     </BnmLockedScreen>

@@ -1,8 +1,7 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import {
-  BnmBellIcon, BnmCreateIcon, BnmExploreIcon,
-  BnmHomeIcon, BnmInboxIcon, BnmLocationIcon, BnmProfileIcon
-} from "@/components/bnm/BnmIcons";
+  Bell, Heart, Home, MapPin, MessageCircle, Plus, Search, Sparkles, User
+} from "lucide-react";
 
 const cx = (...v) => v.filter(Boolean).join(" ");
 
@@ -11,7 +10,7 @@ export function BnmWordmark({ compact = false }) {
     <Link to="/home" className="flex items-center gap-1 font-black tracking-[-0.055em] text-white" aria-label="Be Near Me home">
       <span className={compact ? "text-[20px]" : "text-[24px]"}>Be Near</span>
       <span className={cx("bg-gradient-to-r from-[#22c9ff] via-[#8b5cff] to-[#ff39b7] bg-clip-text text-transparent", compact ? "text-[20px]" : "text-[24px]")}>Me</span>
-      <BnmLocationIcon size={compact ? 18 : 20} />
+      <MapPin className={compact ? "h-4.5 w-4.5" : "h-5 w-5"} fill="#9b5cff" stroke="#ff46b8" />
     </Link>
   );
 }
@@ -21,7 +20,7 @@ const tabs = [
   { label: "Nearby", to: "/nearby", match: ["/nearby", "/search"] },
   { label: "Kindness", to: "/challenge", match: ["/challenge"] },
   { label: "Creators", to: "/creator-studio", match: ["/creator-studio", "/profile"] },
-  { label: "Live", to: "/Live", match: ["/Live", "/live"] },
+  { label: "Live", to: "/live", match: ["/live", "/live-watch"] },
 ];
 
 export function BnmTopChrome({ rewards = false, locationLabel = "Near You", activeSection = null }) {
@@ -33,12 +32,12 @@ export function BnmTopChrome({ rewards = false, locationLabel = "Near You", acti
         <BnmWordmark />
         <div className="ml-auto flex min-w-0 items-center gap-1.5">
           <button type="button" className="flex h-9 min-w-0 max-w-[108px] items-center gap-1.5 rounded-full border border-[#6d70ff]/60 bg-[#17234a] px-2.5 text-[10px] font-bold text-white">
-            <BnmLocationIcon size={16} />
+            <MapPin className="h-4 w-4 text-[#bd8cff]" />
             <span className="truncate">{locationLabel}</span>
             <span className="text-[#92a4ce]">⌄</span>
           </button>
           <Link to="/inbox" className="relative grid h-8 w-8 shrink-0 place-items-center text-white/90" aria-label="Notifications">
-            <BnmBellIcon size={20} />
+            <Bell className="h-5 w-5" />
             <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-[#ff38ad] ring-2 ring-[#031126]" />
           </Link>
         </div>
@@ -59,11 +58,11 @@ export function BnmTopChrome({ rewards = false, locationLabel = "Near You", acti
 }
 
 const bottom = [
-  { to: "/home", label: "Home", Icon: BnmHomeIcon },
-  { to: "/search", label: "Explore", Icon: BnmExploreIcon },
-  { to: "/create", label: "Create", Icon: BnmCreateIcon, create: true },
-  { to: "/inbox", label: "Inbox", Icon: BnmInboxIcon, badge: true },
-  { to: "/profile", label: "Profile", Icon: BnmProfileIcon },
+  { to: "/home", label: "Home", Icon: Home },
+  { to: "/search", label: "Explore", Icon: Search },
+  { to: "/create", label: "Create", Icon: Plus, create: true },
+  { to: "/inbox", label: "Inbox", Icon: MessageCircle, badge: true },
+  { to: "/profile", label: "Profile", Icon: User },
 ];
 
 export function BnmBottomChrome() {
@@ -75,12 +74,12 @@ export function BnmBottomChrome() {
             {({ isActive }) => (
               <>
                 {create ? (
-                  <span className="grid h-10 w-14 place-items-center">
-                    <Icon size={30} />
+                  <span className="grid h-10 w-14 place-items-center rounded-[15px] bg-gradient-to-r from-[#21c9ff] via-[#8e52ff] to-[#ff35ab] shadow-[0_0_24px_rgba(153,72,255,.42)]">
+                    <Icon className="h-7 w-7 text-white" strokeWidth={2.3} />
                   </span>
                 ) : (
                   <span className="relative grid h-8 w-9 place-items-center">
-                    <Icon active={isActive} size={26} />
+                    <Icon className={cx("h-6 w-6", isActive && "drop-shadow-[0_0_8px_rgba(97,124,255,.9)]")} fill={isActive && label === "Home" ? "currentColor" : "none"} strokeWidth={isActive ? 2.4 : 2} />
                     {badge && <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-[#ff3fae] ring-2 ring-[#020c1c]" />}
                   </span>
                 )}
@@ -146,7 +145,7 @@ export function Avatar({ src, label = "BNM", size = 44, ring = true }) {
   );
 }
 
-export function EmptyState({ icon: Icon, title, body }) {
+export function EmptyState({ icon: Icon = Sparkles, title, body }) {
   return (
     <Glass className="mx-4 p-8 text-center">
       <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-[#26c8ff]/20 via-[#8f54ff]/20 to-[#ff38aa]/20">
@@ -158,7 +157,7 @@ export function EmptyState({ icon: Icon, title, body }) {
   );
 }
 
-export function Metric({ icon: Icon, value, label, accent = "text-[#ff55b5]" }) {
+export function Metric({ icon: Icon = Heart, value, label, accent = "text-[#ff55b5]" }) {
   return (
     <div className="min-w-0 rounded-[16px] border border-[#2b426c] bg-[#0b1931] p-3">
       <Icon className={cx("h-5 w-5", accent)} />

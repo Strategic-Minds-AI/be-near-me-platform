@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
-import { BnmChevronRightIcon, BnmClockIcon, BnmHeartIcon, BnmLeafSmallIcon, BnmShieldIcon, BnmSparkleIcon, BnmUsersIcon } from "@/components/bnm/BnmIcons";
+import { bnmData } from "@/services/bnmData";
+import { ChevronRight, Clock3, Heart, Leaf, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { BnmLockedScreen, Glass, GradientButton, MediaBackdrop, Pill, asItems } from "@/components/bnm/LockedShell";
 
 function daysRemaining(expiresAt) {
@@ -13,13 +13,13 @@ function daysRemaining(expiresAt) {
 
 export default function BnmLockedChallenge() {
   const { challengeId } = useParams();
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => base44.auth.me() });
+  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => bnmData.auth.me() });
   const { data: dares = [], isLoading } = useQuery({
     queryKey: ["bnm-lock-dares-v2", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const incoming = asItems(await base44.entities.Dare.filter({ challenger_email: user.email }, "-created_date", 25));
-      const outgoing = asItems(await base44.entities.Dare.filter({ initiator_email: user.email }, "-created_date", 25));
+      const incoming = asItems(await bnmData.entities.Dare.filter({ challenger_email: user.email }, "-created_date", 25));
+      const outgoing = asItems(await bnmData.entities.Dare.filter({ initiator_email: user.email }, "-created_date", 25));
       return [...incoming, ...outgoing].filter((item, index, arr) => arr.findIndex((x) => x.id === item.id) === index);
     },
   });
@@ -37,7 +37,7 @@ export default function BnmLockedChallenge() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_18%,rgba(255,74,176,.2),transparent_30%),linear-gradient(180deg,rgba(1,8,19,.05),rgba(2,8,18,.1)_35%,rgba(1,6,16,.92)_100%)]" />
           <div className="relative flex min-h-[268px] flex-col p-3">
             <div className="flex items-center justify-between">
-              <Pill active><BnmLeafSmallIcon size={14} /> Kindness Challenge</Pill>
+              <Pill active><Leaf className="h-3.5 w-3.5" /> Kindness Challenge</Pill>
               <Pill>{status}</Pill>
             </div>
             <div className="mt-auto">
@@ -51,17 +51,17 @@ export default function BnmLockedChallenge() {
 
         <div className="mt-1.5 grid grid-cols-3 gap-1.5">
           <Glass className="p-2.5">
-            <BnmClockIcon size={18} />
+            <Clock3 className="h-4.5 w-4.5 text-[#ab7bff]" />
             <div className="mt-1.5 text-[16px] font-black">{days === "—" ? "—" : days + "d"}</div>
             <div className="text-[8px] leading-3 text-[#8497b9]">Time left</div>
           </Glass>
           <Glass className="p-2.5">
-            <BnmUsersIcon size={18} />
+            <Users className="h-4.5 w-4.5 text-[#66c8ff]" />
             <div className="mt-1.5 text-[16px] font-black">—</div>
             <div className="text-[8px] leading-3 text-[#8497b9]">People joined</div>
           </Glass>
           <Glass className="p-2.5">
-            <BnmHeartIcon size={18} filled />
+            <Heart className="h-4.5 w-4.5 text-[#ff4eaf]" />
             <div className="mt-1.5 text-[16px] font-black">{reward === null ? "—" : reward}</div>
             <div className="text-[8px] leading-3 text-[#8497b9]">Reward units</div>
           </Glass>
@@ -92,16 +92,16 @@ export default function BnmLockedChallenge() {
 
         <Link to="/Dares" className="mt-2 block">
           <GradientButton className="w-full py-2.5 text-[13px]">
-            <span className="mr-1 inline-flex align-middle"><BnmSparkleIcon size={18} /></span>
+            <Sparkles className="mr-1 inline h-4.5 w-4.5" />
             {selected ? "Open Challenge" : "Join / Create Challenge"}
-            <span className="ml-2 inline-flex align-middle"><BnmChevronRightIcon size={18} /></span>
+            <ChevronRight className="ml-2 inline h-4.5 w-4.5" />
           </GradientButton>
         </Link>
 
         <div className="mt-2 grid grid-cols-3 gap-2 pb-2 text-center text-[7px] leading-3 text-[#8295b8]">
-          <div className="flex flex-col items-center"><BnmUsersIcon size={18} /><span className="mb-1">Kinder community</span></div>
-          <div className="flex flex-col items-center"><BnmShieldIcon size={18} /><span className="mb-1">Safe and respectful</span></div>
-          <div className="flex flex-col items-center"><BnmHeartIcon size={18} filled /><span className="mb-1">Positive action</span></div>
+          <div><Users className="mx-auto mb-1 h-4.5 w-4.5 text-[#d15dff]" />Kinder community</div>
+          <div><ShieldCheck className="mx-auto mb-1 h-4.5 w-4.5 text-[#5fe0ff]" />Safe and respectful</div>
+          <div><Heart className="mx-auto mb-1 h-4.5 w-4.5 text-[#ff5ab9]" />Positive action</div>
         </div>
         {isLoading ? <p className="sr-only">Loading challenges</p> : null}
       </div>

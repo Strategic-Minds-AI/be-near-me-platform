@@ -1,0 +1,141 @@
+name: bnm-convergence-validation
+
+on:
+  push:
+    branches:
+      - apex/bnm-full-convergence-v1
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install candidate
+        run: npm ci
+
+      - name: Build candidate
+        run: npm run build
+
+      - name: Lint candidate-owned JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --quiet
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMRT origin/main...HEAD -- '*.js' '*.jsx' '*.ts' '*.tsx')
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No candidate-owned JS/TS files changed."
+            exit 0
+          fi
+          printf '%s\n' "${files[@]}"
+          npx eslint "${files[@]}"
+
+      - name: Compare TypeScript debt with main
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          mkdir -p /tmp/bnm-validation
+          rm -rf /tmp/bnm-main
+          git worktree prune
+
+          candidate_exit=0
+          npm run typecheck > /tmp/bnm-validation/candidate-typecheck.txt 2>&1 || candidate_exit=$?
+          candidate_errors=$(grep -c 'error TS' /tmp/bnm-validation/candidate-typecheck.txt || true)
+
+          git worktree add --detach /tmp/bnm-main origin/main
+          worktree_exit=$?
+          if [ "$worktree_exit" -ne 0 ]; then
+            echo "Could not create main baseline worktree." >&2
+            exit "$worktree_exit"
+          fi
+
+          cd /tmp/bnm-main
+          npm ci --ignore-scripts --silent
+          install_exit=$?
+          if [ "$install_exit" -ne 0 ]; then
+            echo "Could not install main baseline dependencies." >&2
+            exit "$install_exit"
+          fi
+
+          main_exit=0
+          npm run typecheck > /tmp/bnm-validation/main-typecheck.txt 2>&1 || main_exit=$?
+          main_errors=$(grep -c 'error TS' /tmp/bnm-validation/main-typecheck.txt || true)
+
+          echo "candidate_typecheck_exit=$candidate_exit"
+          echo "candidate_typecheck_errors=$candidate_errors"
+          echo "main_typecheck_exit=$main_exit"
+          echo "main_typecheck_errors=$main_errors"
+
+          if [ "$candidate_errors" -gt "$main_errors" ]; then
+            echo "Candidate increases TypeScript error debt." >&2
+            exit 1
+          fi
+
+          exit 0
+
+      - name: Wait for Vercel branch preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://be-near-me-platform-git-apex-bn-ced4d1-strategic-minds-advisory.vercel.app"
+          for attempt in {1..18}; do
+            if curl --silent --show-error --fail --location --max-time 20 "$base/" >/dev/null; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Preview alias never became reachable" >&2
+          exit 1
+
+      - name: Smoke test BNM routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://be-near-me-platform-git-apex-bn-ced4d1-strategic-minds-advisory.vercel.app"
+          routes=(
+            /
+            /home
+            /discover
+            /create
+            /upload
+            /nearby
+            /challenge
+            /search
+            /profile
+            /creator-studio
+            /ai-coach
+            /rewards
+            /inbox
+            /messages
+            /menu
+            /live
+            /login
+            /register
+            /forgot-password
+            /upgrade
+            /ThankYou
+          )
+          for route in "${routes[@]}"; do
+            code="$(curl --silent --output /dev/null --write-out '%{http_code}' --location --max-time 20 "$base$route")"
+            echo "$route -> $code"
+            test "$code" = "200"
+          done

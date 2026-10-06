@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
-import { BnmCalendarIcon, BnmMapPinIcon, BnmPlayIcon, BnmSearchIcon, BnmUsersIcon } from "@/components/bnm/BnmIcons";
+import { bnmData } from "@/services/bnmData";
+import { CalendarDays, MapPin, Play, Search, Users } from "lucide-react";
 import {
   Avatar, BnmLockedScreen, EmptyState, Glass, GradientButton, Pill, SectionTitle, asItems, formatCount
 } from "@/components/bnm/LockedShell";
@@ -18,7 +18,7 @@ export default function BnmLockedSearch() {
 
   const { data: rawVideos = [], isLoading } = useQuery({
     queryKey: ["bnm-search-public-videos-v2"],
-    queryFn: async () => asItems(await base44.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
+    queryFn: async () => asItems(await bnmData.entities.Video.filter({ visibility: "public" }, "-created_date", 80)),
   });
 
   const videos = useMemo(() => rawVideos.filter(isProductionContent), [rawVideos]);
@@ -58,7 +58,7 @@ export default function BnmLockedSearch() {
     <BnmLockedScreen activeSection="Nearby">
       <div className="px-3 pt-2">
         <label className="flex h-10 items-center gap-2.5 rounded-full border border-[#6875d1] bg-[#101f42] px-3.5">
-          <BnmSearchIcon size={20} />
+          <Search className="h-5 w-5" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -109,7 +109,7 @@ export default function BnmLockedSearch() {
                 {[1,2,3].map((i) => (
                   <Glass key={i} className="flex items-center gap-2.5 p-2">
                     <div className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full border border-[#3d5780] bg-[#101c36]">
-                      <BnmUsersIcon size={20} />
+                      <Users className="h-5 w-5 text-[#846cce]" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="h-2.5 w-[72%] rounded-full bg-[#1b2d49]" />
@@ -131,7 +131,7 @@ export default function BnmLockedSearch() {
             <div className="space-y-2">
               {[1,2].map((i) => (
                 <Glass key={i} className="flex items-center gap-2.5 p-2">
-                  <div className="grid h-12 w-14 shrink-0 place-items-center rounded-[12px] border border-[#213b61] bg-[linear-gradient(135deg,#102745,#151934_55%,#26172d)]"><BnmMapPinIcon size={20} /></div>
+                  <div className="grid h-12 w-14 shrink-0 place-items-center rounded-[12px] border border-[#213b61] bg-[linear-gradient(135deg,#102745,#151934_55%,#26172d)]"><MapPin className="h-5 w-5 text-[#5ed6ff]" /></div>
                   <div className="min-w-0 flex-1">
                     <div className="h-2.5 w-[84%] rounded-full bg-[#1b2d49]" />
                     <div className="mt-1.5 h-2 w-[62%] rounded-full bg-[#14243e]" />
@@ -151,7 +151,7 @@ export default function BnmLockedSearch() {
             <div className="space-y-2">
               {[1,2].map((i) => (
                 <Glass key={i} className="flex items-center gap-2.5 p-2">
-                  <div className="grid h-12 w-14 shrink-0 place-items-center rounded-[12px] border border-[#312f67] bg-[linear-gradient(135deg,#171b42,#26183e_55%,#35172f)]"><BnmCalendarIcon size={20} /></div>
+                  <div className="grid h-12 w-14 shrink-0 place-items-center rounded-[12px] border border-[#312f67] bg-[linear-gradient(135deg,#171b42,#26183e_55%,#35172f)]"><CalendarDays className="h-5 w-5 text-[#b97bff]" /></div>
                   <div className="min-w-0 flex-1">
                     <div className="h-2.5 w-[78%] rounded-full bg-[#1b2d49]" />
                     <div className="mt-1.5 h-2 w-[48%] rounded-full bg-[#14243e]" />
@@ -174,7 +174,7 @@ export default function BnmLockedSearch() {
                 {results.slice(0, 8).map((v) => (
                   <Glass key={v.id} className="flex gap-3 p-2">
                     <div className="h-[84px] w-[110px] shrink-0 overflow-hidden rounded-[12px] bg-[#122342]">
-                      {v.thumbnail_url ? <img src={v.thumbnail_url} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><BnmPlayIcon size={28} /></div>}
+                      {v.thumbnail_url ? <img src={v.thumbnail_url} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center"><Play className="h-7 w-7 text-[#8c69ff]" /></div>}
                     </div>
                     <div className="min-w-0 flex-1 py-1">
                       <div className="line-clamp-2 text-[12px] font-black leading-4">{v.title}</div>
@@ -187,7 +187,7 @@ export default function BnmLockedSearch() {
                 ))}
               </div>
             ) : (
-              <EmptyState icon={BnmSearchIcon} title="No verified posts match" body="Try another search or create the first Be Near Me post." />
+              <EmptyState icon={Search} title="No verified posts match" body="Try another search or create the first Be Near Me post." />
             )}
           </section>
         ) : null}

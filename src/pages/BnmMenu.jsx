@@ -1,48 +1,66 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, CircleHelp, Heart, LayoutTemplate, MapPin, Settings, Sparkles, TrendingUp, User, Video } from "lucide-react";
-import BnmLogoMark from "@/components/bnm/BnmLogoMark";
+import {
+  ChevronRight,
+  CircleHelp,
+  Heart,
+  MapPin,
+  Settings,
+  Sparkles,
+  TrendingUp,
+  User,
+  Video,
+} from "lucide-react";
+import {
+  BnmLockedScreen,
+  Glass,
+  Pill,
+} from "@/components/bnm/LockedShell";
 
 const items = [
   { label: "My Profile", to: "/profile", Icon: User },
-  { label: "Settings", to: "/Settings", Icon: Settings },
-  { label: "Saved Videos", to: "/Playlists", Icon: Video },
-  { label: "Liked Videos", to: "/LikedVideos", Icon: Heart },
-  { label: "Local Business", to: "/nearby", Icon: MapPin },
-  { label: "Creator Tools", to: "/CreatorStudio", Icon: Sparkles },
-  { label: "Template Gallery", to: "/gallery", Icon: LayoutTemplate },
+  { label: "Profile Settings", to: "/settings", Icon: Settings },
+  { label: "Creator Studio", to: "/creator-studio", Icon: Sparkles },
+  { label: "Upload Video", to: "/upload", Icon: Video },
+  { label: "Nearby", to: "/nearby", Icon: MapPin },
+  { label: "Rewards", to: "/rewards", Icon: Heart },
   { label: "Video Tracker", to: "/tracker", Icon: TrendingUp },
   { label: "Help & Support", to: "/Contact", Icon: CircleHelp },
 ];
 
 export default function BnmMenu() {
   return (
-    <div className="min-h-[100dvh] bg-[#03050a] text-white">
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_85%_8%,rgba(213,0,255,.10),transparent_36%)]" />
-      <div className="relative mx-auto flex min-h-[100dvh] max-w-md">
-        <Link to="/home" className="flex w-[22%] items-start justify-center pt-8 text-xs font-bold text-[#707b91]" aria-label="Close menu">
-          Close
-        </Link>
-        <aside className="min-h-[100dvh] flex-1 border-l border-white/10 bg-[#0a101b]/95 px-5 pb-10 pt-8 shadow-[-24px_0_80px_rgba(0,0,0,.35)] backdrop-blur-2xl">
-          <div className="flex items-center gap-3 border-b border-white/10 pb-7">
-            <BnmLogoMark className="h-14 w-12" />
-            <div>
-              <h1 className="text-xl font-extrabold tracking-tight">B Near Me</h1>
-              <p className="mt-1 text-xs text-[#7f899f]">People · Places · Moments</p>
-            </div>
-          </div>
-          <nav className="mt-3">
+    <BnmLockedScreen>
+      <div className="px-3 pt-3">
+        <Glass className="p-4">
+          <Pill active>Menu</Pill>
+          <h1 className="mt-3 text-[24px] font-black tracking-[-0.04em]">
+            Be Near Me
+          </h1>
+          <p className="mt-1 text-sm text-[#8fa0c4]">
+            Your profile, creator tools, local discovery, and support.
+          </p>
+        </Glass>
+
+        <Glass className="mt-3 overflow-hidden">
+          <nav>
             {items.map(({ label, to, Icon }) => (
-              <Link key={label} to={to} className="flex items-center gap-4 border-b border-white/[0.07] py-5 text-white transition hover:bg-white/[0.025]">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.035]">
-                  <Icon className="h-5 w-5 text-[#d6dbea]" />
+              <Link
+                key={label}
+                to={to}
+                className="flex items-center gap-3 border-b border-[#20375b] px-4 py-4 last:border-b-0"
+              >
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-[#10213e]">
+                  <Icon className="h-5 w-5 text-[#a38bff]" />
                 </span>
-                <span className="flex-1 text-[15px] font-extrabold">{label}</span>
-                <ChevronRight className="h-5 w-5 text-[#68748a]" />
+                <span className="min-w-0 flex-1 text-sm font-black text-white">
+                  {label}
+                </span>
+                <ChevronRight className="h-5 w-5 text-[#7184a8]" />
               </Link>
             ))}
           </nav>
-        </aside>
+        </Glass>
       </div>
-    </div>
+    </BnmLockedScreen>
   );
 }
