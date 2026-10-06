@@ -1,67 +1,62 @@
-import Home from './pages/Home';
-import Watch from './pages/Watch';
-import Channel from './pages/Channel';
-import Upload from './pages/Upload';
-import CreateChannel from './pages/CreateChannel';
-import Search from './pages/Search';
-import Explore from './pages/Explore';
-import Trending from './pages/Trending';
-import Category from './pages/Category';
-import Subscriptions from './pages/Subscriptions';
-import History from './pages/History';
-import LikedVideos from './pages/LikedVideos';
-import Settings from './pages/Settings';
-import Admin from './pages/Admin';
-import Live from './pages/Live';
-import CreatorStudio from './pages/CreatorStudio';
-import StudioContent from './pages/StudioContent';
-import StudioAnalytics from './pages/StudioAnalytics';
-import StudioEarnings from './pages/StudioEarnings';
-import Shorts from './pages/Shorts';
-import Notifications from './pages/Notifications';
-import Playlists from './pages/Playlists';
-import LiveWatch from './pages/LiveWatch';
-import StudioLive from './pages/StudioLive';
-import StudioComments from './pages/StudioComments';
-import Community from './pages/Community';
-import StudioAIClips from './pages/StudioAIClips';
-import Premium from './pages/Premium';
+import Splash from './pages/Splash';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import BnmDiscover from './pages/BnmDiscover';
+import BnmEffects from './pages/BnmEffects';
+import BnmInbox from './pages/BnmInbox';
+import BnmMessages from './pages/BnmMessages';
+import BnmMenu from './pages/BnmMenu';
+import BnmTracker from './pages/BnmTracker';
+import BnmLockedHome from './pages/BnmLockedHome';
+import BnmLockedNearby from './pages/BnmLockedNearby';
+import BnmLockedChallenge from './pages/BnmLockedChallenge';
+import BnmLockedSearch from './pages/BnmLockedSearch';
+import BnmLockedProfile from './pages/BnmLockedProfile';
+import BnmLockedCreateChannel from './pages/BnmLockedCreateChannel';
+import BnmLockedSettings from './pages/BnmLockedSettings';
+import BnmLockedCreatorStudio from './pages/BnmLockedCreatorStudio';
+import BnmLockedAiCoach from './pages/BnmLockedAiCoach';
+import BnmLockedRewards from './pages/BnmLockedRewards';
+import BnmLockedCheckout from './pages/BnmLockedCheckout';
+import BnmLockedCreate from './pages/BnmLockedCreate';
+import BnmLockedUpload from './pages/BnmLockedUpload';
+import BnmLockedWatch from './pages/BnmLockedWatch';
+import BnmLockedLive from './pages/BnmLockedLive';
+import BnmLockedLiveWatch from './pages/BnmLockedLiveWatch';
+import BnmLockedOnboarding from './pages/BnmLockedOnboarding';
 import __Layout from './Layout.jsx';
 
-
 export const PAGES = {
-    "Home": Home,
-    "Watch": Watch,
-    "Channel": Channel,
-    "Upload": Upload,
-    "CreateChannel": CreateChannel,
-    "Search": Search,
-    "Explore": Explore,
-    "Trending": Trending,
-    "Category": Category,
-    "Subscriptions": Subscriptions,
-    "History": History,
-    "LikedVideos": LikedVideos,
-    "Settings": Settings,
-    "Admin": Admin,
-    "Live": Live,
-    "CreatorStudio": CreatorStudio,
-    "StudioContent": StudioContent,
-    "StudioAnalytics": StudioAnalytics,
-    "StudioEarnings": StudioEarnings,
-    "Shorts": Shorts,
-    "Notifications": Notifications,
-    "Playlists": Playlists,
-    "LiveWatch": LiveWatch,
-    "StudioLive": StudioLive,
-    "StudioComments": StudioComments,
-    "Community": Community,
-    "StudioAIClips": StudioAIClips,
-    "Premium": Premium,
-}
+  Splash,
+  About,
+  Contact,
+  home: BnmLockedHome,
+  discover: BnmDiscover,
+  create: BnmLockedCreate,
+  upload: BnmLockedUpload,
+  watch: BnmLockedWatch,
+  live: BnmLockedLive,
+  'live-watch': BnmLockedLiveWatch,
+  tracker: BnmTracker,
+  effects: BnmEffects,
+  nearby: BnmLockedNearby,
+  challenge: BnmLockedChallenge,
+  search: BnmLockedSearch,
+  profile: BnmLockedProfile,
+  'create-channel': BnmLockedCreateChannel,
+  settings: BnmLockedSettings,
+  'creator-studio': BnmLockedCreatorStudio,
+  'ai-coach': BnmLockedAiCoach,
+  rewards: BnmLockedRewards,
+  'reward-checkout': BnmLockedCheckout,
+  inbox: BnmInbox,
+  messages: BnmMessages,
+  menu: BnmMenu,
+  onboarding: BnmLockedOnboarding,
+};
 
 export const pagesConfig = {
-    mainPage: "Home",
-    Pages: PAGES,
-    Layout: __Layout,
+  mainPage: 'Splash',
+  Pages: PAGES,
+  Layout: __Layout,
 };

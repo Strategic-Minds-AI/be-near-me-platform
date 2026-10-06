@@ -1,0 +1,37 @@
+{
+  "gate_id": "BNM-PROOF-GATE-V1",
+  "evaluated_ref": "apex/bnm-full-convergence-v1",
+  "evaluated_sha": "be7af91652c2204aff533ca20f545bee948f43b9",
+  "status": "FAIL",
+  "evidence": {
+    "visual_lock_id": "BNM-EA-V1",
+    "visual_lock_status": "APPROVED",
+    "screen_count": 10,
+    "minimum_parity_score": 94,
+    "critical_fails_allowed": 0,
+    "locked_routes_present": [
+      "/home -> BnmLockedHome",
+      "/nearby -> BnmLockedNearby",
+      "/challenge -> BnmLockedChallenge",
+      "/search -> BnmLockedSearch",
+      "/profile -> BnmLockedProfile",
+      "/creator-studio -> BnmLockedCreatorStudio",
+      "/ai-coach -> BnmLockedAiCoach",
+      "/rewards -> BnmLockedRewards",
+      "/reward-checkout -> BnmLockedCheckout",
+      "/create -> BnmLockedCreate"
+    ]
+  },
+  "failures": [
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Home"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Watch"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Channel"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Explore"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Trending"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Subscriptions"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Shorts"},
+    {"id":"LEGACY_ROUTE_SURFACE_PRESENT","detail":"./pages/Premium"}
+  ],
+  "decision": "DO NOT CALL THE FRONTEND FULLY CONVERGED",
+  "rule": "NO EVIDENCE = NO PASS"
+}
