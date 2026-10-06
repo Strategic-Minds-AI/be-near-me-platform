@@ -5,7 +5,7 @@ import {
   BarChart3, CalendarDays, Eye, Heart, Leaf, MessageCircle, Play, Plus, Sparkles, Trophy, Users
 } from "lucide-react";
 import {
-  Avatar, BnmLockedScreen, EmptyState, Glass, GradientButton, Metric, Pill, SectionTitle, asItems, formatCount
+  Avatar, BnmLockedScreen, Glass, GradientButton, Metric, Pill, SectionTitle, asItems, formatCount
 } from "@/components/bnm/LockedShell";
 
 const isProductionContent = (video) => {
