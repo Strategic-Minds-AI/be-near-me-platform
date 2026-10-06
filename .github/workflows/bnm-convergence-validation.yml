@@ -51,16 +51,31 @@ jobs:
       - name: Compare TypeScript debt with main
         shell: bash
         run: |
+          set +e
           set -uo pipefail
           mkdir -p /tmp/bnm-validation
+          rm -rf /tmp/bnm-main
+          git worktree prune
+
           npm run typecheck > /tmp/bnm-validation/candidate-typecheck.txt 2>&1
           candidate_exit=$?
           candidate_errors=$(grep -c 'error TS' /tmp/bnm-validation/candidate-typecheck.txt || true)
 
           git worktree add --detach /tmp/bnm-main origin/main
-          cp package-lock.json /tmp/bnm-main/package-lock.json
+          worktree_exit=$?
+          if [ "$worktree_exit" -ne 0 ]; then
+            echo "Could not create main baseline worktree." >&2
+            exit "$worktree_exit"
+          fi
+
           cd /tmp/bnm-main
           npm ci --ignore-scripts --silent
+          install_exit=$?
+          if [ "$install_exit" -ne 0 ]; then
+            echo "Could not install main baseline dependencies." >&2
+            exit "$install_exit"
+          fi
+
           npm run typecheck > /tmp/bnm-validation/main-typecheck.txt 2>&1
           main_exit=$?
           main_errors=$(grep -c 'error TS' /tmp/bnm-validation/main-typecheck.txt || true)
@@ -74,6 +89,8 @@ jobs:
             echo "Candidate increases TypeScript error debt." >&2
             exit 1
           fi
+
+          exit 0
 
       - name: Wait for Vercel branch preview
         shell: bash
