@@ -40,7 +40,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin main --quiet
-          mapfile -t files < <(git diff --name-only origin/main...HEAD -- '*.js' '*.jsx' '*.ts' '*.tsx')
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMRT origin/main...HEAD -- '*.js' '*.jsx' '*.ts' '*.tsx')
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No candidate-owned JS/TS files changed."
             exit 0
