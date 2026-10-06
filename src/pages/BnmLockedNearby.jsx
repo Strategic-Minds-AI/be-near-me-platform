@@ -5,7 +5,7 @@ import {
   Compass, Heart, Leaf, MapPin, PawPrint, Search, SlidersHorizontal, Sparkles, Users, Utensils, ChevronRight
 } from "lucide-react";
 import {
-  BnmLockedScreen, EmptyState, Glass, Pill, SectionTitle, asItems, formatCount
+  BnmLockedScreen, Glass, Pill, SectionTitle, asItems, formatCount
 } from "@/components/bnm/LockedShell";
 
 export default function BnmLockedNearby() {
