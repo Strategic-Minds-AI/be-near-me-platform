@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ImagePlus, X, Loader2 } from "lucide-react";
 
 // ImageUploader — lets users pick images from their device, resizes them
