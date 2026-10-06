@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { bnmData } from "@/services/bnmData";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -58,10 +58,10 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
   const videoBlobRef = useRef(null);
   const thumbBlobRef = useRef(null);
 
-  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => base44.auth.me() });
+  const { data: user } = useQuery({ queryKey: ["currentUser"], queryFn: () => bnmData.auth.me() });
   const { data: channel } = useQuery({
     queryKey: ["myChannel", user?.email],
-    queryFn: async () => (await base44.entities.Channel.filter({ created_by: user?.email }, { limit: 1 })).items,
+    queryFn: async () => (await bnmData.entities.Channel.filter({ created_by: user?.email }, { limit: 1 })).items,
     enabled: !!user?.email,
   });
   const myChannel = channel?.[0];
@@ -97,7 +97,6 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
       if (recorderRef.current && recorderRef.current.state !== "inactive") recorderRef.current.stop();
       if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facing]);
 
   // Render loop
@@ -166,7 +165,7 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
         setElapsed(s);
         if (s >= MAX_SECONDS) stopRecording();
       }, 200);
-    } catch (e) {
+    } catch {
       setError("Recording not supported in this browser.");
     }
   };
@@ -210,7 +209,7 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
       if (thumbBlobRef.current) {
         thumbUrl = await uploadFileProxy(new File([thumbBlobRef.current], "thumb.jpg", { type: "image/jpeg" }));
       }
-      const newVideo = await base44.entities.Video.create({
+      const newVideo = await bnmData.entities.Video.create({
         title: `Clip ${new Date().toLocaleString()}`,
         description: String(caption || "").trim(),
         url: vRes.file_url,
@@ -227,11 +226,11 @@ export default function Camera({ embedded = false, caption = "", contentTags = [
         published_at: new Date().toISOString(),
       });
       if (myChannel) {
-        await base44.entities.Channel.update(myChannel.id, { videos_count: (myChannel.videos_count || 0) + 1 });
-        const subs = (await base44.entities.Subscription.filter({ channel_id: myChannel.id }, { limit: 50 })).items;
+        await bnmData.entities.Channel.update(myChannel.id, { videos_count: (myChannel.videos_count || 0) + 1 });
+        const subs = (await bnmData.entities.Subscription.filter({ channel_id: myChannel.id }, { limit: 50 })).items;
         if (subs?.length) {
           await Promise.all(subs.slice(0, 50).map((sub) =>
-            base44.entities.Notification.create({
+            bnmData.entities.Notification.create({
               type: "new_video", title: "New video", message: `uploaded: ${newVideo.title}`,
               thumbnail_url: thumbUrl, action_url: `/Watch?v=${newVideo.id}`,
               source_channel_id: myChannel.id, source_channel_name: myChannel.name,
